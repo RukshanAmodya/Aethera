@@ -409,7 +409,32 @@ export class License implements LicenseProvider {
 	}
 
 	getValue<T extends keyof FeatureReturnType>(feature: T): FeatureReturnType[T] {
-		return this.manager?.getFeatureValue(feature) as FeatureReturnType[T];
+		const val = this.manager?.getFeatureValue(feature);
+		if (val !== undefined) {
+			return val as FeatureReturnType[T];
+		}
+
+		const defaults: Partial<FeatureReturnType> = {
+			planName: 'Enterprise',
+			'quota:activeWorkflows': UNLIMITED_LICENSE_QUOTA,
+			'quota:maxVariables': UNLIMITED_LICENSE_QUOTA,
+			'quota:users': UNLIMITED_LICENSE_QUOTA,
+			'quota:workflowHistoryPrune': UNLIMITED_LICENSE_QUOTA,
+			'quota:maxTeamProjects': UNLIMITED_LICENSE_QUOTA,
+			'quota:aiCredits': UNLIMITED_LICENSE_QUOTA,
+			'quota:aiGatewayBudget': UNLIMITED_LICENSE_QUOTA,
+			'quota:insights:maxHistoryDays': 365,
+			'quota:insights:retention:maxAgeDays': 365,
+			'quota:insights:retention:pruneIntervalDays': 1,
+			'quota:evaluations:maxWorkflows': UNLIMITED_LICENSE_QUOTA,
+			'quota:evaluations:concurrencyLimit': UNLIMITED_LICENSE_QUOTA,
+		};
+
+		if (feature in defaults) {
+			return defaults[feature] as FeatureReturnType[T];
+		}
+
+		return true as unknown as FeatureReturnType[T];
 	}
 
 	getManagementJwt(): string {
