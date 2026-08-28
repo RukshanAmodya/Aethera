@@ -1,8 +1,11 @@
-﻿# 🌌 Aethera
+# 🌌 Aethera
 
 <div align="center">
 
-![Aethera Banner](https://img.shields.io/badge/Aethera-Workflow%20Automation-7928CA?style=for-the-badge&logo=fastapi&logoColor=white)
+![Aethera Banner](./assets/aethera-cover.png)
+
+<br />
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg?style=for-the-badge)](#)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=for-the-badge)](https://github.com/RukshanAmodya/Aethera/pulls)
