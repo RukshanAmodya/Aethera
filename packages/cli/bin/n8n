@@ -13,18 +13,7 @@ if (versionFlags.includes(process.argv.slice(-1)[0])) {
 	process.exit(0);
 }
 
-const satisfies = require('semver/functions/satisfies');
-const nodeVersion = process.versions.node;
-const {
-	engines: { node: supportedNodeVersions },
-} = require('../package.json');
-if (!satisfies(nodeVersion, supportedNodeVersions)) {
-	console.error(`
-Your Node.js version ${nodeVersion} is currently not supported by n8n.
-Please use a Node.js version that satisfies the following version range: ${supportedNodeVersions}
-`);
-	process.exit(1);
-}
+
 
 // Disable nodejs custom inspection across the app
 const { inspect } = require('util');
