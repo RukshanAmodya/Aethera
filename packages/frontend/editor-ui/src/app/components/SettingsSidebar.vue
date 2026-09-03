@@ -43,7 +43,7 @@ onMounted(() => {
 		</div>
 		<div :class="$style.versionContainer">
 			<N8nLink size="small" @click="uiStore.openModal(ABOUT_MODAL_KEY)">
-				{{ i18n.baseText('settings.version') }} {{ rootStore.versionCli }}
+				Aethera v{{ rootStore.versionCli }}
 			</N8nLink>
 		</div>
 	</div>
