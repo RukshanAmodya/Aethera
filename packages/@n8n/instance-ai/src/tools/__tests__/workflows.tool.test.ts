@@ -1,4 +1,9 @@
-import type { InstanceAiPermissions } from '@n8n/api-types';
+import { zodToJsonSchema } from '@n8n/agents';
+import {
+	buildCredentialDestinationGrantKey,
+	type InstanceAiCredentialSetupHint,
+	type InstanceAiPermissions,
+} from '@n8n/api-types';
 import { generateWorkflowCode } from '@n8n/workflow-sdk';
 import type { Mock } from 'vitest';
 
@@ -11,13 +16,13 @@ import {
 	applyNodeChanges,
 	buildCompletedReport,
 } from '../workflows/setup-workflow.service';
-import { STRUCTURE_ONLY_NOTE } from '../workflows/summarize-workflow';
+import { FULL_PAYLOAD_TOO_LARGE_NOTE, STRUCTURE_ONLY_NOTE } from '../workflows/summarize-workflow';
 import {
 	getWorkflowSourceFileBinding,
 	refreshWorkflowSourceFileBindingFromSave,
 	saveWorkflowSourceFileBinding,
 } from '../workflows/workflow-file-bindings';
-import { createWorkflowsTool, type WorkflowAction } from '../workflows.tool';
+import { createWorkflowsTool, type WorkflowAction, workflowsResumeSchema } from '../workflows.tool';
 
 // Mock the setup-workflow.service module to avoid pulling in heavy dependencies
 vi.mock('../workflows/setup-workflow.service', () => ({
@@ -39,6 +44,45 @@ vi.mock('@n8n/workflow-sdk', async (importOriginal) => {
 });
 
 const emptyList = { workflows: [], total: 0, totalInScope: 0 };
+
+function templatedSetupFixture(
+	options: {
+		nodeUrl?: string;
+		testUrl?: string;
+		serviceOrigin?: string | null;
+	} = {},
+) {
+	const nodeUrl = options.nodeUrl ?? 'https://api.example.com/v1/account';
+	const serviceOrigin =
+		options.serviceOrigin === undefined ? 'https://api.example.com' : options.serviceOrigin;
+	const recipe: InstanceAiCredentialSetupHint = {
+		template: { headers: { Authorization: 'Bearer {{api_key}}' } },
+		placeholders: [{ name: 'api_key', title: 'API key' }],
+		...(options.testUrl ? { testUrl: options.testUrl } : {}),
+	};
+	const request = {
+		node: {
+			name: 'Fetch account',
+			type: 'n8n-nodes-base.httpRequest',
+			parameters: { url: nodeUrl },
+		},
+		credentialType: 'httpTemplatedCustomAuth',
+		needsAction: true,
+		setupHint: {
+			...recipe,
+			...(serviceOrigin ? { serviceHost: new URL(serviceOrigin).hostname, serviceOrigin } : {}),
+		},
+	};
+	return {
+		recipe,
+		request,
+		input: {
+			action: 'setup' as const,
+			workflowId: 'wf1',
+			credentialHints: [{ ...recipe, nodeName: request.node.name }],
+		},
+	};
+}
 
 function createMockContext(
 	overrides: Partial<Omit<InstanceAiContext, 'permissions'>> & {
@@ -125,6 +169,10 @@ describe('workflows tool', () => {
 		vi.clearAllMocks();
 	});
 
+	it('exports the resume schema without unsupported URI formats', () => {
+		expect(JSON.stringify(zodToJsonSchema(workflowsResumeSchema))).not.toContain('"format":"uri"');
+	});
+
 	describe('surface filtering', () => {
 		const builderWorkflowActions = [
 			'list',
@@ -145,6 +193,8 @@ describe('workflows tool', () => {
 			expect(result).toEqual({
 				workflowId: 'w1',
 				name: 'Test WF',
+				nodeCount: 0,
+				nodes: [],
 				code: '// generated code',
 			});
 		});
@@ -875,8 +925,400 @@ describe('workflows tool', () => {
 			await executeTool(tool, { action: 'get-as-code', workflowId: 'wf1' }, {} as never);
 
 			expect(vi.mocked(generateWorkflowCode)).toHaveBeenCalledWith(
-				expect.objectContaining({ includeNodeIds: true }),
+				expect.objectContaining({ includeNodeIds: true, includePositions: false }),
 			);
+		});
+	});
+
+	describe('get-as-code source file materialization', () => {
+		const GENERATED = [
+			'const trigger1 = trigger({',
+			"  type: 'n8n-nodes-base.manualTrigger',",
+			'  version: 1,',
+			"  config: { id: 'n1', name: 'Start' }",
+			'});',
+			"export default workflow('wf1', 'Test WF').add(trigger1);",
+		].join('\n');
+
+		function createWorkspaceContext(files: Map<string, string>) {
+			const context = createMockContext({
+				logger: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() },
+				workspace: {
+					filesystem: {
+						readFile: vi.fn(async (path: string) => {
+							const content = files.get(path);
+							if (content === undefined) throw new Error(`ENOENT ${path}`);
+							return await Promise.resolve(content);
+						}),
+						writeFile: vi.fn(async (path: string, content: string | Buffer) => {
+							files.set(path, Buffer.isBuffer(content) ? content.toString('utf-8') : content);
+							await Promise.resolve();
+						}),
+					},
+				} as unknown as InstanceAiContext['workspace'],
+			});
+			(context.workflowService.getAsWorkflowJSON as Mock).mockResolvedValue({
+				name: 'Test WF',
+				nodes: [
+					{
+						id: 'n1',
+						name: 'Start',
+						type: 'n8n-nodes-base.manualTrigger',
+						typeVersion: 1,
+						position: [0, 0],
+						parameters: {},
+					},
+				],
+				connections: {},
+			});
+			(context.workflowService.get as Mock).mockResolvedValue({
+				id: 'wf1',
+				name: 'Test WF',
+				versionId: 'v1',
+				checksum: 'c1',
+				activeVersionId: null,
+				isArchived: false,
+				createdAt: '2024-01-01',
+				updatedAt: '2024-01-01',
+				nodes: [],
+				connections: {},
+			});
+			vi.mocked(generateWorkflowCode).mockReturnValue(GENERATED);
+			return context;
+		}
+
+		afterEach(() => {
+			vi.mocked(generateWorkflowCode).mockReturnValue('// generated code');
+		});
+
+		it('writes a build-ready source file, binds it, and returns a node index', async () => {
+			const files = new Map<string, string>();
+			const context = createWorkspaceContext(files);
+			const tool = createWorkflowsTool(context, 'full');
+
+			const result = await executeTool(
+				tool,
+				{ action: 'get-as-code', workflowId: 'wf1' },
+				{} as never,
+			);
+
+			const filePath = 'src/workflows/test-wf.workflow.ts';
+			expect(result).toMatchObject({
+				workflowId: 'wf1',
+				name: 'Test WF',
+				filePath,
+				status: 'written',
+				nodeCount: 1,
+				nodes: [{ name: 'Start', type: 'n8n-nodes-base.manualTrigger', line: 3 }],
+			});
+			expect(files.get(filePath)).toBe(
+				`import { workflow, trigger } from '@n8n/workflow-sdk';\n\n${GENERATED}`,
+			);
+			await expect(getWorkflowSourceFileBinding(context, filePath)).resolves.toMatchObject({
+				workflowId: 'wf1',
+				workflowVersionId: 'v1',
+				workflowChecksum: 'c1',
+			});
+		});
+
+		it('inlines the source only while it is small', async () => {
+			const files = new Map<string, string>();
+			const context = createWorkspaceContext(files);
+			const tool = createWorkflowsTool(context, 'full');
+
+			const small = await executeTool<{ code?: string }>(
+				tool,
+				{ action: 'get-as-code', workflowId: 'wf1' },
+				{} as never,
+			);
+			expect(small.code).toContain(GENERATED);
+
+			files.clear();
+			const largeTool = createWorkflowsTool(createWorkspaceContext(files), 'full');
+			vi.mocked(generateWorkflowCode).mockReturnValue(`${GENERATED}\n// ${'x'.repeat(20_000)}`);
+			const large = await executeTool<{ code?: string; status: string }>(
+				largeTool,
+				{ action: 'get-as-code', workflowId: 'wf1' },
+				{} as never,
+			);
+			expect(large.code).toBeUndefined();
+			expect(large.status).toBe('written');
+		});
+
+		it('does not rewrite a file that already matches the saved workflow', async () => {
+			const files = new Map<string, string>();
+			const context = createWorkspaceContext(files);
+			const tool = createWorkflowsTool(context, 'full');
+			await executeTool(tool, { action: 'get-as-code', workflowId: 'wf1' }, {} as never);
+			const writeFile = context.workspace?.filesystem?.writeFile as Mock;
+			writeFile.mockClear();
+
+			const result = await executeTool<{ status: string }>(
+				tool,
+				{ action: 'get-as-code', workflowId: 'wf1' },
+				{} as never,
+			);
+
+			expect(result.status).toBe('current');
+			expect(writeFile).not.toHaveBeenCalled();
+		});
+
+		it('reports a conflict instead of clobbering unbuilt edits', async () => {
+			const files = new Map<string, string>();
+			const context = createWorkspaceContext(files);
+			const tool = createWorkflowsTool(context, 'full');
+			await executeTool(tool, { action: 'get-as-code', workflowId: 'wf1' }, {} as never);
+			const filePath = 'src/workflows/test-wf.workflow.ts';
+			const edited = `${files.get(filePath)}\n// local edit`;
+			files.set(filePath, edited);
+
+			const result = await executeTool<{ status: string; code?: string }>(
+				tool,
+				{ action: 'get-as-code', workflowId: 'wf1' },
+				{} as never,
+			);
+
+			expect(result.status).toBe('conflict');
+			expect(result.code).toBeUndefined();
+			expect(files.get(filePath)).toBe(edited);
+		});
+
+		it('regenerates the file when the saved workflow changed and the file has no local edits', async () => {
+			const files = new Map<string, string>();
+			const context = createWorkspaceContext(files);
+			const tool = createWorkflowsTool(context, 'full');
+			await executeTool(tool, { action: 'get-as-code', workflowId: 'wf1' }, {} as never);
+
+			(context.workflowService.get as Mock).mockResolvedValue({
+				id: 'wf1',
+				name: 'Test WF',
+				versionId: 'v2',
+				checksum: 'c2',
+				activeVersionId: null,
+				isArchived: false,
+				createdAt: '2024-01-01',
+				updatedAt: '2024-01-02',
+				nodes: [],
+				connections: {},
+			});
+			const regenerated = GENERATED.replace("name: 'Start'", "name: 'Start (renamed)'");
+			vi.mocked(generateWorkflowCode).mockReturnValue(regenerated);
+
+			const result = await executeTool<{ status: string; nodes: Array<{ line: number }> }>(
+				tool,
+				{ action: 'get-as-code', workflowId: 'wf1' },
+				{} as never,
+			);
+
+			expect(result.status).toBe('refreshed');
+			expect(files.get('src/workflows/test-wf.workflow.ts')).toContain(regenerated);
+			await expect(
+				getWorkflowSourceFileBinding(context, 'src/workflows/test-wf.workflow.ts'),
+			).resolves.toMatchObject({ workflowChecksum: 'c2', workflowVersionId: 'v2' });
+		});
+
+		it('indexes the file on disk, not the regenerated code, when it reports a conflict', async () => {
+			const files = new Map<string, string>();
+			const context = createWorkspaceContext(files);
+			const tool = createWorkflowsTool(context, 'full');
+			await executeTool(tool, { action: 'get-as-code', workflowId: 'wf1' }, {} as never);
+			const filePath = 'src/workflows/test-wf.workflow.ts';
+			// Two lines prepended: the node declaration moves from line 3 to line 5 on disk.
+			files.set(filePath, `// note\n// note\n${files.get(filePath)}`);
+
+			const result = await executeTool<{ status: string; nodes: Array<{ line: number }> }>(
+				tool,
+				{ action: 'get-as-code', workflowId: 'wf1' },
+				{} as never,
+			);
+
+			expect(result.status).toBe('conflict');
+			expect(result.nodes[0].line).toBe(5);
+		});
+
+		it('keeps the concurrency token on the old version when it reports a conflict', async () => {
+			const files = new Map<string, string>();
+			const context = createWorkspaceContext(files);
+			const tool = createWorkflowsTool(context, 'full');
+			const filePath = 'src/workflows/test-wf.workflow.ts';
+			await executeTool(tool, { action: 'get-as-code', workflowId: 'wf1' }, {} as never);
+			// The agent edits the file without building, then the user edits the canvas.
+			files.set(filePath, files.get(filePath)!.replace("name: 'Start'", "name: 'Start (edited)'"));
+			(context.workflowService.get as Mock).mockResolvedValue({
+				id: 'wf1',
+				name: 'Test WF',
+				versionId: 'v2',
+				checksum: 'c2',
+				activeVersionId: null,
+				isArchived: false,
+				createdAt: '2024-01-01',
+				updatedAt: '2024-01-02',
+				nodes: [],
+				connections: {},
+			});
+
+			const result = await executeTool<{ status: string }>(
+				tool,
+				{ action: 'get-as-code', workflowId: 'wf1' },
+				{} as never,
+			);
+
+			expect(result.status).toBe('conflict');
+			// The file still derives from v1, so a build of it must hit the lost-update guard.
+			await expect(getWorkflowSourceFileBinding(context, filePath)).resolves.toMatchObject({
+				workflowChecksum: 'c1',
+				workflowVersionId: 'v1',
+			});
+		});
+
+		it('moves the concurrency token forward when only the canvas changed and the source is current', async () => {
+			const files = new Map<string, string>();
+			const context = createWorkspaceContext(files);
+			const tool = createWorkflowsTool(context, 'full');
+			const filePath = 'src/workflows/test-wf.workflow.ts';
+			await executeTool(tool, { action: 'get-as-code', workflowId: 'wf1' }, {} as never);
+			// A node was moved: new version, same generated source (positions are not emitted).
+			(context.workflowService.get as Mock).mockResolvedValue({
+				id: 'wf1',
+				name: 'Test WF',
+				versionId: 'v2',
+				checksum: 'c2',
+				activeVersionId: null,
+				isArchived: false,
+				createdAt: '2024-01-01',
+				updatedAt: '2024-01-02',
+				nodes: [],
+				connections: {},
+			});
+
+			const result = await executeTool<{ status: string }>(
+				tool,
+				{ action: 'get-as-code', workflowId: 'wf1' },
+				{} as never,
+			);
+
+			expect(result.status).toBe('current');
+			await expect(getWorkflowSourceFileBinding(context, filePath)).resolves.toMatchObject({
+				workflowChecksum: 'c2',
+				workflowVersionId: 'v2',
+			});
+		});
+
+		it('retries when the workflow changes between the source read and the checksum read', async () => {
+			const files = new Map<string, string>();
+			const context = createWorkspaceContext(files);
+			const stable = { versionId: 'v2', checksum: 'c2' };
+			const detail = (v: { versionId: string; checksum: string }) => ({
+				id: 'wf1',
+				name: 'Test WF',
+				activeVersionId: null,
+				isArchived: false,
+				createdAt: '2024-01-01',
+				updatedAt: '2024-01-01',
+				nodes: [],
+				connections: {},
+				...v,
+			});
+			(context.workflowService.get as Mock)
+				.mockResolvedValueOnce(detail({ versionId: 'v1', checksum: 'c1' }))
+				.mockResolvedValueOnce(detail(stable))
+				.mockResolvedValue(detail(stable));
+			const tool = createWorkflowsTool(context, 'full');
+
+			const result = await executeTool<{ status: string; error?: string }>(
+				tool,
+				{ action: 'get-as-code', workflowId: 'wf1' },
+				{} as never,
+			);
+
+			expect(result.error).toBeUndefined();
+			expect(result.status).toBe('written');
+			await expect(
+				getWorkflowSourceFileBinding(context, 'src/workflows/test-wf.workflow.ts'),
+			).resolves.toMatchObject({ workflowChecksum: 'c2' });
+		});
+
+		it('fails instead of binding a torn snapshot when the workflow keeps changing', async () => {
+			const files = new Map<string, string>();
+			const context = createWorkspaceContext(files);
+			let n = 0;
+			(context.workflowService.get as Mock).mockImplementation(async () => {
+				n += 1;
+				return await Promise.resolve({
+					id: 'wf1',
+					name: 'Test WF',
+					versionId: `v${n}`,
+					checksum: `c${n}`,
+					activeVersionId: null,
+					isArchived: false,
+					createdAt: '2024-01-01',
+					updatedAt: '2024-01-01',
+					nodes: [],
+					connections: {},
+				});
+			});
+			const tool = createWorkflowsTool(context, 'full');
+
+			const result = await executeTool<{ error?: string }>(
+				tool,
+				{ action: 'get-as-code', workflowId: 'wf1' },
+				{} as never,
+			);
+
+			expect(result.error).toContain('changed while its source was being read');
+			expect(files.size).toBe(0);
+		});
+
+		it('keeps historical reads inline and unbound', async () => {
+			const files = new Map<string, string>();
+			const context = createWorkspaceContext(files);
+			const tool = createWorkflowsTool(context, 'full');
+
+			const result = await executeTool<{ code?: string; filePath?: string }>(
+				tool,
+				{ action: 'get-as-code', workflowId: 'wf1', versionId: 'v0' },
+				{} as never,
+			);
+
+			expect(result.code).toContain(GENERATED);
+			expect(result.filePath).toBeUndefined();
+			expect(files.size).toBe(0);
+		});
+	});
+
+	describe('get with full: true', () => {
+		it('refuses to inline a workflow above the full-payload limit', async () => {
+			const context = createMockContext();
+			const nodes = Array.from({ length: 300 }, (_, i) => ({
+				id: `n${i}`,
+				name: `Node ${i}`,
+				type: 'n8n-nodes-base.set',
+				typeVersion: 3.4,
+				position: [0, 0],
+				parameters: { assignments: { assignments: [{ name: 'k', value: 'v'.repeat(400) }] } },
+			}));
+			(context.workflowService.get as Mock).mockResolvedValue({
+				id: 'wf1',
+				name: 'Big',
+				versionId: 'v1',
+				activeVersionId: null,
+				isArchived: false,
+				createdAt: '2024-01-01',
+				updatedAt: '2024-01-01',
+				nodes,
+				connections: {},
+			});
+			const tool = createWorkflowsTool(context, 'full');
+
+			const result = await executeTool<{ nodes?: unknown; nodeCount?: number; note?: string }>(
+				tool,
+				{ action: 'get', workflowId: 'wf1', full: true },
+				{} as never,
+			);
+
+			expect(result.nodes).toBeUndefined();
+			expect(result.nodeCount).toBe(300);
+			expect(result.note).toBe(FULL_PAYLOAD_TOO_LARGE_NOTE);
 		});
 	});
 
@@ -2270,6 +2712,155 @@ describe('workflows tool', () => {
 			expect(suspend).toHaveBeenCalled();
 		});
 
+		it('should accept a credential test URL on the workflow service origin', async () => {
+			const fixture = templatedSetupFixture({ testUrl: 'https://api.example.com/me' });
+			(analyzeWorkflow as Mock).mockResolvedValue([fixture.request]);
+			const suspend = vi.fn();
+
+			const tool = createWorkflowsTool(createMockContext(), 'full');
+			await executeTool(tool, fixture.input, { suspend, resumeData: undefined } as never);
+
+			expect(suspend).toHaveBeenCalledWith(
+				expect.objectContaining({
+					workflowId: 'wf1',
+					credentialDestination: {
+						origin: 'https://api.example.com',
+						nodeNames: ['Fetch account'],
+					},
+				}),
+			);
+		});
+
+		it('should remember an approved credential destination and open setup', async () => {
+			const first = templatedSetupFixture({ testUrl: 'https://api.example.com/me' });
+			const second = templatedSetupFixture({ testUrl: 'https://api.example.com/me' });
+			(analyzeWorkflow as Mock)
+				.mockResolvedValueOnce([first.request])
+				.mockResolvedValueOnce([second.request]);
+			const grantSessionToolApproval = vi.fn().mockResolvedValue(undefined);
+			const context = createMockContext({ grantSessionToolApproval });
+			const suspend = vi.fn();
+			const tool = createWorkflowsTool(context, 'full');
+
+			await executeTool(tool, first.input, { suspend, resumeData: undefined } as never);
+			suspend.mockClear();
+			await executeTool(tool, first.input, {
+				suspend,
+				resumeData: {
+					approved: true,
+					credentialDestination: { origin: 'https://api.example.com' },
+				},
+			} as never);
+
+			expect(grantSessionToolApproval).toHaveBeenCalledWith(
+				buildCredentialDestinationGrantKey('wf1', 'https://api.example.com'),
+			);
+			expect(suspend).toHaveBeenCalledWith(
+				expect.objectContaining({
+					message: 'Configure credentials for your workflow',
+					setupRequests: [second.request],
+				}),
+			);
+		});
+
+		it('should reuse approval only for the same workflow credential destination', async () => {
+			const fixture = templatedSetupFixture({ testUrl: 'https://api.example.com/me' });
+			(analyzeWorkflow as Mock).mockResolvedValue([fixture.request]);
+			const context = createMockContext({
+				sessionApprovedToolKeys: new Set([
+					buildCredentialDestinationGrantKey('wf1', 'https://api.example.com'),
+				]),
+			});
+			const suspend = vi.fn();
+
+			const tool = createWorkflowsTool(context, 'full');
+			await executeTool(tool, fixture.input, { suspend, resumeData: undefined } as never);
+
+			expect(suspend).toHaveBeenCalledWith(
+				expect.objectContaining({
+					message: 'Configure credentials for your workflow',
+					setupRequests: [fixture.request],
+				}),
+			);
+		});
+
+		it('should require review again when the credential destination changes', async () => {
+			const fixture = templatedSetupFixture({
+				nodeUrl: 'https://api-v2.example.com/v1/account',
+				testUrl: 'https://api-v2.example.com/me',
+				serviceOrigin: 'https://api-v2.example.com',
+			});
+			(analyzeWorkflow as Mock).mockResolvedValue([fixture.request]);
+			const grantSessionToolApproval = vi.fn();
+			const suspend = vi.fn();
+
+			const tool = createWorkflowsTool(createMockContext({ grantSessionToolApproval }), 'full');
+			const result = await executeTool(tool, fixture.input, {
+				suspend,
+				resumeData: {
+					approved: true,
+					credentialDestination: { origin: 'https://api.example.com' },
+				},
+			} as never);
+
+			expect(result).toMatchObject({ error: 'credential_destination_changed' });
+			expect(grantSessionToolApproval).not.toHaveBeenCalled();
+			expect(suspend).not.toHaveBeenCalled();
+		});
+
+		it('should stop setup when the credential destination is declined', async () => {
+			const tool = createWorkflowsTool(createMockContext(), 'full');
+			const result = await executeTool(tool, { action: 'setup', workflowId: 'wf1' }, {
+				resumeData: {
+					approved: false,
+					credentialDestination: { origin: 'https://api.example.com' },
+				},
+			} as never);
+
+			expect(result).toMatchObject({
+				success: false,
+				denied: true,
+				reason: 'User did not approve credential use with https://api.example.com.',
+			});
+			expect(analyzeWorkflow).not.toHaveBeenCalled();
+		});
+
+		it('should reject a credential test URL on a different service origin', async () => {
+			const fixture = templatedSetupFixture({ testUrl: 'https://status.example.net/me' });
+			(analyzeWorkflow as Mock).mockResolvedValue([fixture.request]);
+			const suspend = vi.fn();
+
+			const tool = createWorkflowsTool(createMockContext(), 'full');
+			const result = await executeTool(tool, fixture.input, {
+				suspend,
+				resumeData: undefined,
+			} as never);
+
+			expect(result).toMatchObject({ error: 'invalid_credential_hints' });
+			expect(suspend).not.toHaveBeenCalled();
+		});
+
+		it('should reject a templated setup when the workflow service origin is unavailable', async () => {
+			const fixture = templatedSetupFixture({
+				nodeUrl: '={{ $json.url }}',
+				serviceOrigin: null,
+			});
+			(analyzeWorkflow as Mock).mockResolvedValue([fixture.request]);
+			const suspend = vi.fn();
+
+			const tool = createWorkflowsTool(createMockContext(), 'full');
+			const result = await executeTool(tool, fixture.input, {
+				suspend,
+				resumeData: undefined,
+			} as never);
+
+			expect(result).toMatchObject({
+				error: 'invalid_credential_hints',
+				problems: [expect.stringContaining('no statically derivable HTTP origin')],
+			});
+			expect(suspend).not.toHaveBeenCalled();
+		});
+
 		it('should allow a plain generic type when credentials of it already exist', async () => {
 			(analyzeWorkflow as Mock).mockResolvedValue([
 				{
@@ -2400,6 +2991,7 @@ describe('workflows tool', () => {
 
 			expect(analyzeWorkflow).toHaveBeenCalledWith(context, 'wf1', undefined, {
 				includeSettled: true,
+				appliedCredentialIds: ['cred-1'],
 			});
 			expect(result).toMatchObject({
 				success: true,
@@ -2743,6 +3335,62 @@ describe('workflows tool', () => {
 				expect(suspend.mock.calls[0][0]).toMatchObject({ setupRequests: [sheetsRequest] });
 			});
 
+			it('revalidates the credential test destination after a trigger test', async () => {
+				const fixture = templatedSetupFixture({ testUrl: 'https://status.example.net/me' });
+				(analyzeWorkflow as Mock).mockResolvedValue([fixture.request]);
+				(applyNodeChanges as Mock).mockResolvedValue({ applied: [], failed: [] });
+				const context = createGrantAwareContext();
+				(context.executionService.run as Mock).mockResolvedValue({ status: 'success' });
+				const suspend = vi.fn();
+
+				const tool = createWorkflowsTool(context, 'full');
+				const result = await executeTool(tool, fixture.input, {
+					suspend,
+					resumeData: {
+						approved: true,
+						action: 'test-trigger',
+						testTriggerNode: 'Fetch account',
+					},
+				} as never);
+
+				expect(result).toMatchObject({ error: 'invalid_credential_hints' });
+				expect(suspend).not.toHaveBeenCalled();
+			});
+
+			it('checks refreshed credential test destinations against skipped node URLs', async () => {
+				const fixture = templatedSetupFixture({
+					testUrl: 'https://api.example.com/v1/action',
+				});
+				const skippedRequest = {
+					node: {
+						name: 'Run action',
+						type: 'n8n-nodes-base.httpRequest',
+						parameters: { url: fixture.recipe.testUrl },
+					},
+					credentialType: 'httpHeaderAuth',
+					needsAction: true,
+					credentialNeedsAction: true,
+				};
+				(analyzeWorkflow as Mock).mockResolvedValue([fixture.request, skippedRequest]);
+				(applyNodeChanges as Mock).mockResolvedValue({ applied: [], failed: [] });
+				const context = createGrantAwareContext(['workflows:setup-skip:cred:httpHeaderAuth']);
+				(context.executionService.run as Mock).mockResolvedValue({ status: 'success' });
+				const suspend = vi.fn();
+
+				const tool = createWorkflowsTool(context, 'full');
+				const result = await executeTool(tool, fixture.input, {
+					suspend,
+					resumeData: {
+						approved: true,
+						action: 'test-trigger',
+						testTriggerNode: 'Fetch account',
+					},
+				} as never);
+
+				expect(result).toMatchObject({ error: 'invalid_credential_hints' });
+				expect(suspend).not.toHaveBeenCalled();
+			});
+
 			it('keeps another node Slack skip when only a parameter was completed', async () => {
 				// "Alert on Slack" was connected already and only needed a channel. Clearing the
 				// type-wide record here would re-open the card "Post to Slack" was skipped on.
@@ -2770,6 +3418,83 @@ describe('workflows tool', () => {
 				expect(context.revokeSessionToolApproval).not.toHaveBeenCalledWith(
 					'workflows:setup-skip:cred:slackApi',
 				);
+			});
+		});
+
+		describe('credential slots the resume just filled', () => {
+			// The analysis's credential list view can lag a credential created moments
+			// ago; slots this resume bound settle on the apply result instead.
+			it('hands just-applied credential ids to the post-apply analysis', async () => {
+				(analyzeWorkflow as Mock).mockResolvedValue([]);
+				(applyNodeChanges as Mock).mockResolvedValue({ applied: ['Call Replicate'], failed: [] });
+				(buildCompletedReport as Mock).mockReturnValue([
+					{ nodeName: 'Call Replicate', credentialType: 'httpBearerAuth' },
+				]);
+				const context = createMockContext();
+
+				const tool = createWorkflowsTool(context, 'full');
+				await executeTool(tool, { action: 'setup', workflowId: 'wf1' }, {
+					resumeData: {
+						approved: true,
+						action: 'apply',
+						credentials: { 'Call Replicate': { httpBearerAuth: 'cred-new' } },
+					},
+				} as never);
+
+				expect(analyzeWorkflow).toHaveBeenCalledWith(context, 'wf1', undefined, {
+					includeSettled: true,
+					appliedCredentialIds: ['cred-new'],
+				});
+			});
+
+			it('hands just-applied credential ids to the trigger-test analysis', async () => {
+				(analyzeWorkflow as Mock).mockResolvedValue([]);
+				(applyNodeChanges as Mock).mockResolvedValue({ applied: ['Call Replicate'], failed: [] });
+				const context = createMockContext();
+				(context.executionService.run as Mock).mockResolvedValue({ status: 'success' });
+				const suspend = vi.fn();
+
+				const tool = createWorkflowsTool(context, 'full');
+				await executeTool(tool, { action: 'setup', workflowId: 'wf1' }, {
+					suspend,
+					resumeData: {
+						approved: true,
+						action: 'test-trigger',
+						testTriggerNode: 'Receive Photo Request',
+						credentials: { 'Call Replicate': { httpBearerAuth: 'cred-new' } },
+					},
+				} as never);
+
+				expect(analyzeWorkflow).toHaveBeenCalledWith(
+					context,
+					'wf1',
+					{ 'Receive Photo Request': { status: 'success' } },
+					{ appliedCredentialIds: ['cred-new'] },
+				);
+			});
+
+			it('does not vouch for a credential id whose application failed', async () => {
+				(analyzeWorkflow as Mock).mockResolvedValue([]);
+				(applyNodeChanges as Mock).mockResolvedValue({
+					applied: [],
+					failed: [{ nodeName: 'Call Replicate', error: 'Credential not found: cred-gone' }],
+				});
+				(buildCompletedReport as Mock).mockReturnValue([]);
+				const context = createMockContext();
+
+				const tool = createWorkflowsTool(context, 'full');
+				await executeTool(tool, { action: 'setup', workflowId: 'wf1' }, {
+					resumeData: {
+						approved: true,
+						action: 'apply',
+						credentials: { 'Call Replicate': { httpBearerAuth: 'cred-gone' } },
+					},
+				} as never);
+
+				expect(analyzeWorkflow).toHaveBeenCalledWith(context, 'wf1', undefined, {
+					includeSettled: true,
+					appliedCredentialIds: [],
+				});
 			});
 		});
 	});

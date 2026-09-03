@@ -524,13 +524,12 @@ export class FrontendService {
 			saml: this.license.isSamlEnabled(),
 			oidc: this.licenseState.isOidcLicensed(),
 			mfaEnforcement: this.licenseState.isMFAEnforcementLicensed(),
-			provisioning: true,
+			provisioning: false, // temporarily disabled until this feature is ready for release
 			advancedExecutionFilters: this.license.isAdvancedExecutionFiltersEnabled(),
 			variables: this.license.isVariablesEnabled(),
 			sourceControl: this.license.isSourceControlLicensed(),
-			auditLogs: true,
 			externalSecrets: this.license.isExternalSecretsEnabled(),
-			showNonProdBanner: false,
+			showNonProdBanner: this.license.isLicensed(LICENSE_FEATURES.SHOW_NON_PROD_BANNER),
 			debugInEditor: this.license.isDebugInEditorLicensed(),
 			binaryDataS3: isS3Available && isS3Selected && isS3Licensed,
 			workerView: this.license.isWorkerViewLicensed(),
@@ -565,25 +564,43 @@ export class FrontendService {
 			});
 		}
 
-		this.settings.variables.limit = this.license.getVariablesLimit();
+		if (this.license.isVariablesEnabled()) {
+			this.settings.variables.limit = this.license.getVariablesLimit();
+		}
 
-		this.settings.aiAssistant.enabled = true;
-		this.settings.aiAssistant.setup = true;
+		if (isAiAssistantEnabled) {
+			this.settings.aiAssistant.enabled = isAiAssistantEnabled;
+			this.settings.aiAssistant.setup =
+				!!this.globalConfig.aiAssistant.baseUrl || !!process.env.N8N_AI_ANTHROPIC_KEY;
+		}
 
-		this.settings.askAi.enabled = true;
+		if (isAskAiEnabled) {
+			this.settings.askAi.enabled = isAskAiEnabled;
+		}
 
-		this.settings.aiCredits.enabled = true;
-		this.settings.aiCredits.credits = this.license.getAiCredits();
-		this.settings.aiCredits.setup = true;
+		if (isAiCreditsEnabled) {
+			this.settings.aiCredits.enabled = isAiCreditsEnabled;
+			this.settings.aiCredits.credits = this.license.getAiCredits();
+			this.settings.aiCredits.setup = !!this.globalConfig.aiAssistant.baseUrl;
+		}
 
-		this.settings.aiGateway = {
-			enabled: true,
-			budget: this.license.getValue(LICENSE_QUOTAS.AI_GATEWAY_BUDGET) ?? 0,
-			cloudUbbEnabled: this.licenseState.isAiGatewayCloudUbbLicensed(),
-		};
+		const isAiGatewayEnabled =
+			this.globalConfig.aiGateway.enabled &&
+			this.licenseState.isAiGatewayLicensed() &&
+			!!this.globalConfig.aiAssistant.baseUrl;
+		if (isAiGatewayEnabled) {
+			this.settings.aiGateway = {
+				enabled: true,
+				budget: this.license.getValue(LICENSE_QUOTAS.AI_GATEWAY_BUDGET) ?? 0,
+				cloudUbbEnabled: this.licenseState.isAiGatewayCloudUbbLicensed(),
+			};
+		}
 
-		this.settings.aiBuilder.enabled = true;
-		this.settings.aiBuilder.setup = true;
+		if (isAiBuilderEnabled) {
+			this.settings.aiBuilder.enabled = isAiBuilderEnabled;
+			this.settings.aiBuilder.setup =
+				!!this.globalConfig.aiAssistant.baseUrl || !!this.globalConfig.aiBuilder.apiKey;
+		}
 
 		this.settings.mfa.enabled = this.globalConfig.mfa.enabled;
 
@@ -602,13 +619,10 @@ export class FrontendService {
 
 		this.settings.enterprise.projects.team.limit = this.license.getTeamProjectLimit();
 
-		this.settings.folders.enabled = true;
+		this.settings.folders.enabled = this.license.isFoldersEnabled();
 
 		// Refresh evaluation settings
 		this.settings.evaluation.quota = this.licenseState.getMaxWorkflowsWithEvaluations();
-		this.settings.evaluation.collectionsEnabled = true;
-		this.settings.evaluation.configEvalsEnabled = true;
-		this.settings.evaluation.agentEvalsEnabled = true;
 
 		// Refresh environment feature flags
 		this.settings.envFeatureFlags = this.collectEnvFeatureFlags();

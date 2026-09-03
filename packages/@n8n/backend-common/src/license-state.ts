@@ -23,39 +23,31 @@ export class LicenseState {
 		if (!this.licenseProvider) throw new ProviderNotSetError();
 	}
 
+	// --------------------
+	//     core queries
+	// --------------------
 	/*
-	 * All features are licensed by default in Aethera
+	 * If the feature is a string. checks if the feature is licensed
+	 * If the feature is an array of strings, it checks if any of the features are licensed
 	 */
-	isLicensed(_feature: BooleanLicenseFeature | BooleanLicenseFeature[]): boolean {
-		return true;
+	isLicensed(feature: BooleanLicenseFeature | BooleanLicenseFeature[]) {
+		this.assertProvider();
+
+		if (typeof feature === 'string') return this.licenseProvider.isLicensed(feature);
+
+		for (const featureName of feature) {
+			if (this.licenseProvider.isLicensed(featureName)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	getValue<T extends keyof FeatureReturnType>(feature: T): FeatureReturnType[T] {
-		const defaults: Partial<FeatureReturnType> = {
-			planName: 'Enterprise',
-			'quota:activeWorkflows': UNLIMITED_LICENSE_QUOTA,
-			'quota:maxVariables': UNLIMITED_LICENSE_QUOTA,
-			'quota:users': UNLIMITED_LICENSE_QUOTA,
-			'quota:workflowHistoryPrune': UNLIMITED_LICENSE_QUOTA,
-			'quota:maxTeamProjects': UNLIMITED_LICENSE_QUOTA,
-			'quota:aiCredits': UNLIMITED_LICENSE_QUOTA,
-			'quota:aiGatewayBudget': UNLIMITED_LICENSE_QUOTA,
-			'quota:insights:maxHistoryDays': 365,
-			'quota:insights:retention:maxAgeDays': 365,
-			'quota:insights:retention:pruneIntervalDays': 1,
-			'quota:evaluations:maxWorkflows': UNLIMITED_LICENSE_QUOTA,
-			'quota:evaluations:concurrencyLimit': UNLIMITED_LICENSE_QUOTA,
-		};
+		this.assertProvider();
 
-		if (feature in defaults) {
-			return defaults[feature] as FeatureReturnType[T];
-		}
-
-		if (this.licenseProvider) {
-			return this.licenseProvider.getValue(feature);
-		}
-
-		return true as unknown as FeatureReturnType[T];
+		return this.licenseProvider.getValue(feature);
 	}
 
 	// --------------------

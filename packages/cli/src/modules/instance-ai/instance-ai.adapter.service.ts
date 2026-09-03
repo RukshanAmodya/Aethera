@@ -1,5 +1,6 @@
 import { braveSearch, searxngSearch, type WebSearchResponse } from '@n8n/ai-utilities';
 import {
+	AI_GATEWAY_MANAGED_TAG,
 	CONFIG_EVALUATIONS_FLAG,
 	CONFIG_EVALUATIONS_ENABLED_VARIANT,
 	INSTANCE_AI_MCP_CONNECTIONS_FLAG,
@@ -141,6 +142,7 @@ import { McpRegistryService } from '@/modules/mcp-registry/registry/mcp-registry
 import { NodeCatalogService } from '@/node-catalog';
 import { NodeTypes } from '@/node-types';
 import { userHasScopes } from '@/permissions.ee/check-access';
+import { PolicyEnforcementService } from '@/policy/policy-enforcement.service';
 import { PostHogClient } from '@/posthog';
 import { AiGatewayService } from '@/services/ai-gateway.service';
 import { FolderService } from '@/services/folder.service';
@@ -329,6 +331,7 @@ export class InstanceAiAdapterService {
 		private readonly aiGatewayService: AiGatewayService,
 		private readonly workflowTemplatesService: WorkflowTemplatesService,
 		private readonly collaborationService: CollaborationService,
+		private readonly policyEnforcementService: PolicyEnforcementService,
 		private readonly nodeCatalogService?: NodeCatalogService,
 		// Optional: absent only in package/test contexts constructed without DI.
 		// DI (by type, not position) always provides it in a running instance.
@@ -661,6 +664,7 @@ export class InstanceAiAdapterService {
 			allowSendingParameterValues,
 			telemetry,
 			collaborationService,
+			policyEnforcementService,
 		} = this;
 		const logger = this.logger;
 		const assertNotReadOnly = () => this.assertInstanceNotReadOnly('workflows');
@@ -953,23 +957,34 @@ export class InstanceAiAdapterService {
 					versionId: randomUUID(),
 				} as Partial<WorkflowEntity>);
 
-				const saved = await workflowRepository.manager.transaction(async (transactionManager) => {
-					const workflow = await transactionManager.save(WorkflowEntity, newWorkflow);
-					await sharedWorkflowRepository.makeOwner([workflow.id], projectId, transactionManager);
-					if (options?.markAsAiTemporary) {
-						if (!threadId) {
-							throw new UnexpectedError(
-								'Cannot mark AI-builder temporary workflow without a thread ID',
+				// The shell has no nodes, so the real content check is the `update()` below.
+				// This call is still needed: `createContent` refuses to write without a clearance.
+				const cleared = await policyEnforcementService.enforceWorkflowSave({
+					workflow: { id: null, name: newWorkflow.name, nodes: newWorkflow.nodes },
+					storedWorkflow: null,
+					projectId,
+				});
+
+				const saved = await workflowRepository.runInTransaction(
+					{ policyCleared: cleared },
+					async (transactionManager, ctx) => {
+						const workflow = await workflowRepository.createContent(newWorkflow, ctx);
+						await sharedWorkflowRepository.makeOwner([workflow.id], projectId, transactionManager);
+						if (options?.markAsAiTemporary) {
+							if (!threadId) {
+								throw new UnexpectedError(
+									'Cannot mark AI-builder temporary workflow without a thread ID',
+								);
+							}
+							await aiBuilderTemporaryWorkflowRepository.mark(
+								workflow.id,
+								threadId,
+								transactionManager,
 							);
 						}
-						await aiBuilderTemporaryWorkflowRepository.mark(
-							workflow.id,
-							threadId,
-							transactionManager,
-						);
-					}
-					return workflow;
-				});
+						return workflow;
+					},
+				);
 
 				// Now update with actual nodes — this creates the WorkflowHistory entry
 				// needed for activation and publishing.
@@ -2662,7 +2677,7 @@ export class InstanceAiAdapterService {
 			async listAvailable(options) {
 				const [nodes, gatewayConfig] = await Promise.all([
 					getNodes(),
-					options?.n8nConnectOnly ? getGatewayConfig() : Promise.resolve(null),
+					options?.gatewayCreditsOnly ? getGatewayConfig() : Promise.resolve(null),
 				]);
 				let filtered = nodes;
 
@@ -2689,9 +2704,9 @@ export class InstanceAiAdapterService {
 					return summary;
 				});
 
-				// n8nConnectOnly answers "which nodes support n8n Connect?" — keep only
+				// gatewayCreditsOnly answers "which nodes support Gateway credits?" — keep only
 				// nodes the gateway covers (meta present).
-				return options?.n8nConnectOnly ? summaries.filter((s) => s.aiGateway) : summaries;
+				return options?.gatewayCreditsOnly ? summaries.filter((s) => s.aiGateway) : summaries;
 			},
 
 			async listSearchable() {
@@ -4016,20 +4031,42 @@ function hasCredentialId(value: unknown): boolean {
 	return typeof id === 'string' && id.trim() !== '';
 }
 
+/**
+ * Convert the n8n credits managed tag, when written as a credential id, to the
+ * runtime sentinel. Build-time resolve already does this; normalizing at save
+ * also covers direct saves (e.g. workflows update) so the tag never persists as
+ * a real id the runtime would fail to resolve.
+ */
+function normalizeManagedCredentialForSave(value: unknown): unknown {
+	if (typeof value !== 'object' || value === null) return value;
+	if (Reflect.get(value, 'id') !== AI_GATEWAY_MANAGED_TAG) return value;
+	const name = Reflect.get(value, 'name');
+	return {
+		id: null,
+		name: typeof name === 'string' && name !== '' ? name : 'Gateway credits',
+		__aiGatewayManaged: true,
+	};
+}
+
 function sanitizeCredentialReferencesForSave(nodes: WorkflowJSON['nodes']): WorkflowJSON['nodes'] {
 	return nodes.map((node) => {
 		if (!node.credentials) return node;
 
+		let changed = false;
 		const credentials = Object.entries(node.credentials).reduce<
 			NonNullable<typeof node.credentials>
-		>((acc, [type, value]) => {
+		>((acc, [type, rawValue]) => {
+			const value = normalizeManagedCredentialForSave(rawValue);
+			if (value !== rawValue) changed = true;
 			if (hasCredentialId(value)) {
-				acc[type] = value;
+				acc[type] = value as NonNullable<typeof node.credentials>[string];
+			} else {
+				changed = true;
 			}
 			return acc;
 		}, {});
 
-		if (Object.keys(credentials).length === Object.keys(node.credentials).length) return node;
+		if (!changed) return node;
 
 		const sanitized = { ...node };
 		if (Object.keys(credentials).length > 0) {

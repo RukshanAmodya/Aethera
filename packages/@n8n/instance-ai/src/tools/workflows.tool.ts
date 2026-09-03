@@ -4,6 +4,11 @@
  * update-version.
  */
 import { Tool } from '@n8n/agents';
+import {
+	buildCredentialDestinationGrantKey,
+	credentialDestinationSchema,
+	TEMPLATED_CUSTOM_AUTH_CREDENTIAL_TYPE,
+} from '@n8n/api-types';
 import { isRecord } from '@n8n/utils/is-record';
 import { dropInvalidWorkflowJsonGroups, type WorkflowJSON } from '@n8n/workflow-sdk';
 import { makeGetNodeTypeForGrouping } from 'n8n-workflow';
@@ -12,9 +17,11 @@ import { z } from 'zod';
 
 import { sanitizeInputSchema } from '../agent/sanitize-mcp-schemas';
 import { WorkflowSaveConflictError } from '../errors/workflow-save-conflict.error';
+import { WorkflowSnapshotChangedError } from '../errors/workflow-snapshot-changed.error';
 import type { InstanceAiContext } from '../types';
 import {
 	findSetupHintProblems,
+	findSetupHintTestUrlOriginProblem,
 	INVALID_SETUP_HINT_MESSAGE,
 	setupHintField,
 	TEMPLATABLE_PLAIN_AUTH_TYPES,
@@ -45,6 +52,8 @@ import {
 	buildCompletedReport,
 } from './workflows/setup-workflow.service';
 import {
+	exceedsFullPayloadLimit,
+	FULL_PAYLOAD_TOO_LARGE_NOTE,
 	isSmallPayload,
 	STRUCTURE_ONLY_NOTE,
 	summarizeWorkflowStructure,
@@ -55,8 +64,17 @@ import {
 	canSkipWorkflowUpdateHitl,
 	formatWarning,
 } from './workflows/workflow-build-context';
-import { refreshWorkflowSourceFileBindingFromWorkflow } from './workflows/workflow-file-bindings';
+import {
+	refreshWorkflowSourceFileBindingFromSave,
+	refreshWorkflowSourceFileBindingFromWorkflow,
+} from './workflows/workflow-file-bindings';
 import { ensureUniqueNodeIds, getReferencedWorkflowIds } from './workflows/workflow-json-utils';
+import {
+	INLINE_SOURCE_LIMIT_CHARS,
+	indexSourceNodes,
+	materializeWorkflowSource,
+	type MaterializedSourceStatus,
+} from './workflows/workflow-source-materializer';
 import { nodeGroupDroppedWarnings } from './workflows/workflow-validation-warnings';
 
 // ── Action schemas ──────────────────────────────────────────────────────────
@@ -122,7 +140,7 @@ const getAsCodeAction = z.object({
 	action: z
 		.literal('get-as-code')
 		.describe(
-			'Convert an existing workflow to TypeScript SDK code. Call before precise patches when you need the current code. Pass versionId for a past version instead of the current draft.',
+			'Write an existing workflow as TypeScript SDK source into the workspace (src/workflows/<name>.workflow.ts), bind the file to the workflow, and return the file path plus a node index with line numbers. Edit the file with scoped replacements and save with build-workflow. Source is inlined only when small. Pass versionId for a past version instead of the current draft.',
 		),
 	workflowId: z.string().describe('ID of the workflow'),
 	versionId: z.string().optional().describe('Version ID'),
@@ -175,10 +193,12 @@ const setupAction = z.object({
 		.array(z.string())
 		.optional()
 		.describe(
-			'Credential types (e.g. ["slackApi"]) the user explicitly asked to create fresh — pass ONLY on an ' +
-				'explicit request like "create a new Slack credential", never as a default. The card opens with ' +
-				'nothing preselected so the user lands on credential creation; existing credentials of the type ' +
-				'stay listed in case they change their mind. Pass the same list you passed to build-workflow.',
+			'Credential types (e.g. ["slackApi"]) to route to fresh credential creation — pass when the user ' +
+				'explicitly asked ("create a new Slack credential") or needs to enter a replacement for a ' +
+				'credential whose secret is invalid or rotated (e.g. pasted a new token in chat, which you ' +
+				'cannot store). Never pass as a default. The card opens with nothing preselected so the user ' +
+				'lands on credential creation; existing credentials of the type stay listed in case they ' +
+				'change their mind. Pass the same list you passed to build-workflow.',
 		),
 	reopenSkipped: z
 		.array(z.string())
@@ -281,7 +301,8 @@ const confirmationSuspendSchema = setupSuspendSchema
 		severity: true,
 		workflowId: true,
 	})
-	.partial({ workflowId: true });
+	.partial({ workflowId: true })
+	.extend({ credentialDestination: credentialDestinationSchema.optional() });
 
 const suspendSchema = z.union([setupSuspendSchema, confirmationSuspendSchema]);
 
@@ -520,7 +541,7 @@ async function handleGet(context: InstanceAiContext, input: Extract<Input, { act
 				};
 			}
 			const version = await context.workflowService.getVersion(input.workflowId, input.versionId);
-			if (input.full || isSmallPayload(version)) {
+			if (isSmallPayload(version) || (input.full && !exceedsFullPayloadLimit(version))) {
 				return { workflowId: input.workflowId, ...version };
 			}
 			const { nodes, connections, ...meta } = version;
@@ -529,18 +550,19 @@ async function handleGet(context: InstanceAiContext, input: Extract<Input, { act
 				...meta,
 				nodeCount: nodes.length,
 				structure: await summarizeWorkflowStructure(meta.name ?? '', nodes, connections),
-				note: STRUCTURE_ONLY_NOTE,
+				note: input.full ? FULL_PAYLOAD_TOO_LARGE_NOTE : STRUCTURE_ONLY_NOTE,
 			};
 		}
 		const detail = await context.workflowService.get(input.workflowId);
 		await rememberObservedWorkflowChecksum(context, input.workflowId, detail.checksum);
-		if (input.full || isSmallPayload(detail)) return detail;
+		if (isSmallPayload(detail)) return detail;
+		if (input.full && !exceedsFullPayloadLimit(detail)) return detail;
 		const { nodes, connections, ...meta } = detail;
 		return {
 			...meta,
 			nodeCount: nodes.length,
 			structure: await summarizeWorkflowStructure(meta.name, nodes, connections),
-			note: STRUCTURE_ONLY_NOTE,
+			note: input.full ? FULL_PAYLOAD_TOO_LARGE_NOTE : STRUCTURE_ONLY_NOTE,
 		};
 	} catch (error) {
 		const message = error instanceof Error ? error.message : 'Failed to fetch workflow';
@@ -613,21 +635,117 @@ async function handleGetJson(
 	}
 }
 
+const SOURCE_FILE_NOTES: Record<MaterializedSourceStatus, string> = {
+	written:
+		'Source written to filePath and bound to this workflow. Locate nodes with the `nodes` index (line numbers) and read only those lines — for a large file use a ranged shell read such as `sed -n START,ENDp filePath` via workspace_execute_command, since workspace_read_file returns the whole file. Apply edits with workspace_str_replace_file, then call build-workflow with this filePath. Do not rewrite the whole file.',
+	refreshed:
+		'The saved workflow changed since the file was written, so the file was regenerated from the saved workflow. Re-apply any edit you still need with workspace_str_replace_file, then build-workflow.',
+	current:
+		'The file already matches the saved workflow; nothing was written. Edit it with workspace_str_replace_file and call build-workflow with this filePath.',
+	conflict:
+		'The file has edits that were never built, so it was left untouched. Build it with build-workflow to save them, or delete the file and call get-as-code again to start from the saved workflow.',
+};
+
+/**
+ * The source and the concurrency token come from two reads. A save landing between
+ * them would bind older source to a newer checksum, and a later build could then
+ * overwrite that save. Re-read the checksum after generating and retry once when
+ * it moved; give up loudly instead of binding a torn snapshot.
+ */
+async function readConsistentWorkflowSnapshot(
+	context: InstanceAiContext,
+	workflowId: string,
+): Promise<{ json: WorkflowJSON; saved: { versionId: string; checksum?: string } }> {
+	for (let attempt = 0; attempt < 2; attempt++) {
+		const before = await context.workflowService.get(workflowId);
+		const json = await context.workflowService.getAsWorkflowJSON(workflowId);
+		const after = await context.workflowService.get(workflowId);
+		if (before.checksum === after.checksum && before.versionId === after.versionId) {
+			return { json, saved: { versionId: after.versionId, checksum: after.checksum } };
+		}
+	}
+	throw new WorkflowSnapshotChangedError(workflowId);
+}
+
 async function handleGetAsCode(
 	context: InstanceAiContext,
 	input: Extract<Input, { action: 'get-as-code' }>,
 ) {
-	const { generateWorkflowCode } = await import('@n8n/workflow-sdk');
-	try {
-		const json = await context.workflowService.getAsWorkflowJSON(input.workflowId, input.versionId);
+	const { generateWorkflowCode, buildImports } = await import('@n8n/workflow-sdk');
+	const toCode = (json: WorkflowJSON): string => {
 		// Emit node ids: this code is edited and built back into the same saved workflow,
-		// and carrying the ids through is what keeps node identity stable.
-		const code = generateWorkflowCode({ workflow: json, includeNodeIds: true });
-		// Historical reads must not advance the optimistic-concurrency lock.
-		if (!input.versionId) {
-			await refreshWorkflowSourceFileBindingFromWorkflow(context, input.workflowId);
+		// and carrying the ids through is what keeps node identity stable. Positions stay
+		// out: build-workflow restores the saved layout by id, so a position in the file
+		// is only an invitation to edit layout.
+		const body = generateWorkflowCode({
+			workflow: json,
+			includeNodeIds: true,
+			includePositions: false,
+		});
+		// The file must build as-is, so it carries the import line codegen omits.
+		const importLine = buildImports(body);
+		return importLine ? `${importLine}\n\n${body}` : body;
+	};
+	try {
+		// Historical reads are not bound to a file and must not advance the
+		// optimistic-concurrency lock; they stay inline.
+		if (input.versionId) {
+			const json = await context.workflowService.getAsWorkflowJSON(
+				input.workflowId,
+				input.versionId,
+			);
+			const code = toCode(json);
+			return {
+				workflowId: input.workflowId,
+				name: json.name,
+				nodeCount: json.nodes?.length ?? 0,
+				nodes: await indexSourceNodes(json, code),
+				code,
+			};
 		}
-		return { workflowId: input.workflowId, name: json.name, code };
+
+		const { json, saved } = await readConsistentWorkflowSnapshot(context, input.workflowId);
+		const code = toCode(json);
+		const nodeCount = json.nodes?.length ?? 0;
+		const base = { workflowId: input.workflowId, name: json.name, nodeCount };
+
+		// Without a workspace there is no file to write; the code stays inline and the
+		// conversation's view of the workflow still moves to the current version.
+		if (!context.workspace) {
+			await refreshWorkflowSourceFileBindingFromSave(context, input.workflowId, {
+				versionId: saved.versionId,
+				checksum: saved.checksum,
+			});
+			return { ...base, nodes: await indexSourceNodes(json, code), code };
+		}
+
+		const materialized = await materializeWorkflowSource(context, {
+			workflowId: input.workflowId,
+			name: json.name,
+			code,
+			saved: { versionId: saved.versionId, checksum: saved.checksum },
+		});
+		// A conflict leaves source generated from an older version on disk, so the
+		// binding keeps that version's token: building that file must hit the
+		// lost-update guard instead of overwriting whatever changed the workflow since.
+		if (materialized.status !== 'conflict') {
+			await refreshWorkflowSourceFileBindingFromSave(context, input.workflowId, {
+				versionId: saved.versionId,
+				checksum: saved.checksum,
+			});
+		}
+
+		return {
+			...base,
+			filePath: materialized.filePath,
+			status: materialized.status,
+			// Index what is on disk: for `current` and `conflict` that is not the regenerated code.
+			nodes: await indexSourceNodes(json, materialized.content),
+			note: SOURCE_FILE_NOTES[materialized.status],
+			...(materialized.status !== 'conflict' && code.length <= INLINE_SOURCE_LIMIT_CHARS
+				? { code }
+				: {}),
+		};
 	} catch (error) {
 		return {
 			workflowId: input.workflowId,
@@ -753,13 +871,120 @@ function collectCredentialTestFailures(
  * Carry the "user asked for a fresh credential" types into every setup analysis
  * of this call, so no re-analysis (trigger test, apply) quietly reinstates the
  * auto-applied credential the first analysis withheld.
+ *
+ * Types the user has just applied a credential for are dropped: that ask is
+ * fulfilled, and keeping the flag would render the slot unbound again and
+ * report it as still needing configuration.
  */
-function preferNewCredentialOptions(input: Extract<Input, { action: 'setup' }>): {
+function preferNewCredentialOptions(
+	input: Extract<Input, { action: 'setup' }>,
+	appliedCredentials?: SetupResumeData['credentials'],
+): {
 	preferNewCredentialTypes?: readonly string[];
 } {
-	return input.preferNewCredentials?.length
-		? { preferNewCredentialTypes: input.preferNewCredentials }
-		: {};
+	const appliedTypes = new Set(
+		Object.values(appliedCredentials ?? {}).flatMap((byType) => Object.keys(byType)),
+	);
+	const remaining = (input.preferNewCredentials ?? []).filter((type) => !appliedTypes.has(type));
+	return remaining.length ? { preferNewCredentialTypes: remaining } : {};
+}
+
+/** Ids this resume applied — the analysis treats a slot bound to one as settled
+ *  even when its credential list view lags the just-created credential. Only
+ *  nodes the apply reported as successful vouch for their ids: a failed
+ *  application must not settle a stale binding elsewhere. */
+function appliedCredentialIdList(
+	applied: SetupResumeData['credentials'],
+	appliedNodeNames: readonly string[],
+): string[] {
+	const appliedNodes = new Set(appliedNodeNames);
+	return Object.entries(applied ?? {})
+		.filter(([nodeName]) => appliedNodes.has(nodeName))
+		.flatMap(([, byType]) => Object.values(byType));
+}
+
+interface RequiredCredentialDestination {
+	origin: string;
+	nodeNames: string[];
+	grantKey: string;
+}
+
+function inspectCredentialDestinations(
+	workflowId: string,
+	requests: readonly SetupRequest[],
+	requestsForNodeUrls: readonly SetupRequest[] = requests,
+): { problems: string[]; destinations: RequiredCredentialDestination[] } {
+	const problems: string[] = [];
+	const byGrantKey = new Map<string, RequiredCredentialDestination>();
+	const nodeUrls = requestsForNodeUrls.map((request) => request.node.parameters?.url);
+	for (const request of requests) {
+		if (
+			request.credentialType !== TEMPLATED_CUSTOM_AUTH_CREDENTIAL_TYPE ||
+			request.needsAction === false ||
+			!request.setupHint
+		) {
+			continue;
+		}
+
+		const origin = request.setupHint.serviceOrigin;
+		if (!origin) {
+			problems.push(
+				`${request.node.name}: credential destination cannot be verified because the workflow node has no statically derivable HTTP origin`,
+			);
+			continue;
+		}
+
+		const hintProblems = findSetupHintProblems(request.setupHint, { nodeUrls });
+		const originProblem = findSetupHintTestUrlOriginProblem(request.setupHint, origin);
+		problems.push(
+			...hintProblems.map((problem) => `${request.node.name}: ${problem}`),
+			...(originProblem ? [`${request.node.name}: ${originProblem}`] : []),
+		);
+
+		const grantKey = buildCredentialDestinationGrantKey(workflowId, origin);
+		const existing = byGrantKey.get(grantKey);
+		if (existing) {
+			existing.nodeNames.push(request.node.name);
+			continue;
+		}
+		byGrantKey.set(grantKey, {
+			origin,
+			nodeNames: [request.node.name],
+			grantKey,
+		});
+	}
+	return { problems, destinations: [...byGrantKey.values()] };
+}
+
+function findUnapprovedCredentialDestination(
+	context: InstanceAiContext,
+	destinations: readonly RequiredCredentialDestination[],
+	justApprovedGrantKey?: string,
+): RequiredCredentialDestination | undefined {
+	return destinations.find(
+		(destination) =>
+			destination.grantKey !== justApprovedGrantKey &&
+			context.sessionApprovedToolKeys?.has(destination.grantKey) !== true,
+	);
+}
+
+async function suspendForCredentialDestination(
+	ctx: WorkflowToolContext,
+	state: SetupState,
+	workflowId: string,
+	destination: RequiredCredentialDestination,
+) {
+	state.currentRequestId = nanoid();
+	return await ctx.suspend({
+		requestId: state.currentRequestId,
+		message: 'Review where this credential will be used',
+		severity: 'warning' as const,
+		workflowId,
+		credentialDestination: {
+			origin: destination.origin,
+			nodeNames: destination.nodeNames,
+		},
+	});
 }
 
 /** Setup state 3: persist setup, run the trigger, and re-suspend with the refreshed requests. */
@@ -795,7 +1020,10 @@ async function handleSetupTestTrigger(
 		context,
 		input.workflowId,
 		{ [testTriggerNode]: triggerTestResult },
-		preferNewCredentialOptions(input),
+		{
+			...preferNewCredentialOptions(input, resumeData.credentials),
+			appliedCredentialIds: appliedCredentialIdList(resumeData.credentials, preTestApply.applied),
+		},
 	);
 	// Re-derived from scratch, so it has to be partitioned again: this is the second path that
 	// builds the panel, and without it a trigger test mid-session puts back the cards state 1
@@ -806,6 +1034,26 @@ async function handleSetupTestTrigger(
 		getSkippedSetupSubjects(context),
 	);
 	applyCredentialHints(refreshedPending, input.credentialHints);
+	const destinationInspection = inspectCredentialDestinations(
+		input.workflowId,
+		refreshedPending,
+		refreshedRequests,
+	);
+	if (destinationInspection.problems.length > 0) {
+		return {
+			error: 'invalid_credential_hints',
+			message: INVALID_SETUP_HINT_MESSAGE,
+			problems: destinationInspection.problems,
+		};
+	}
+
+	const destination = findUnapprovedCredentialDestination(
+		context,
+		destinationInspection.destinations,
+	);
+	if (destination) {
+		return await suspendForCredentialDestination(ctx, state, input.workflowId, destination);
+	}
 
 	// Generate a new requestId so the frontend doesn't filter it
 	// as already-resolved from the previous suspend cycle
@@ -901,7 +1149,8 @@ async function handleSetupApply(
 		// a bound credential is settled for routing even when its test fails.
 		const remainingRequests = await analyzeWorkflow(context, input.workflowId, undefined, {
 			includeSettled: true,
-			...preferNewCredentialOptions(input),
+			...preferNewCredentialOptions(input, resumeData.credentials),
+			appliedCredentialIds: appliedCredentialIdList(resumeData.credentials, applyResult.applied),
 		});
 		const completedNodes = buildCompletedReport(
 			resumeData.credentials,
@@ -1032,9 +1281,18 @@ async function handleSetup(
 	}
 
 	const resumeData = ctx.resumeData;
+	const destinationDecision = resumeData?.credentialDestination;
+
+	if (destinationDecision && !resumeData.approved) {
+		return {
+			success: false,
+			denied: true,
+			reason: `User did not approve credential use with ${destinationDecision.origin}.`,
+		};
+	}
 
 	// State 1: Analyze workflow and suspend for user setup
-	if (resumeData === undefined || resumeData === null) {
+	if (resumeData === undefined || resumeData === null || destinationDecision !== undefined) {
 		const allSetupRequests = await analyzeWorkflow(
 			context,
 			input.workflowId,
@@ -1081,24 +1339,6 @@ async function handleSetup(
 			await forgetSkippedSetup(context, subjects);
 		}
 
-		// Setup after a build covers only the nodes that build changed —
-		// pre-existing, unrelated nodes must not surface in the setup card.
-		const scopeNodeNames = input.includeAllNodes
-			? undefined
-			: await resolveSetupScopeNodeNames(context, input.workflowId);
-		const scopedRequests = scopeNodeNames
-			? allSetupRequests.filter((request) => scopeNodeNames.includes(request.node.name))
-			: allSetupRequests;
-
-		// Two reasons a card stays out, applied in order: this build never touched the node, or
-		// the user declined it. Partitioning the scoped list keeps them apart in the report —
-		// an out-of-scope card is not something the user passed on.
-		const { pending: setupRequests, skippedByUser } = partitionSkippedSetupRequests(
-			scopedRequests,
-			input.workflowId,
-			getSkippedSetupSubjects(context),
-		);
-
 		// Validated against the workflow's node URLs so a recipe can't set one of
 		// the workflow's own (action) endpoints as its probe testUrl. Checked against every
 		// analyzed node, not just the pending ones — narrowing it to what the card shows would
@@ -1117,7 +1357,33 @@ async function handleSetup(
 			};
 		}
 
-		applyCredentialHints(setupRequests, input.credentialHints);
+		applyCredentialHints(allSetupRequests, input.credentialHints);
+		const destinationInspection = inspectCredentialDestinations(input.workflowId, allSetupRequests);
+		if (destinationInspection.problems.length > 0) {
+			return {
+				error: 'invalid_credential_hints',
+				message: INVALID_SETUP_HINT_MESSAGE,
+				problems: destinationInspection.problems,
+			};
+		}
+
+		// Setup after a build covers only the nodes that build changed —
+		// pre-existing, unrelated nodes must not surface in the setup card.
+		const scopeNodeNames = input.includeAllNodes
+			? undefined
+			: await resolveSetupScopeNodeNames(context, input.workflowId);
+		const scopedRequests = scopeNodeNames
+			? allSetupRequests.filter((request) => scopeNodeNames.includes(request.node.name))
+			: allSetupRequests;
+
+		// Two reasons a card stays out, applied in order: this build never touched the node, or
+		// the user declined it. Partitioning the scoped list keeps them apart in the report —
+		// an out-of-scope card is not something the user passed on.
+		const { pending: setupRequests, skippedByUser } = partitionSkippedSetupRequests(
+			scopedRequests,
+			input.workflowId,
+			getSkippedSetupSubjects(context),
+		);
 
 		// A provider documenting `Authorization: Bearer <token>` reliably lures the
 		// model into httpBearerAuth despite the skill guidance, so new plain generic
@@ -1141,6 +1407,36 @@ async function handleSetup(
 					})),
 				};
 			}
+		}
+
+		const setupNodeNames = new Set(setupRequests.map((request) => request.node.name));
+		const credentialDestinations = destinationInspection.destinations.flatMap((destination) => {
+			const nodeNames = destination.nodeNames.filter((name) => setupNodeNames.has(name));
+			return nodeNames.length > 0 ? [{ ...destination, nodeNames }] : [];
+		});
+		let justApprovedGrantKey: string | undefined;
+		if (destinationDecision) {
+			const approvedDestination = credentialDestinations.find(
+				(destination) => destination.origin === destinationDecision.origin,
+			);
+			if (!approvedDestination) {
+				return {
+					error: 'credential_destination_changed',
+					message:
+						'The credential destination changed before approval was applied. Call setup again to review the current destination.',
+				};
+			}
+			await context.grantSessionToolApproval?.(approvedDestination.grantKey);
+			justApprovedGrantKey = approvedDestination.grantKey;
+		}
+
+		const destination = findUnapprovedCredentialDestination(
+			context,
+			credentialDestinations,
+			justApprovedGrantKey,
+		);
+		if (destination) {
+			return await suspendForCredentialDestination(ctx, state, input.workflowId, destination);
 		}
 
 		if (setupRequests.length === 0) {
