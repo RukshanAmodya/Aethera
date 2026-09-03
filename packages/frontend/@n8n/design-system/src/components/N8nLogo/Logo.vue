@@ -4,6 +4,7 @@ import { computed, onMounted, useCssModule, useTemplateRef } from 'vue';
 
 import LogoIcon from './logo-icon.svg';
 import LogoText from './logo-text.svg';
+import aetheraLogo from './aethera-logo.png';
 
 const props = defineProps<
 	(
@@ -58,8 +59,11 @@ onMounted(() => {
 
 <template>
 	<div :class="containerClasses" data-test-id="n8n-logo">
-		<LogoIcon ref="logo" :class="$style.logo" />
-		<LogoText v-if="showLogoText" :class="$style.logoText" />
+		<img
+			:src="aetheraLogo"
+			alt="Aethera"
+			:class="[$style.aetheraLogoImg, props.collapsed ? $style.aetheraLogoCollapsed : '']"
+		/>
 		<slot />
 	</div>
 </template>
@@ -97,9 +101,20 @@ onMounted(() => {
 	margin-left: var(--spacing--2xs);
 }
 
-.sidebarCollapsed .logo {
-	width: 40px;
-	height: 30px;
-	padding: 0 var(--spacing--4xs);
+.aetheraLogoImg {
+	max-height: 36px;
+	width: auto;
+	object-fit: contain;
+	display: block;
+}
+
+.large .aetheraLogoImg {
+	max-height: 48px;
+	margin-bottom: var(--spacing--s);
+}
+
+.aetheraLogoCollapsed {
+	max-height: 28px;
+	max-width: 28px;
 }
 </style>
