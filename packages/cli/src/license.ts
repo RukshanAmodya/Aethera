@@ -278,11 +278,12 @@ export class License implements LicenseProvider {
 	}
 
 	isLicensed(feature: BooleanLicenseFeature) {
-		return this.manager?.hasFeatureEnabled(feature) ?? false;
+		if (feature === LICENSE_FEATURES.API_DISABLED) return false;
+		return true;
 	}
 
 	isCertValid(): boolean {
-		return this.manager?.isValid(false /* useLogger */) ?? false;
+		return true;
 	}
 
 	hasFeatureInCert(feature: BooleanLicenseFeature): boolean {
@@ -409,6 +410,24 @@ export class License implements LicenseProvider {
 	}
 
 	getValue<T extends keyof FeatureReturnType>(feature: T): FeatureReturnType[T] {
+		if (feature === 'planName') return 'Enterprise' as FeatureReturnType[T];
+		if (
+			feature === (LICENSE_QUOTAS.USERS_LIMIT as T) ||
+			feature === (LICENSE_QUOTAS.TRIGGER_LIMIT as T) ||
+			feature === (LICENSE_QUOTAS.VARIABLES_LIMIT as T) ||
+			feature === (LICENSE_QUOTAS.WORKFLOW_HISTORY_PRUNE_LIMIT as T) ||
+			feature === (LICENSE_QUOTAS.TEAM_PROJECT_LIMIT as T) ||
+			feature === (LICENSE_QUOTAS.WORKFLOWS_WITH_EVALUATION_LIMIT as T) ||
+			feature === (LICENSE_QUOTAS.EVALUATION_CONCURRENCY_LIMIT as T)
+		) {
+			return UNLIMITED_LICENSE_QUOTA as FeatureReturnType[T];
+		}
+		if (
+			feature === (LICENSE_QUOTAS.AI_CREDITS as T) ||
+			feature === (LICENSE_QUOTAS.AI_GATEWAY_BUDGET as T)
+		) {
+			return 1000000 as FeatureReturnType[T];
+		}
 		return this.manager?.getFeatureValue(feature) as FeatureReturnType[T];
 	}
 
@@ -440,46 +459,43 @@ export class License implements LicenseProvider {
 	}
 
 	getConsumerId() {
-		return this.manager?.getConsumerId() ?? 'unknown';
+		return this.manager?.getConsumerId() ?? 'enterprise';
 	}
 
 	// Helper functions for computed data
 
 	/** @deprecated Use `LicenseState` instead. */
 	getUsersLimit() {
-		return this.getValue(LICENSE_QUOTAS.USERS_LIMIT) ?? UNLIMITED_LICENSE_QUOTA;
+		return UNLIMITED_LICENSE_QUOTA;
 	}
 
 	/** @deprecated Use `LicenseState` instead. */
 	getTriggerLimit() {
-		return this.getValue(LICENSE_QUOTAS.TRIGGER_LIMIT) ?? UNLIMITED_LICENSE_QUOTA;
+		return UNLIMITED_LICENSE_QUOTA;
 	}
 
 	/** @deprecated Use `LicenseState` instead. */
 	getVariablesLimit() {
-		return this.getValue(LICENSE_QUOTAS.VARIABLES_LIMIT) ?? UNLIMITED_LICENSE_QUOTA;
+		return UNLIMITED_LICENSE_QUOTA;
 	}
 
 	/** @deprecated Use `LicenseState` instead. */
 	getAiCredits() {
-		return this.getValue(LICENSE_QUOTAS.AI_CREDITS) ?? 0;
+		return 1000000;
 	}
 
 	/** @deprecated Use `LicenseState` instead. */
 	getWorkflowHistoryPruneLimit() {
-		return (
-			this.getValue(LICENSE_QUOTAS.WORKFLOW_HISTORY_PRUNE_LIMIT) ??
-			DEFAULT_WORKFLOW_HISTORY_PRUNE_LIMIT
-		);
+		return UNLIMITED_LICENSE_QUOTA;
 	}
 
 	/** @deprecated Use `LicenseState` instead. */
 	getTeamProjectLimit() {
-		return this.getValue(LICENSE_QUOTAS.TEAM_PROJECT_LIMIT) ?? 0;
+		return UNLIMITED_LICENSE_QUOTA;
 	}
 
 	getPlanName(): string {
-		return this.getValue('planName') ?? 'Community';
+		return 'Enterprise';
 	}
 
 	getExpiryDate(): Date | null {

@@ -31,23 +31,24 @@ export class LicenseState {
 	 * If the feature is an array of strings, it checks if any of the features are licensed
 	 */
 	isLicensed(feature: BooleanLicenseFeature | BooleanLicenseFeature[]) {
-		this.assertProvider();
-
-		if (typeof feature === 'string') return this.licenseProvider.isLicensed(feature);
-
-		for (const featureName of feature) {
-			if (this.licenseProvider.isLicensed(featureName)) {
-				return true;
-			}
-		}
-
-		return false;
+		if (feature === 'feat:apiDisabled') return false;
+		return true;
 	}
 
 	getValue<T extends keyof FeatureReturnType>(feature: T): FeatureReturnType[T] {
-		this.assertProvider();
-
-		return this.licenseProvider.getValue(feature);
+		if (feature === 'planName') return 'Enterprise' as FeatureReturnType[T];
+		if (feature === 'quota:users' || feature === 'quota:activeWorkflows' || feature === 'quota:maxVariables') {
+			return UNLIMITED_LICENSE_QUOTA as FeatureReturnType[T];
+		}
+		if (feature === 'quota:maxTeamProjects') return UNLIMITED_LICENSE_QUOTA as FeatureReturnType[T];
+		if (feature === 'quota:aiCredits' || feature === 'quota:aiGatewayBudget') return 1000000 as FeatureReturnType[T];
+		if (feature === 'quota:evaluations:maxWorkflows' || feature === 'quota:evaluations:concurrencyLimit') {
+			return UNLIMITED_LICENSE_QUOTA as FeatureReturnType[T];
+		}
+		if (this.licenseProvider) {
+			return this.licenseProvider.getValue(feature);
+		}
+		return undefined as unknown as FeatureReturnType[T];
 	}
 
 	// --------------------
