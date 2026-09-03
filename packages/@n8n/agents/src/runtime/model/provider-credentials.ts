@@ -45,6 +45,7 @@ export const PROVIDER_CREDENTIAL_SCHEMAS = {
 	minimax: apiKeyCreds,
 	vercel: apiKeyCreds,
 	openrouter: apiKeyCreds,
+	agentrouter: apiKeyCreds,
 	nvidia: apiKeyCreds,
 
 	'azure-openai': z

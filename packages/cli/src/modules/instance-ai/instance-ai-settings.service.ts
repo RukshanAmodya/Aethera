@@ -93,6 +93,7 @@ export const CREDENTIAL_TO_MODEL_PROVIDER: Record<string, string> = {
 	mistralCloudApi: 'mistral',
 	xAiApi: 'xai',
 	openRouterApi: 'openrouter',
+	agentRouterApi: 'agentrouter',
 	cohereApi: 'cohere',
 } satisfies Record<(typeof INSTANCE_AI_MODEL_CREDENTIAL_TYPES)[number], string>;
 
@@ -101,6 +102,7 @@ const URL_FIELD_MAP: Record<string, string> = {
 	openAiApi: 'url',
 	anthropicApi: 'url',
 	googlePalmApi: 'host',
+	agentRouterApi: 'url',
 };
 
 function requireConnectionValue(

@@ -131,7 +131,7 @@ function buildOpenAiCompatible(
 	})(model);
 }
 
-type OpenAiCompatibleProviderId = 'nvidia';
+type OpenAiCompatibleProviderId = 'nvidia' | 'agentrouter';
 
 function isOfficialOpenAiBaseUrl(baseURL: string | undefined): boolean {
 	return baseURL?.replace(/\/+$/, '') === 'https://api.openai.com/v1';
@@ -268,6 +268,7 @@ const LANGUAGE_PROVIDERS: ProviderRegistry = {
 			return createOpenRouter({ apiKey: creds.apiKey, baseURL: creds.baseURL, fetch })(model);
 		},
 	},
+	agentrouter: openAiCompatibleEntry('agentrouter', 'https://agentrouter.org/v1', {}),
 	nvidia: openAiCompatibleEntry('nvidia', 'https://integrate.api.nvidia.com/v1', {}),
 	moonshotai: {
 		build: (creds, model, fetch) => {

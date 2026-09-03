@@ -10,6 +10,7 @@ import { listMoonshotAiModels } from './providers/moonshotai';
 import { listNvidiaModels } from './providers/nvidia';
 import { listOpenAiModels } from './providers/openai';
 import { listOpenRouterModels } from './providers/openrouter';
+import { listAgentRouterModels } from './providers/agentrouter';
 import { listVercelModels } from './providers/vercel';
 import { listXaiModels } from './providers/xai';
 import type { ListModelsFn, ListModelsOptions, ProviderModel } from './types';
@@ -38,6 +39,7 @@ export const MODEL_DISCOVERY_PROVIDERS: Record<string, ListModelsFn> = {
 	nvidia: listNvidiaModels,
 	openai: listOpenAiModels,
 	openrouter: listOpenRouterModels,
+	agentrouter: listAgentRouterModels,
 	vercel: listVercelModels,
 	xai: listXaiModels,
 };
@@ -78,6 +80,7 @@ export {
 	isOpenAiCustomEndpoint,
 } from './providers/openai';
 export { listOpenRouterModels } from './providers/openrouter';
+export { listAgentRouterModels } from './providers/agentrouter';
 export { listVercelModels } from './providers/vercel';
 export { listXaiModels } from './providers/xai';
 export { ensureUrlPathSuffix } from './request';

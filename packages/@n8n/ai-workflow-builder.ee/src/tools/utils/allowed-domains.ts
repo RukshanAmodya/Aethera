@@ -15,6 +15,7 @@ const AI_DOCS = [
 	'modelcontextprotocol.io',
 	'ollama.com',
 	'openrouter.ai',
+	'agentrouter.org',
 	'platform.claude.com',
 	'platform.deepseek.com',
 	'platform.openai.com',

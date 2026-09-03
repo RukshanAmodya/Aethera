@@ -307,6 +307,7 @@ async function credentialData(id: string | null | undefined): Promise<unknown> {
 function modelProviderForCredentialType(type: string): InstanceAiModelProvider {
 	if (type === 'anthropicApi') return 'anthropic';
 	if (type === 'openRouterApi') return 'openrouter';
+	if (type === 'agentRouterApi') return 'agentrouter';
 	return 'openai';
 }
 

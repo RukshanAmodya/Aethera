@@ -6,7 +6,12 @@ import type {
 
 import { SANDBOX_PROVIDER_LABELS } from './constants';
 
-export type InstanceAiModelProvider = 'anthropic' | 'openai' | 'openrouter' | 'custom';
+export type InstanceAiModelProvider =
+	| 'anthropic'
+	| 'openai'
+	| 'openrouter'
+	| 'agentrouter'
+	| 'custom';
 export type InstanceAiSearchProvider = 'searxng' | 'brave' | 'disabled';
 
 export const INSTANCE_AI_CURATED_MODELS = {
@@ -18,6 +23,13 @@ export const INSTANCE_AI_CURATED_MODELS = {
 		'openai/gpt-5.6-sol',
 		'openai/gpt-5.6-terra',
 		'moonshotai/kimi-k3',
+	],
+	agentrouter: [
+		'anthropic/claude-opus-5',
+		'anthropic/claude-sonnet-5',
+		'openai/gpt-5.6-sol',
+		'openai/gpt-5.6-terra',
+		'deepseek/deepseek-chat',
 	],
 	custom: [],
 } as const satisfies Record<InstanceAiModelProvider, readonly string[]>;
@@ -40,6 +52,12 @@ export const INSTANCE_AI_MODEL_PROVIDERS = [
 		credentialType: 'openRouterApi',
 		label: 'OpenRouter',
 		placeholder: 'sk-or-…',
+	},
+	{
+		id: 'agentrouter',
+		credentialType: 'agentRouterApi',
+		label: 'AgentRouter',
+		placeholder: 'sk-…',
 	},
 	{
 		id: 'custom',
