@@ -253,10 +253,11 @@ export abstract class BaseCommand<F = never> {
 					observability,
 				});
 			} catch (error) {
-				await this.exitWithCrash(
-					'Could not initialize the vm expression engine (see errors above for details). If they point at isolated-vm, check that it installed correctly, e.g. that native build scripts were not skipped.',
-					error,
+				this.logger.warn(
+					'Could not initialize the vm expression engine (e.g. isolated-vm ABI mismatch). Falling back to legacy expression engine.',
+					{ error: error instanceof Error ? error.message : error },
 				);
+				Expression.setExpressionEngine('legacy');
 			}
 		} else {
 			// Record the configured engine so an unexpected expression evaluation on a
