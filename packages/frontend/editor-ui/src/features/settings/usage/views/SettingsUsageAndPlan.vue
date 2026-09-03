@@ -50,9 +50,7 @@ const activationKeyInput = ref<HTMLInputElement | null>(null);
 const eulaModal = ref(false);
 const eulaUrl = ref('');
 
-const canUserActivateLicense = computed(() =>
-	hasPermission(['rbac'], { rbac: { scope: 'license:manage' } }),
-);
+const canUserActivateLicense = computed(() => false);
 
 const badgedPlanName = computed(() => {
 	const [badge, name] = usageStore.planName.split(' ');

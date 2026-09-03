@@ -134,29 +134,12 @@ export class LicenseService {
 	async activateLicense(activationKey: string, eulaUri: string, userEmail: string): Promise<void>;
 	// Implementation signature
 	async activateLicense(
-		activationKey: string,
-		eulaUri?: string,
-		userEmail?: string,
+		_activationKey: string,
+		_eulaUri?: string,
+		_userEmail?: string,
 	): Promise<void> {
-		try {
-			if (eulaUri && userEmail) {
-				await this.license.activate(activationKey, eulaUri, userEmail);
-			} else if (!eulaUri && !userEmail) {
-				await this.license.activate(activationKey);
-			} else {
-				throw new BadRequestError('When providing eulaUri, userEmail is required');
-			}
-		} catch (e) {
-			// Check if this is a EULA_REQUIRED error from license server
-			if (this.isEulaRequiredError(e)) {
-				throw new LicenseEulaRequiredError('License activation requires EULA acceptance', {
-					eulaUrl: e.info.eula.uri,
-				});
-			}
-
-			const message = this.mapErrorMessage(ensureError(e), 'activate');
-			throw new BadRequestError(message);
-		}
+		this.logger.debug('License is already permanently activated in Enterprise mode');
+		return;
 	}
 
 	private isEulaRequiredError(
