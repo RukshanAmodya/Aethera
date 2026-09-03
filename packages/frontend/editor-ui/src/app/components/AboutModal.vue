@@ -60,7 +60,7 @@ const copyDebugInfoToClipboard = async () => {
 <template>
 	<Modal
 		max-width="540px"
-		:title="i18n.baseText('about.aboutN8n')"
+		title="About Aethera"
 		:event-bus="modalBus"
 		:name="ABOUT_MODAL_KEY"
 		:center="true"
@@ -69,10 +69,10 @@ const copyDebugInfoToClipboard = async () => {
 			<div :class="$style.container">
 				<ElRow>
 					<ElCol :span="8" class="info-name">
-						<N8nText>{{ i18n.baseText('about.n8nVersion') }}</N8nText>
+						<N8nText>Aethera Version</N8nText>
 					</ElCol>
 					<ElCol :span="16">
-						<N8nText>{{ rootStore.versionCli }}</N8nText>
+						<N8nText>{{ rootStore.versionCli }} (Enterprise Edition)</N8nText>
 					</ElCol>
 				</ElRow>
 				<ElRow>
@@ -80,7 +80,9 @@ const copyDebugInfoToClipboard = async () => {
 						<N8nText>{{ i18n.baseText('about.sourceCode') }}</N8nText>
 					</ElCol>
 					<ElCol :span="16">
-						<N8nLink to="https://github.com/n8n-io/n8n">https://github.com/n8n-io/n8n</N8nLink>
+						<N8nLink to="https://github.com/RukshanAmodya/Aethera">
+							https://github.com/RukshanAmodya/Aethera
+						</N8nLink>
 					</ElCol>
 				</ElRow>
 				<ElRow>
@@ -88,9 +90,7 @@ const copyDebugInfoToClipboard = async () => {
 						<N8nText>{{ i18n.baseText('about.license') }}</N8nText>
 					</ElCol>
 					<ElCol :span="16">
-						<N8nLink to="https://github.com/n8n-io/n8n/blob/master/LICENSE.md">
-							{{ i18n.baseText('about.n8nLicense') }}
-						</N8nLink>
+						<N8nText>Aethera Enterprise (Self-Hosted)</N8nText>
 					</ElCol>
 				</ElRow>
 				<ElRow>
