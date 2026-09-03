@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { N8nLogo } from '@n8n/design-system';
+import aetheraLogo from './aethera-logo.png';
 import SSOLogin from '@/features/settings/sso/components/SSOLogin.vue';
 import type { FormFieldValueUpdate, IFormBoxConfig } from '@/Interface';
 import { useSettingsStore } from '@n8n/stores/settings.store';
@@ -44,7 +45,9 @@ const {
 
 <template>
 	<div :class="$style.container">
-		<N8nLogo size="large" :release-channel="releaseChannel" />
+		<div :class="$style.brandLogoWrapper">
+			<img :src="aetheraLogo" alt="Aethera" :class="$style.brandLogo" />
+		</div>
 		<div v-if="subtitle" :class="$style.textContainer">
 			<N8nText size="large">{{ subtitle }}</N8nText>
 		</div>
@@ -85,5 +88,18 @@ body {
 
 .formContainer {
 	padding-bottom: var(--spacing--xl);
+}
+
+.brandLogoWrapper {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-bottom: var(--spacing--xl);
+}
+
+.brandLogo {
+	max-height: 52px;
+	width: auto;
+	object-fit: contain;
 }
 </style>

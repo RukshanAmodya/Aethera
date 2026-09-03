@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { IFormInputs, InputAutocompletePropType } from '@/Interface';
 import { N8nLogo } from '@n8n/design-system';
+import aetheraLogo from './aethera-logo.png';
 import {
 	MFA_AUTHENTICATION_RECOVERY_CODE_INPUT_MAX_LENGTH,
 	MFA_AUTHENTICATION_CODE_INPUT_MAX_LENGTH,
@@ -197,7 +198,9 @@ onMounted(() => {
 
 <template>
 	<div :class="$style.container">
-		<N8nLogo size="large" :release-channel="releaseChannel" />
+		<div :class="$style.brandLogoWrapper">
+			<img :src="aetheraLogo" alt="Aethera" :class="$style.brandLogo" />
+		</div>
 		<N8nCard>
 			<div :class="$style.headerContainer">
 				<N8nHeading size="xlarge" color="text-dark">{{
@@ -305,5 +308,18 @@ body {
 
 .infoBox {
 	padding-top: var(--spacing--4xs);
+}
+
+.brandLogoWrapper {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-bottom: var(--spacing--xl);
+}
+
+.brandLogo {
+	max-height: 52px;
+	width: auto;
+	object-fit: contain;
 }
 </style>
