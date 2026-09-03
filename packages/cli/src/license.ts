@@ -278,7 +278,12 @@ export class License implements LicenseProvider {
 	}
 
 	isLicensed(feature: BooleanLicenseFeature) {
-		if (feature === LICENSE_FEATURES.API_DISABLED) return false;
+		if (
+			feature === LICENSE_FEATURES.API_DISABLED ||
+			feature === LICENSE_FEATURES.SHOW_NON_PROD_BANNER
+		) {
+			return false;
+		}
 		return true;
 	}
 

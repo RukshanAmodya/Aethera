@@ -31,7 +31,7 @@ export class LicenseState {
 	 * If the feature is an array of strings, it checks if any of the features are licensed
 	 */
 	isLicensed(feature: BooleanLicenseFeature | BooleanLicenseFeature[]) {
-		if (feature === 'feat:apiDisabled') return false;
+		if (feature === 'feat:apiDisabled' || feature === 'feat:showNonProdBanner') return false;
 		return true;
 	}
 
