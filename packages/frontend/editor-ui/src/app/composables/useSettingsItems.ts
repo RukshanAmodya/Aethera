@@ -27,7 +27,7 @@ export function useSettingsItems() {
 				icon: 'chart-column-decreasing',
 				label: i18n.baseText('settings.usageAndPlan.title'),
 				position: 'top',
-				available: canUserAccessRouteByName(VIEWS.USAGE),
+				available: false,
 				route: { to: { name: VIEWS.USAGE } },
 			},
 			{

@@ -608,11 +608,7 @@ export const routes: RouteRecordRaw[] = [
 		name: VIEWS.SETTINGS,
 		props: true,
 		redirect: () => {
-			const settingsStore = useSettingsStore();
-			if (settingsStore.settings.hideUsagePage) {
-				return { name: VIEWS.PERSONAL_SETTINGS };
-			}
-			return { name: VIEWS.USAGE };
+			return { name: VIEWS.PERSONAL_SETTINGS };
 		},
 		meta: {
 			layout: 'settings',
