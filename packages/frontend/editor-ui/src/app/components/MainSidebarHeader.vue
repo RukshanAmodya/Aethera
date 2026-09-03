@@ -207,22 +207,29 @@ const {
 	align-items: center;
 	padding: var(--spacing--2xs) var(--spacing--3xs);
 	justify-content: space-between;
-	gap: var(--spacing--4xs);
-
 	img {
 		position: relative;
-		left: 1px;
-		height: 20px;
+		left: 2px;
+		height: 28px;
+		max-width: 120px;
+		object-fit: contain;
 		margin-right: auto;
 	}
 
 	&.collapsed {
 		flex-direction: column;
 		border-bottom: var(--border);
+
+		img {
+			height: 24px;
+			max-width: 28px;
+		}
 	}
 }
 
 .logo {
+	display: flex;
+	align-items: center;
 	margin-right: auto;
 }
 
