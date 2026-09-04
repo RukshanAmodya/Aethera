@@ -488,14 +488,14 @@ function onActivate(event: MouseEvent) {
 	justify-content: center;
 	background: light-dark(
 		#ffffff,
-		#14161f
+		#0f1118
 	);
 	@include styles.canvas-node-border;
 	border-radius: 16px;
 	box-shadow:
-		0 4px 16px -2px light-dark(rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.4)),
-		0 1px 3px 0 light-dark(rgba(0, 0, 0, 0.03), rgba(0, 0, 0, 0.2)),
-		inset 0 1px 0 0 light-dark(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.06));
+		0 4px 16px -2px light-dark(rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.6)),
+		0 1px 3px 0 light-dark(rgba(0, 0, 0, 0.03), rgba(0, 0, 0, 0.4)),
+		inset 0 1px 0 0 light-dark(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.08));
 	transition:
 		transform 0.18s cubic-bezier(0.16, 1, 0.3, 1),
 		box-shadow 0.18s cubic-bezier(0.16, 1, 0.3, 1),
@@ -504,10 +504,10 @@ function onActivate(event: MouseEvent) {
 	&:hover {
 		transform: translateY(-2px);
 		box-shadow:
-			0 12px 28px -4px light-dark(rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.5)),
-			0 2px 6px 0 light-dark(rgba(0, 0, 0, 0.04), rgba(0, 0, 0, 0.25)),
-			0 0 0 1px light-dark(rgba(99, 102, 241, 0.3), rgba(129, 140, 248, 0.35)),
-			inset 0 1px 0 0 light-dark(rgba(255, 255, 255, 1), rgba(255, 255, 255, 0.1));
+			0 12px 28px -4px light-dark(rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.7)),
+			0 2px 6px 0 light-dark(rgba(0, 0, 0, 0.04), rgba(0, 0, 0, 0.3)),
+			0 0 0 1px light-dark(rgba(16, 185, 129, 0.3), rgba(34, 197, 94, 0.45)),
+			inset 0 1px 0 0 light-dark(rgba(255, 255, 255, 1), rgba(255, 255, 255, 0.12));
 	}
 
 	&.trigger {
@@ -721,13 +721,13 @@ function onActivate(event: MouseEvent) {
 	transform: translateX(-50%);
 	width: 256px;
 	margin-top: 12px;
-	background: light-dark(#ffffff, #141620);
+	background: light-dark(#ffffff, #0f1118);
 	border: 1px solid light-dark(rgba(0, 0, 0, 0.08), rgba(255, 255, 255, 0.1));
 	border-radius: 14px;
 	padding: 10px 12px;
 	box-shadow:
-		0 8px 24px -4px light-dark(rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.45)),
-		0 2px 6px 0 light-dark(rgba(0, 0, 0, 0.04), rgba(0, 0, 0, 0.25));
+		0 8px 24px -4px light-dark(rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.6)),
+		0 2px 6px 0 light-dark(rgba(0, 0, 0, 0.04), rgba(0, 0, 0, 0.35));
 	pointer-events: auto;
 	display: flex;
 	flex-direction: column;
@@ -739,8 +739,8 @@ function onActivate(event: MouseEvent) {
 
 	&:hover {
 		box-shadow:
-			0 12px 30px -4px light-dark(rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0.55)),
-			0 0 0 1px light-dark(rgba(99, 102, 241, 0.25), rgba(129, 140, 248, 0.35));
+			0 12px 30px -4px light-dark(rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0.7)),
+			0 0 0 1px light-dark(rgba(16, 185, 129, 0.25), rgba(34, 197, 94, 0.4));
 	}
 }
 

@@ -35,13 +35,13 @@ const isOutputHandle = computed(() => props.handleClasses === 'source');
 	width: var(--handle--indicator--width);
 	height: var(--handle--indicator--height);
 	border-radius: 50%;
-	background: light-dark(#ffffff, #1e2433);
+	background: light-dark(#ffffff, #0d1117);
 	border: 1.5px solid
 		light-dark(
 			oklch(var(--handle--border--lightness--light, 0.68) 0 0),
-			oklch(var(--handle--border--lightness--dark, 0.5) 0 0)
+			#22c55e
 		);
-	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+	box-shadow: 0 0 6px rgba(34, 197, 94, 0.45);
 	transition:
 		transform 0.18s cubic-bezier(0.16, 1, 0.3, 1),
 		background 0.18s ease,
@@ -49,9 +49,9 @@ const isOutputHandle = computed(() => props.handleClasses === 'source');
 		box-shadow 0.18s ease;
 
 	.wrapper.output:hover & {
-		border: 1.5px solid #6366f1;
-		background: light-dark(#f8fafc, #2b3245);
-		box-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
+		border: 1.5px solid #34d399;
+		background: light-dark(#f8fafc, #10b981);
+		box-shadow: 0 0 12px rgba(34, 197, 94, 0.85);
 		transform: scale(1.4);
 	}
 }

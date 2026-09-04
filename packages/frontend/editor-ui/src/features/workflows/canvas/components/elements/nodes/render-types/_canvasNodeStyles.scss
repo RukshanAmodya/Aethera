@@ -20,14 +20,14 @@
 @mixin canvas-node-selected-ring {
 	/* stylelint-disable-next-line @n8n/css-var-naming */
 	box-shadow: 0 0 0 calc(3px * var(--canvas-zoom-compensation-factor, 1))
-		rgba(99, 102, 241, 0.6),
-		0 8px 24px -4px rgba(99, 102, 241, 0.35);
+		rgba(34, 197, 94, 0.7),
+		0 8px 24px -4px rgba(34, 197, 94, 0.45);
 }
 
 @mixin status-success {
 	--canvas-node--border-width: 1.5px;
-	--canvas-node--border-color: var(--color-canvas-node-success-border-color, var(--color--success));
-	box-shadow: 0 0 12px -2px rgba(34, 197, 94, 0.4), 0 0 0 1px rgba(34, 197, 94, 0.3);
+	--canvas-node--border-color: var(--color-canvas-node-success-border-color, #22c55e);
+	box-shadow: 0 0 16px -2px rgba(34, 197, 94, 0.5), 0 0 0 1.5px rgba(34, 197, 94, 0.4);
 }
 
 @mixin status-error {

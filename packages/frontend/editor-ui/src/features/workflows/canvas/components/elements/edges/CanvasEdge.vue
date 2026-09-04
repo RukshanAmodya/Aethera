@@ -198,19 +198,26 @@ function onEdgeLabelMouseLeave() {
 
 <style lang="scss" module>
 .edge {
-	transition: fill 0.3s ease;
+	transition: fill 0.3s ease, stroke 0.3s ease, filter 0.3s ease;
 	// @bugfix cat-1639-connection-colors-not-rendering-correctly
 	// Using !important here to override BaseEdge styles after Rolldown Vite migration
 	stroke: var(
 		--canvas-edge--color,
 		light-dark(
 			oklch(var(--canvas-edge--color--lightness--light) 0 0),
-			oklch(var(--canvas-edge--color--lightness--dark) 0 0)
+			#22c55e
 		)
 	) !important;
 	/* stylelint-disable-next-line @n8n/css-var-naming */
-	stroke-width: calc(2 * var(--canvas-zoom-compensation-factor, 1)) !important;
-	stroke-linecap: square;
+	stroke-width: calc(2.2px * var(--canvas-zoom-compensation-factor, 1)) !important;
+	stroke-linecap: round;
+	filter: drop-shadow(0 0 5px rgba(34, 197, 94, 0.45));
+
+	&:hover,
+	&.hovered {
+		stroke: #34d399 !important;
+		filter: drop-shadow(0 0 8px rgba(34, 197, 94, 0.75));
+	}
 }
 
 .edgeLabelWrapper {
@@ -229,8 +236,16 @@ function onEdgeLabelMouseLeave() {
 .edgeLabel {
 	/* stylelint-disable-next-line @n8n/css-var-naming */
 	transform: scale(var(--canvas-zoom-compensation-factor, 1)) translate(0, var(--label-translate-y));
-	color: var(--canvas--label--color);
-	font-size: var(--font-size--xs);
-	background-color: var(--canvas--label--color--background);
+	color: light-dark(#059669, #34d399);
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.02em;
+	background: light-dark(rgba(16, 185, 129, 0.12), rgba(16, 185, 129, 0.18));
+	border: 1px solid light-dark(rgba(16, 185, 129, 0.3), rgba(16, 185, 129, 0.45));
+	border-radius: 9999px;
+	padding: 2px 8px;
+	box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
 }
 </style>
