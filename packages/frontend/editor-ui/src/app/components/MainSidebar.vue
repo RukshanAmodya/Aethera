@@ -380,5 +380,71 @@ useKeybindings({
 .scrollAreaWrapperWithTopBorder {
 	border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
+
+/* 
+ * Sleek Deep Black Glass Theme & Shader/Glow Effects for Sidebar items
+ */
+:global(#side-menu) {
+	/* Section headers / Labels */
+	:global(.n8n-text) {
+		color: #94a3b8;
+	}
+
+	/* Menu items base state */
+	:global(a[role='menuitem']) {
+		color: #e2e8f0 !important;
+		border: 1px solid transparent;
+		transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+		background: transparent;
+
+		:global(.n8n-text) {
+			color: #e2e8f0 !important;
+			font-weight: 500;
+		}
+
+		:global(svg) {
+			color: #94a3b8 !important;
+			transition: all 0.2s ease;
+		}
+
+		/* Hover state */
+		&:hover:not(:global(.router-link-active)) {
+			background: rgba(255, 255, 255, 0.06) !important;
+			border-color: rgba(255, 255, 255, 0.08) !important;
+
+			:global(.n8n-text) {
+				color: #ffffff !important;
+			}
+
+			:global(svg) {
+				color: #ffffff !important;
+				transform: scale(1.06);
+			}
+		}
+
+		/* Active / Selected state (Deep glowing dark glass card with shader gradient) */
+		&:global(.router-link-active) {
+			background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.04) 100%) !important;
+			border: 1px solid rgba(255, 255, 255, 0.18) !important;
+			box-shadow:
+				0 4px 20px -2px rgba(0, 0, 0, 0.5),
+				inset 0 1px 1px 0 rgba(255, 255, 255, 0.25),
+				0 0 16px -4px rgba(255, 255, 255, 0.1) !important;
+			backdrop-filter: blur(16px);
+
+			:global(.n8n-text) {
+				color: #ffffff !important;
+				font-weight: 600;
+				text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+			}
+
+			:global(svg) {
+				color: #ffffff !important;
+				filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.4));
+			}
+		}
+	}
+}
 </style>
+
 

@@ -181,13 +181,32 @@ const tooltipPlacement = computed(() => {
 
 	&:global(.router-link-active),
 	&.active {
-		background-color: var(--color--background--light-1);
-		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+		background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.05) 100%) !important;
+		border: 1px solid rgba(255, 255, 255, 0.18) !important;
+		box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.5), inset 0 1px 1px 0 rgba(255, 255, 255, 0.25) !important;
+		backdrop-filter: blur(12px);
+
+		.menuItemText * {
+			color: #ffffff !important;
+			font-weight: 600;
+		}
+
+		.menuItemIcon {
+			color: #ffffff !important;
+		}
 	}
 
 	&:hover:not(.active):not(:global(.router-link-active)):not(.disabled) {
-		background-color: var(--color--background--light-1);
-		color: var(--color--text--shade-1);
+		background-color: rgba(255, 255, 255, 0.06);
+		color: #ffffff;
+
+		.menuItemText * {
+			color: #ffffff !important;
+		}
+
+		.menuItemIcon {
+			color: #ffffff !important;
+		}
 	}
 
 	&.compact {
@@ -202,6 +221,7 @@ const tooltipPlacement = computed(() => {
 
 .menuItem.disabled {
 	cursor: not-allowed;
+	opacity: 0.5;
 }
 
 .menuItemText {
@@ -213,7 +233,8 @@ const tooltipPlacement = computed(() => {
 }
 
 .menuItemText * {
-	color: var(--color--text);
+	color: #e2e8f0;
+	font-weight: 500;
 }
 
 .menuItemIcon {
@@ -224,7 +245,9 @@ const tooltipPlacement = computed(() => {
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	color: #94a3b8;
 	transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), color 0.15s ease;
+
 
 	&.notification::after {
 		content: '';
