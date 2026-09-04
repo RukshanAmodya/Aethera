@@ -650,6 +650,7 @@
       "dist/nodes/Iterable/Iterable.node.js",
       "dist/nodes/Jenkins/Jenkins.node.js",
       "dist/nodes/JinaAI/JinaAi.node.js",
+      "dist/nodes/JinaReader/JinaReader.node.js",
       "dist/nodes/Jira/Jira.node.js",
       "dist/nodes/Jira/JiraTrigger.node.js",
       "dist/nodes/JotForm/JotFormTrigger.node.js",
