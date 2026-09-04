@@ -301,14 +301,38 @@ const {
 	gap: 4px;
 }
 
+:global(.el-menu),
+:global(.el-sub-menu),
+:global(.el-sub-menu__title) {
+	background: transparent !important;
+	background-color: transparent !important;
+	border: none !important;
+
+	&:hover,
+	&:focus,
+	&:active,
+	&.is-active {
+		background: transparent !important;
+		background-color: transparent !important;
+	}
+}
+
 .actionBtn {
-	color: #94a3b8 !important;
-	border-radius: 8px !important;
-	transition: all 0.15s ease !important;
+	color: #cbd5e1 !important;
+	background: transparent !important;
+	border-radius: 10px !important;
+	border: 1px solid transparent !important;
+	transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
 
 	&:hover {
 		color: #ffffff !important;
-		background: rgba(255, 255, 255, 0.08) !important;
+		background: rgba(255, 255, 255, 0.1) !important;
+		border-color: rgba(255, 255, 255, 0.15) !important;
+		transform: scale(1.05);
+	}
+
+	&:active {
+		transform: scale(0.96);
 	}
 }
 

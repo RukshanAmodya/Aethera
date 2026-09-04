@@ -223,14 +223,27 @@ defineExpose({
 <style lang="scss" module>
 :global(.el-menu).dropdown {
 	border-bottom: 0 !important;
-	background-color: transparent;
+	background-color: transparent !important;
+	background: transparent !important;
 
 	> :global(.el-sub-menu) {
+		background-color: transparent !important;
+		background: transparent !important;
+
 		> :global(.el-sub-menu__title) {
 			height: auto;
 			line-height: initial;
 			border-bottom: 0 !important;
 			padding: 0;
+			background-color: transparent !important;
+			background: transparent !important;
+
+			&:hover,
+			&:focus {
+				background-color: transparent !important;
+				background: transparent !important;
+			}
+
 			:global(.el-sub-menu__icon-arrow) {
 				display: none;
 			}
@@ -239,6 +252,8 @@ defineExpose({
 		&:global(.is-active) {
 			:global(.el-sub-menu__title) {
 				border: 0;
+				background-color: transparent !important;
+				background: transparent !important;
 			}
 		}
 	}
