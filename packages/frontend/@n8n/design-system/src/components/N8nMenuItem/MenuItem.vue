@@ -181,31 +181,35 @@ const tooltipPlacement = computed(() => {
 
 	&:global(.router-link-active),
 	&.active {
-		background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.05) 100%) !important;
-		border: 1px solid rgba(255, 255, 255, 0.18) !important;
+		background: linear-gradient(135deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.06) 100%) !important;
+		border: 1px solid rgba(255, 255, 255, 0.2) !important;
 		box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.5), inset 0 1px 1px 0 rgba(255, 255, 255, 0.25) !important;
 		backdrop-filter: blur(12px);
 
-		.menuItemText * {
+		.menuItemText,
+		:global(.n8n-text).menuItemText {
 			color: #ffffff !important;
 			font-weight: 600;
 		}
 
-		.menuItemIcon {
+		.menuItemIcon,
+		.menuItemIcon :global(.n8n-icon) {
 			color: #ffffff !important;
 		}
 	}
 
 	&:hover:not(.active):not(:global(.router-link-active)):not(.disabled) {
-		background-color: rgba(255, 255, 255, 0.06);
-		color: #ffffff;
+		background-color: rgba(255, 255, 255, 0.08) !important;
+		color: #ffffff !important;
 
-		.menuItemText * {
+		.menuItemText,
+		:global(.n8n-text).menuItemText {
 			color: #ffffff !important;
 		}
 
-		.menuItemIcon {
-			color: #ffffff !important;
+		.menuItemIcon,
+		.menuItemIcon :global(.n8n-icon) {
+			color: #34d399 !important;
 		}
 	}
 
@@ -239,16 +243,14 @@ const tooltipPlacement = computed(() => {
 	opacity: 0.5;
 }
 
-.menuItemText {
+.menuItemText,
+:global(.n8n-text).menuItemText {
 	white-space: nowrap;
 	text-overflow: ellipsis;
 	overflow: hidden;
 	line-height: var(--font-size--lg);
 	min-width: 0;
-}
-
-.menuItemText * {
-	color: #e2e8f0;
+	color: #f1f5f9 !important;
 	font-weight: 500;
 }
 
@@ -260,9 +262,12 @@ const tooltipPlacement = computed(() => {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	color: #94a3b8;
+	color: #cbd5e1 !important;
 	transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), color 0.15s ease;
 
+	:global(.n8n-icon) {
+		color: #cbd5e1 !important;
+	}
 
 	&.notification::after {
 		content: '';

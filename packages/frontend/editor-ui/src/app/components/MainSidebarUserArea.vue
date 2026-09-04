@@ -219,11 +219,21 @@ const onUserActionToggle = (action: string) => {
 
 .popover {
 	padding: 8px;
-	min-width: 220px;
-	background: #181920;
-	border: 1px solid rgba(255, 255, 255, 0.1);
-	border-radius: 10px;
-	box-shadow: 0 14px 30px -5px rgba(0, 0, 0, 0.6);
+	min-width: 230px;
+	background: #0f1118;
+	border: 1px solid rgba(255, 255, 255, 0.12);
+	border-radius: 12px;
+	box-shadow: 0 16px 40px -4px rgba(0, 0, 0, 0.75);
+	backdrop-filter: blur(16px);
+	-webkit-backdrop-filter: blur(16px);
+
+	:global(.n8n-text) {
+		color: #f1f5f9 !important;
+	}
+
+	:global(.n8n-icon) {
+		color: #cbd5e1 !important;
+	}
 }
 
 .popoverUserHeader {
