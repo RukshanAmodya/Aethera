@@ -1,4 +1,4 @@
-﻿import type {
+import type {
 	IExecuteFunctions,
 	IDataObject,
 	INodeExecutionData,
@@ -134,7 +134,7 @@ export class Upstash implements INodeType {
 				const baseUrl = (creds.url as string).replace(/\/$/, '');
 
 				let path = '';
-				let body: unknown = undefined;
+				let body: IDataObject | IDataObject[] | string[] | undefined = undefined;
 				let method = 'GET';
 
 				if (operation === 'get') {
@@ -170,12 +170,12 @@ export class Upstash implements INodeType {
 					{
 						method,
 						url: `${baseUrl}${path}`,
-						body,
+						...(body ? { body } : {}),
 						json: true,
 					},
 				)) as { result?: unknown; error?: string };
 
-				let resultData = response.result;
+				let resultData: unknown = response.result;
 				if (typeof resultData === 'string') {
 					try {
 						resultData = JSON.parse(resultData);
@@ -186,8 +186,8 @@ export class Upstash implements INodeType {
 
 				returnData.push({
 					json: {
-						result: resultData,
-						raw: response,
+						result: resultData as IDataObject,
+						raw: response as unknown as IDataObject,
 					},
 					pairedItem: { item: i },
 				});
