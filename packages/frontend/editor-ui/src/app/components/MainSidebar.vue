@@ -377,16 +377,19 @@ useKeybindings({
 }
 
 /* 
- * Sleek Deep Black Glass Theme & Shader/Glow Effects for Sidebar items
+ * Sleek Deep Black Glass Theme & Shader/Glow Effects for Sidebar items & Teleported Popovers
  */
-:global(#side-menu) {
+:global(#side-menu),
+:global([data-radix-popper-content-wrapper]),
+:global(.el-popper) {
 	/* Section headers / Labels */
 	:global(.n8n-text) {
 		color: #94a3b8;
 	}
 
 	/* Menu items base state */
-	:global(a[role='menuitem']) {
+	:global(a[role='menuitem']),
+	:global(div[role='menuitem']) {
 		color: #e2e8f0 !important;
 		border: 1px solid transparent;
 		transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
@@ -403,9 +406,9 @@ useKeybindings({
 		}
 
 		/* Hover state */
-		&:hover:not(:global(.router-link-active)) {
-			background: rgba(255, 255, 255, 0.06) !important;
-			border-color: rgba(255, 255, 255, 0.08) !important;
+		&:hover:not(:global(.router-link-active)):not(:global(.active)) {
+			background: rgba(255, 255, 255, 0.08) !important;
+			border-color: rgba(255, 255, 255, 0.1) !important;
 
 			:global(.n8n-text) {
 				color: #ffffff !important;
@@ -418,7 +421,8 @@ useKeybindings({
 		}
 
 		/* Active / Selected state (Deep glowing dark glass card with shader gradient) */
-		&:global(.router-link-active) {
+		&:global(.router-link-active),
+		&:global(.active) {
 			background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.04) 100%) !important;
 			border: 1px solid rgba(255, 255, 255, 0.18) !important;
 			box-shadow:
@@ -441,5 +445,6 @@ useKeybindings({
 	}
 }
 </style>
+
 
 

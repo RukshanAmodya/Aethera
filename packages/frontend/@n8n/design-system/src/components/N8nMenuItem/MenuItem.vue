@@ -210,7 +210,21 @@ const tooltipPlacement = computed(() => {
 	}
 
 	&.compact {
+		width: 36px;
+		height: 36px;
+		min-height: 36px;
+		max-width: 36px;
+		margin: 0 auto;
+		padding: 0;
+		justify-content: center;
+		border-radius: 10px;
 		gap: 0;
+
+		.menuItemIcon {
+			width: 100%;
+			height: 100%;
+			margin: 0;
+		}
 	}
 }
 
@@ -218,6 +232,7 @@ const tooltipPlacement = computed(() => {
 	outline: 1px solid var(--color--secondary);
 	outline-offset: -1px;
 }
+
 
 .menuItem.disabled {
 	cursor: not-allowed;

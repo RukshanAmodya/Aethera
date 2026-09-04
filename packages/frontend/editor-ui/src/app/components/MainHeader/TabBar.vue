@@ -44,22 +44,26 @@ function onUpdateModelValue(tab: string, event: MouseEvent): void {
 <style module lang="scss">
 .container {
 	position: absolute;
-	bottom: 0;
+	top: 50%;
 	left: 50%;
-	transform: translateX(-50%) translateY(50%);
-	min-height: 30px;
+	transform: translate(-50%, -50%);
+	height: 32px;
 	display: flex;
 	align-items: center;
-	z-index: 100; // Should float above other layout components in any page
+	justify-content: center;
+	z-index: 50;
+	pointer-events: auto;
 }
 
 .floating {
-	top: var(--spacing--4xs);
+	top: var(--spacing--xs);
+	transform: translateX(-50%);
 }
 
 @media screen and (max-width: 430px) {
 	.container {
-		flex-direction: column;
+		display: none;
 	}
 }
 </style>
+

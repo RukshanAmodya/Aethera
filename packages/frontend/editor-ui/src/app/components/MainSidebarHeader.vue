@@ -224,6 +224,7 @@ const {
 	padding: 14px 14px 10px;
 	gap: 12px;
 	box-sizing: border-box;
+	width: 100%;
 
 	&.collapsed {
 		padding: 12px 0 10px;
@@ -241,17 +242,22 @@ const {
 		}
 
 		.brandLink {
+			display: flex;
+			align-items: center;
 			justify-content: center;
+			width: 100%;
 		}
 
 		.headerActions {
 			flex-direction: column;
 			gap: 6px;
+			width: 100%;
 			align-items: center;
 			justify-content: center;
 		}
 	}
 }
+
 
 .brandRow {
 	display: flex;
