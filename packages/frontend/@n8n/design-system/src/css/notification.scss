@@ -3,29 +3,28 @@
 
 @include mixins.b(notification) {
 	display: flex;
-	width: var.$notification-width;
-	padding: var.$notification-padding;
-	border-radius: var.$notification-radius;
+	width: 380px;
+	padding: 16px 18px;
+	border-radius: 16px;
 	box-sizing: border-box;
-	border: 1px solid var.$notification-border-color;
+	border: 1px solid light-dark(rgba(0, 0, 0, 0.08), rgba(255, 255, 255, 0.12));
 	position: fixed;
-	background-color: var(--notification--color--background);
-	box-shadow: var.$notification-shadow;
-	transition:
-		opacity 0.3s,
-		transform 0.3s,
-		left 0.3s,
-		right 0.3s,
-		top 0.4s,
-		bottom 0.3s;
+	background-color: light-dark(rgba(255, 255, 255, 0.95), rgba(15, 17, 24, 0.94)) !important;
+	box-shadow:
+		0 20px 40px -8px rgba(0, 0, 0, 0.35),
+		0 0 0 1px rgba(255, 255, 255, 0.05),
+		inset 0 1px 0 0 rgba(255, 255, 255, 0.15) !important;
+	backdrop-filter: blur(16px);
+	-webkit-backdrop-filter: blur(16px);
+	transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 	overflow: hidden;
 
 	&.right {
-		right: 16px;
+		right: 20px;
 	}
 
 	&.left {
-		left: 16px;
+		left: 20px;
 	}
 
 	&.content-toast {
@@ -33,15 +32,17 @@
 	}
 
 	@include mixins.e(group) {
-		margin-left: var.$notification-group-margin-left;
-		margin-right: var.$notification-group-margin-right;
+		margin-left: 12px;
+		margin-right: 20px;
+		flex: 1;
 	}
 
 	@include mixins.e(title) {
-		line-height: normal;
-		font-weight: var(--font-weight--bold);
-		font-size: var.$notification-title-font-size;
-		color: var.$notification-title-color;
+		line-height: 1.3;
+		font-weight: 700;
+		font-size: 14.5px;
+		letter-spacing: -0.01em;
+		color: light-dark(#0f172a, #f8fafc) !important;
 		margin: 0;
 
 		&:first-letter {
@@ -50,11 +51,11 @@
 	}
 
 	@include mixins.e(content) {
-		font-size: var.$notification-content-font-size;
+		font-size: 13px;
 		line-height: 1.5;
 		margin: 6px 0 0;
-		color: var.$notification-content-color;
-		text-align: justify;
+		color: light-dark(#475569, #cbd5e1) !important;
+		text-align: left;
 
 		p {
 			margin: 0;
@@ -63,38 +64,66 @@
 	}
 
 	@include mixins.e(icon) {
-		height: var.$notification-icon-size;
-		width: var.$notification-icon-size;
-		font-size: var.$notification-icon-size;
+		height: 32px;
+		width: 32px;
+		font-size: 16px;
+		border-radius: 10px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-shrink: 0;
+		margin-top: 2px;
 	}
 
 	@include mixins.e(closeBtn) {
 		position: absolute;
-		top: 18px;
-		right: 15px;
+		top: 14px;
+		right: 14px;
 		cursor: pointer;
-		color: var.$notification-close-color;
-		font-size: var.$notification-close-font-size;
+		width: 24px;
+		height: 24px;
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: light-dark(rgba(0, 0, 0, 0.04), rgba(255, 255, 255, 0.08));
+		color: light-dark(#64748b, #94a3b8);
+		font-size: 12px;
+		transition: all 0.15s ease;
 
 		&:hover {
-			color: var.$notification-close-hover-color;
+			background: light-dark(rgba(0, 0, 0, 0.1), rgba(255, 255, 255, 0.16));
+			color: light-dark(#0f172a, #ffffff);
+			transform: scale(1.08);
 		}
 	}
 
 	.el-icon.el-notification--success {
-		color: var.$notification-success-icon-color;
+		background: rgba(16, 185, 129, 0.15);
+		color: #10b981;
+		border: 1px solid rgba(16, 185, 129, 0.3);
+		box-shadow: 0 0 12px rgba(16, 185, 129, 0.25);
 	}
 
 	.el-icon.el-notification--error {
-		color: var.$notification-danger-icon-color;
+		background: rgba(239, 68, 68, 0.15);
+		color: #ef4444;
+		border: 1px solid rgba(239, 68, 68, 0.3);
+		box-shadow: 0 0 12px rgba(239, 68, 68, 0.25);
 	}
 
 	.el-icon.el-notification--info {
-		color: var.$notification-info-icon-color;
+		background: rgba(56, 189, 248, 0.15);
+		color: #38bdf8;
+		border: 1px solid rgba(56, 189, 248, 0.3);
+		box-shadow: 0 0 12px rgba(56, 189, 248, 0.25);
 	}
 
 	.el-icon.el-notification--warning {
-		color: var.$notification-warning-icon-color;
+		background: rgba(245, 158, 11, 0.15);
+		color: #f59e0b;
+		border: 1px solid rgba(245, 158, 11, 0.3);
+		box-shadow: 0 0 12px rgba(245, 158, 11, 0.25);
 	}
 }
 
