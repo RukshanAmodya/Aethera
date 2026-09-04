@@ -195,23 +195,27 @@ function onLogout() {
 	margin-top: auto;
 
 	&.collapsed {
-		border-top: var(--border);
+		border-top: 1px solid rgba(255, 255, 255, 0.06);
 	}
 }
 
 .bottomMenuItems {
-	padding: var(--spacing--3xs);
+	padding: 4px 10px;
 }
 
 .resourceCenterMenuItem {
 	:global(.n8n-text) {
-		color: var(--color--primary);
+		color: #38bdf8 !important;
 	}
 }
 
 .popover {
-	padding: var(--spacing--4xs);
-	min-width: 260px;
+	padding: 8px;
+	min-width: 240px;
+	background: #181920;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 10px;
+	box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
 }
 
 .popoverTitle {
@@ -219,14 +223,14 @@ function onLogout() {
 	margin-bottom: var(--spacing--3xs);
 	padding-left: var(--spacing--3xs);
 	margin-top: var(--spacing--xs);
+	color: #94a3b8;
 }
 
 .divider {
 	display: block;
 	width: 100%;
-	padding-top: var(--spacing--3xs);
-	border-bottom: var(--border);
-	margin-bottom: var(--spacing--3xs);
-	background-color: var(--color--border);
+	padding-top: 4px;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+	margin-bottom: 4px;
 }
 </style>

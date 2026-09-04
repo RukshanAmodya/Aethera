@@ -7,17 +7,24 @@ import {
 	N8nIconButton,
 	N8nMenuItem,
 	N8nPopover,
-	N8nText,
 } from '@n8n/design-system';
 import { useI18n } from '@n8n/i18n';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
-defineProps<{ fullyExpanded: boolean; isCollapsed: boolean }>();
+defineProps<{ isCollapsed: boolean }>();
 
 const i18n = useI18n();
 const router = useRouter();
 const usersStore = useUsersStore();
+
+const displayName = computed(() => {
+	return usersStore.currentUser?.fullName || usersStore.currentUser?.firstName || 'User';
+});
+
+const displayEmail = computed(() => {
+	return usersStore.currentUser?.email || 'account@aethera.ai';
+});
 
 const userMenuItems = ref<IMenuItem[]>([
 	{
@@ -51,10 +58,20 @@ const onUserActionToggle = (action: string) => {
 </script>
 
 <template>
-	<div ref="user" :class="$style.userArea">
-		<N8nPopover side="right" align="end" :side-offset="16">
+	<div
+		:class="{
+			[$style.userAreaWrapper]: true,
+			[$style.collapsed]: isCollapsed,
+		}"
+	>
+		<N8nPopover side="right" align="end" :side-offset="12">
 			<template #content>
 				<div :class="$style.popover">
+					<div :class="$style.popoverUserHeader">
+						<span :class="$style.popoverUserName">{{ displayName }}</span>
+						<span :class="$style.popoverUserEmail">{{ displayEmail }}</span>
+					</div>
+					<div :class="$style.popoverDivider" />
 					<N8nMenuItem
 						v-for="action in userMenuItems"
 						:key="action.id"
@@ -65,40 +82,46 @@ const onUserActionToggle = (action: string) => {
 				</div>
 			</template>
 			<template #trigger>
-				<div :class="$style.userAreaInner">
-					<div class="ml-3xs" data-test-id="main-sidebar-user-menu">
-						<!-- This dropdown is only enabled when sidebar is collapsed -->
-						<div :class="{ ['clickable']: isCollapsed }">
-							<N8nAvatar
-								:first-name="usersStore.currentUser?.firstName"
-								:last-name="usersStore.currentUser?.lastName"
-								size="small"
-							/>
-						</div>
+				<!-- Expanded Card Layout -->
+				<div
+					v-if="!isCollapsed"
+					:class="$style.userCard"
+					data-test-id="main-sidebar-user-card"
+				>
+					<div :class="$style.avatarWrapper">
+						<N8nAvatar
+							:first-name="usersStore.currentUser?.firstName || 'A'"
+							:last-name="usersStore.currentUser?.lastName || 'U'"
+							size="small"
+						/>
 					</div>
-					<div
-						:class="{
-							['ml-2xs']: true,
-							[$style.userName]: true,
-							[$style.expanded]: fullyExpanded,
-						}"
-					>
-						<N8nText size="small" color="text-dark">
-							{{ usersStore.currentUser?.fullName }}
-						</N8nText>
+					<div :class="$style.userInfo">
+						<span :class="$style.userName">{{ displayName }}</span>
+						<span :class="$style.userEmail">{{ displayEmail }}</span>
 					</div>
-					<div
-						data-test-id="user-menu"
-						:class="{ [$style.userActions]: true, [$style.expanded]: fullyExpanded }"
-					>
+					<div :class="$style.actionsWrapper">
 						<N8nIconButton
 							variant="ghost"
 							iconOnly
 							icon="ellipsis"
 							square
+							:class="$style.ellipsisBtn"
 							:aria-label="i18n.baseText('mainSidebar.userMenu')"
 						/>
 					</div>
+				</div>
+
+				<!-- Collapsed Mini Icon Layout -->
+				<div
+					v-else
+					:class="$style.collapsedAvatar"
+					data-test-id="main-sidebar-user-menu"
+				>
+					<N8nAvatar
+						:first-name="usersStore.currentUser?.firstName || 'A'"
+						:last-name="usersStore.currentUser?.lastName || 'U'"
+						size="small"
+					/>
 				</div>
 			</template>
 		</N8nPopover>
@@ -106,48 +129,132 @@ const onUserActionToggle = (action: string) => {
 </template>
 
 <style lang="scss" module>
-.userArea {
-	display: flex;
-	padding: var(--spacing--xs);
-	align-items: center;
-	border-top: var(--border-width) var(--border-style) var(--color--foreground);
+.userAreaWrapper {
+	padding: 8px 12px 14px;
+	box-sizing: border-box;
+	width: 100%;
 
-	.userName {
-		flex-grow: 1;
-		flex-shrink: 1;
-		display: none;
-		overflow: hidden;
-		width: 100px;
-		white-space: nowrap;
-		text-overflow: ellipsis;
-
-		&.expanded {
-			display: initial;
-		}
-
-		span {
-			overflow: hidden;
-			text-overflow: ellipsis;
-		}
+	&.collapsed {
+		padding: 8px 4px 14px;
+		display: flex;
+		justify-content: center;
 	}
+}
 
-	.userActions {
-		display: none;
+.userCard {
+	display: flex;
+	align-items: center;
+	padding: 8px 10px;
+	background: #14151b;
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	border-radius: 12px;
+	cursor: pointer;
+	gap: 10px;
+	transition: all 0.2s ease;
+	width: 100%;
+	box-sizing: border-box;
 
-		&.expanded {
-			display: initial;
+	&:hover {
+		background: #1a1b24;
+		border-color: rgba(255, 255, 255, 0.16);
+
+		.ellipsisBtn {
+			color: #ffffff !important;
 		}
 	}
 }
 
-.userAreaInner {
+.avatarWrapper {
+	flex-shrink: 0;
 	display: flex;
 	align-items: center;
-	width: 100%;
+	justify-content: center;
+}
+
+.userInfo {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	min-width: 0;
+	overflow: hidden;
+}
+
+.userName {
+	font-size: 13px;
+	font-weight: 600;
+	color: #f1f5f9;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	line-height: 1.25;
+}
+
+.userEmail {
+	font-size: 11px;
+	font-weight: 400;
+	color: #64748b;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	line-height: 1.25;
+	margin-top: 2px;
+}
+
+.actionsWrapper {
+	flex-shrink: 0;
+}
+
+.ellipsisBtn {
+	color: #64748b !important;
+	border-radius: 6px !important;
+	padding: 2px !important;
+
+	&:hover {
+		color: #ffffff !important;
+		background: rgba(255, 255, 255, 0.08) !important;
+	}
+}
+
+.collapsedAvatar {
+	cursor: pointer;
+	border-radius: 50%;
+	transition: transform 0.15s ease;
+
+	&:hover {
+		transform: scale(1.06);
+	}
 }
 
 .popover {
-	padding: var(--spacing--xs);
-	min-width: 200px;
+	padding: 8px;
+	min-width: 220px;
+	background: #181920;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 10px;
+	box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+}
+
+.popoverUserHeader {
+	display: flex;
+	flex-direction: column;
+	padding: 6px 10px 8px;
+}
+
+.popoverUserName {
+	font-size: 13px;
+	font-weight: 600;
+	color: #f8fafc;
+}
+
+.popoverUserEmail {
+	font-size: 11.5px;
+	color: #94a3b8;
+	margin-top: 2px;
+}
+
+.popoverDivider {
+	height: 1px;
+	background: rgba(255, 255, 255, 0.08);
+	margin: 4px 0 8px;
 }
 </style>

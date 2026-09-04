@@ -23,6 +23,7 @@ import { useSettingsItems } from '@/app/composables/useSettingsItems';
 import { useAiGateway } from '@/app/composables/useAiGateway';
 import MainSidebarHeader from '@/app/components/MainSidebarHeader.vue';
 import BottomMenu from '@/app/components/BottomMenu.vue';
+import MainSidebarUserArea from '@/app/components/MainSidebarUserArea.vue';
 import MainSidebarSourceControl from '@/app/components/MainSidebarSourceControl.vue';
 import ProjectNavigation from '@/features/collaboration/projects/components/ProjectNavigation.vue';
 import { useResourceCenterStore } from '@/experiments/resourceCenter/stores/resourceCenter.store';
@@ -327,6 +328,7 @@ useKeybindings({
 			@logout="onLogout"
 			@select="handleSelect"
 		/>
+		<MainSidebarUserArea :is-collapsed="isCollapsed" />
 		<MainSidebarSourceControl :is-collapsed="isCollapsed" />
 	</N8nResizeWrapper>
 </template>
@@ -337,8 +339,8 @@ useKeybindings({
 	height: 100%;
 	display: flex;
 	flex-direction: column;
-	border-right: var(--border);
-	background-color: var(--menu--color--background, var(--color--background--light-2));
+	border-right: 1px solid rgba(255, 255, 255, 0.08);
+	background-color: #0f1015 !important;
 	transition: width var(--duration--snappy) var(--easing--ease-out);
 	will-change: width;
 
@@ -362,10 +364,10 @@ useKeybindings({
 }
 
 .scrollAreaWrapperWithBottomBorder {
-	border-bottom: var(--border);
+	border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .scrollAreaWrapperWithTopBorder {
-	border-top: var(--border);
+	border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 </style>

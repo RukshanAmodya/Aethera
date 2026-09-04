@@ -316,20 +316,24 @@ onBeforeUnmount(() => {
 	gap: var(--spacing--4xs);
 	width: calc(100% - var(--spacing--3xs) * 2);
 	box-sizing: border-box;
-	padding: var(--spacing--4xs) var(--spacing--3xs);
-	margin: var(--spacing--4xs) var(--spacing--3xs) 0;
+	padding: 8px 10px 4px;
+	margin: 6px var(--spacing--3xs) 2px;
 	background: none;
 	border: none;
-	border-radius: var(--spacing--4xs);
+	border-radius: 6px;
 	cursor: pointer;
-	color: inherit;
+	color: #64748b;
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
 
 	&:hover {
-		background-color: var(--color--background--light-1);
-		color: var(--color--text--shade-1);
+		background-color: rgba(255, 255, 255, 0.04);
+		color: #94a3b8;
 
 		.chevron {
-			color: var(--color--text--shade-1);
+			color: #cbd5e1;
 		}
 	}
 
