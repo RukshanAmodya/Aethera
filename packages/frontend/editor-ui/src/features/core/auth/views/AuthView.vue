@@ -205,10 +205,10 @@ const onSecondaryClick = () => {
 }
 
 .brandLogo {
-	max-height: 64px;
+	max-height: 85px;
 	width: auto;
 	object-fit: contain;
-	filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.2));
+	filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.25));
 }
 
 .heroCenter {
@@ -386,44 +386,67 @@ const onSecondaryClick = () => {
 
 	/* Form input aesthetics */
 	:global(.n8n-input),
-	:global(.el-input),
-	:global(.el-input__inner),
+	:global(.el-input) {
+		--input--color--background: #ffffff !important;
+		--input--color--text: #0f172a !important;
+		--input--placeholder--color: #94a3b8 !important;
+		--input--border-color: #cbd5e1 !important;
+		--input--border--shadow: 0 0 0 1px #cbd5e1 !important;
+		--color--neutral-white: #ffffff !important;
+		--color--neutral-950: #ffffff !important;
+		--color--text--shade-1: #0f172a !important;
+		--color--text--tint-1: #94a3b8 !important;
+		width: 100% !important;
+	}
+
+	:global(.n8n-input > div),
+	:global(.n8n-input__wrapper),
+	:global([class*="inputWrapper"]),
 	:global(.el-input__wrapper) {
-		border-radius: 12px !important;
 		background-color: #ffffff !important;
 		background: #ffffff !important;
-		border-color: #cbd5e1 !important;
-		color: #0f172a !important;
-		-webkit-text-fill-color: #0f172a !important;
+		border-radius: 12px !important;
+		box-shadow: 0 0 0 1px #cbd5e1 inset !important;
 		transition: all 0.2s ease !important;
-		font-size: 14px !important;
 	}
 
+	:global(.n8n-input > div:hover),
+	:global(.n8n-input__wrapper:hover),
+	:global([class*="inputWrapper"]:hover),
+	:global(.el-input__wrapper:hover) {
+		box-shadow: 0 0 0 1px #3b82f6 inset !important;
+		background-color: #ffffff !important;
+		background: #ffffff !important;
+	}
+
+	:global(.n8n-input > div:focus-within),
+	:global(.n8n-input__wrapper:focus-within),
+	:global([class*="inputWrapper"]:focus-within),
+	:global(.el-input__wrapper.is-focus) {
+		box-shadow: 0 0 0 2px #2563eb inset, 0 0 0 4px rgba(37, 99, 235, 0.15) !important;
+		background-color: #ffffff !important;
+		background: #ffffff !important;
+	}
+
+	:global(.n8n-input input),
+	:global([class*="inputWrapper"] input),
 	:global(.el-input__inner) {
-		color: #0f172a !important;
+		background: transparent !important;
 		background-color: transparent !important;
+		color: #0f172a !important;
 		-webkit-text-fill-color: #0f172a !important;
+		font-size: 14.5px !important;
+		font-weight: 500 !important;
+		font-family: inherit !important;
+		caret-color: #2563eb !important;
 	}
 
+	:global(.n8n-input input::placeholder),
+	:global([class*="inputWrapper"] input::placeholder),
 	:global(.el-input__inner::placeholder) {
 		color: #94a3b8 !important;
 		-webkit-text-fill-color: #94a3b8 !important;
-	}
-
-	:global(.el-input__wrapper) {
-		box-shadow: 0 0 0 1px #cbd5e1 inset !important;
-	}
-
-	:global(.el-input__wrapper:hover) {
-		border-color: #3b82f6 !important;
-		box-shadow: 0 0 0 1px #3b82f6 inset !important;
-		background-color: #ffffff !important;
-	}
-
-	:global(.el-input__wrapper.is-focus) {
-		border-color: #2563eb !important;
-		background-color: #ffffff !important;
-		box-shadow: 0 0 0 2px #2563eb inset, 0 0 0 4px rgba(37, 99, 235, 0.15) !important;
+		font-weight: 400 !important;
 	}
 
 	:global(.n8n-input-label label),
