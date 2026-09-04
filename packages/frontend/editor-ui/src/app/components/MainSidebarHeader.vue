@@ -17,6 +17,7 @@ import { useSourceControlStore } from '@/features/integrations/sourceControl.ee/
 import KeyboardShortcutTooltip from '@/app/components/KeyboardShortcutTooltip.vue';
 import { useSettingsStore } from '@n8n/stores/settings.store';
 import { useGlobalEntityCreation } from '@/app/composables/useGlobalEntityCreation';
+import aetheraLogo from '@/features/core/auth/views/aethera-logo.png';
 
 defineProps<{
 	isCollapsed: boolean;
@@ -65,23 +66,14 @@ const {
 			[$style.collapsed]: isCollapsed,
 		}"
 	>
-		<!-- Mac Window Traffic Light Dots (Expanded mode) -->
-		<div v-if="!isCollapsed" :class="$style.macWindowDots">
-			<span :class="[$style.macDot, $style.closeDot]" />
-			<span :class="[$style.macDot, $style.minimizeDot]" />
-			<span :class="[$style.macDot, $style.maximizeDot]" />
-		</div>
-
-		<!-- Brand Row: Logo + App Name + Actions -->
+		<!-- Brand Row: Logo + Actions -->
 		<div :class="$style.brandRow">
 			<RouterLink :to="{ name: VIEWS.HOMEPAGE }" :class="$style.brandLink">
-				<div :class="$style.brandBadge">
-					<span :class="$style.badgeSymbol">⚡</span>
-				</div>
-				<div v-if="!isCollapsed" :class="$style.brandText">
-					<span :class="$style.brandTitle">Aethera</span>
-					<span :class="$style.brandSubtitle">Workflow Engine</span>
-				</div>
+				<img
+					:src="aetheraLogo"
+					alt="Aethera"
+					:class="[$style.realLogo, { [$style.realLogoCollapsed]: isCollapsed }]"
+				/>
 			</RouterLink>
 
 			<div :class="$style.headerActions">
@@ -243,36 +235,6 @@ const {
 	}
 }
 
-.macWindowDots {
-	display: flex;
-	align-items: center;
-	gap: 7px;
-	padding-left: 2px;
-	margin-bottom: 2px;
-}
-
-.macDot {
-	width: 11px;
-	height: 11px;
-	border-radius: 50%;
-	display: inline-block;
-}
-
-.closeDot {
-	background-color: #ff5f56;
-	box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
-}
-
-.minimizeDot {
-	background-color: #ffbd2e;
-	box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
-}
-
-.maximizeDot {
-	background-color: #27c93f;
-	box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
-}
-
 .brandRow {
 	display: flex;
 	align-items: center;
@@ -283,52 +245,27 @@ const {
 .brandLink {
 	display: flex;
 	align-items: center;
-	gap: 10px;
 	text-decoration: none;
 	color: inherit;
 	overflow: hidden;
+	transition: opacity 0.2s ease;
 
 	&:hover {
-		opacity: 0.92;
+		opacity: 0.9;
 	}
 }
 
-.brandBadge {
-	width: 32px;
-	height: 32px;
-	min-width: 32px;
-	border-radius: 9px;
-	background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
+.realLogo {
+	height: 36px;
+	width: auto;
+	max-width: 140px;
+	object-fit: contain;
+	display: block;
 }
 
-.badgeSymbol {
-	font-size: 16px;
-	line-height: 1;
-}
-
-.brandText {
-	display: flex;
-	flex-direction: column;
-	overflow: hidden;
-}
-
-.brandTitle {
-	font-size: 14px;
-	font-weight: 700;
-	letter-spacing: -0.2px;
-	color: #ffffff;
-	line-height: 1.2;
-}
-
-.brandSubtitle {
-	font-size: 11px;
-	font-weight: 500;
-	color: #64748b;
-	line-height: 1.2;
+.realLogoCollapsed {
+	height: 28px;
+	max-width: 28px;
 }
 
 .headerActions {
