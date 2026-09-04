@@ -573,18 +573,7 @@ const closeCallback = () => {
 
 const closeDialog = () => {
 	modalBus.emit('close');
-
-	if (userPermissions.value.community.register) {
-		uiStore.openModalWithData({
-			name: COMMUNITY_PLUS_ENROLLMENT_MODAL,
-			data: {
-				closeCallback,
-				customHeading: undefined,
-			},
-		});
-	} else {
-		closeCallback();
-	}
+	closeCallback();
 };
 
 const onSubmit = async (values: object) => {

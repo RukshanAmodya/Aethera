@@ -62,7 +62,8 @@
   "files": [
     "bin",
     "templates",
-    "dist"
+    "dist",
+    "THIRD_PARTY_LICENSES.md"
   ],
   "devDependencies": {
     "@faker-js/faker": "^8.0.2",
