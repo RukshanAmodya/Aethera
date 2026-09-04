@@ -123,9 +123,10 @@ const onUserActionToggle = (action: string) => {
 	width: 100%;
 
 	&.collapsed {
-		padding: 8px 4px 14px;
+		padding: 8px 0 14px;
 		display: flex;
 		justify-content: center;
+		align-items: center;
 	}
 }
 
@@ -133,8 +134,8 @@ const onUserActionToggle = (action: string) => {
 	display: flex;
 	align-items: center;
 	padding: 8px 10px;
-	background: light-dark(#f8fafc, #14151b);
-	border: 1px solid light-dark(rgba(0, 0, 0, 0.08), rgba(255, 255, 255, 0.08));
+	background: #14151b;
+	border: 1px solid rgba(255, 255, 255, 0.08);
 	border-radius: 12px;
 	cursor: pointer;
 	gap: 10px;
@@ -143,11 +144,11 @@ const onUserActionToggle = (action: string) => {
 	box-sizing: border-box;
 
 	&:hover {
-		background: light-dark(#f1f5f9, #1a1b24);
-		border-color: light-dark(rgba(0, 0, 0, 0.16), rgba(255, 255, 255, 0.16));
+		background: #1c1e27;
+		border-color: rgba(255, 255, 255, 0.16);
 
 		.ellipsisBtn {
-			color: light-dark(#0f172a, #ffffff) !important;
+			color: #ffffff !important;
 		}
 	}
 }
@@ -170,7 +171,7 @@ const onUserActionToggle = (action: string) => {
 .userName {
 	font-size: 13px;
 	font-weight: 600;
-	color: light-dark(#0f172a, #f1f5f9);
+	color: #f8fafc;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -180,7 +181,7 @@ const onUserActionToggle = (action: string) => {
 .userEmail {
 	font-size: 11px;
 	font-weight: 400;
-	color: light-dark(#64748b, #94a3b8);
+	color: #94a3b8;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -193,19 +194,22 @@ const onUserActionToggle = (action: string) => {
 }
 
 .ellipsisBtn {
-	color: light-dark(#94a3b8, #64748b) !important;
+	color: #94a3b8 !important;
 	border-radius: 6px !important;
 	padding: 2px !important;
 
 	&:hover {
-		color: light-dark(#0f172a, #ffffff) !important;
-		background: light-dark(rgba(0, 0, 0, 0.06), rgba(255, 255, 255, 0.08)) !important;
+		color: #ffffff !important;
+		background: rgba(255, 255, 255, 0.08) !important;
 	}
 }
 
 .collapsedAvatar {
 	cursor: pointer;
 	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	transition: transform 0.15s ease;
 
 	&:hover {
@@ -216,10 +220,10 @@ const onUserActionToggle = (action: string) => {
 .popover {
 	padding: 8px;
 	min-width: 220px;
-	background: light-dark(#ffffff, #181920);
-	border: 1px solid light-dark(rgba(0, 0, 0, 0.1), rgba(255, 255, 255, 0.1));
+	background: #181920;
+	border: 1px solid rgba(255, 255, 255, 0.1);
 	border-radius: 10px;
-	box-shadow: 0 10px 25px -5px light-dark(rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.5));
+	box-shadow: 0 14px 30px -5px rgba(0, 0, 0, 0.6);
 }
 
 .popoverUserHeader {
@@ -231,18 +235,18 @@ const onUserActionToggle = (action: string) => {
 .popoverUserName {
 	font-size: 13px;
 	font-weight: 600;
-	color: light-dark(#0f172a, #f8fafc);
+	color: #f8fafc;
 }
 
 .popoverUserEmail {
 	font-size: 11.5px;
-	color: light-dark(#64748b, #94a3b8);
+	color: #94a3b8;
 	margin-top: 2px;
 }
 
 .popoverDivider {
 	height: 1px;
-	background: light-dark(rgba(0, 0, 0, 0.08), rgba(255, 255, 255, 0.08));
+	background: rgba(255, 255, 255, 0.08);
 	margin: 4px 0 8px;
 }
 </style>

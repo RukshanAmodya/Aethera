@@ -328,42 +328,6 @@ useKeybindings({
 			@select="handleSelect"
 		/>
 
-		<!-- Vibrant Floating Plan Card (Matching user design Image 3) -->
-		<div :class="[$style.planCardContainer, isCollapsed && $style.planCardCollapsed]">
-			<div v-if="!isCollapsed" :class="$style.planCard">
-				<div :class="$style.planCardHeader">
-					<div :class="$style.planBadgeIcon">
-						<N8nIcon icon="zap" size="small" />
-					</div>
-					<div :class="$style.planInfo">
-						<span :class="$style.planTitle">Current plan</span>
-						<span :class="$style.planSubtitle">{{ cloudPlanStore.currentPlanData?.displayName || 'Pro Plan' }}</span>
-					</div>
-				</div>
-				<p :class="$style.planDescription">
-					Supercharge your automation pipelines with unlimited execution.
-				</p>
-				<button
-					type="button"
-					:class="$style.upgradePillButton"
-					@click="pageRedirectionHelper.goToUpgrade('sidebar')"
-				>
-					<span>Upgrade $50</span>
-					<N8nIcon icon="arrow-right" size="mini" />
-				</button>
-			</div>
-			<!-- Collapsed mini glowing lightning badge -->
-			<button
-				v-else
-				type="button"
-				:class="$style.collapsedPlanBadge"
-				title="Current Plan: Pro (Click to upgrade)"
-				@click="pageRedirectionHelper.goToUpgrade('sidebar')"
-			>
-				<N8nIcon icon="zap" size="small" />
-			</button>
-		</div>
-
 		<MainSidebarUserArea :is-collapsed="isCollapsed" />
 		<MainSidebarSourceControl :is-collapsed="isCollapsed" />
 	</aside>
@@ -380,11 +344,11 @@ useKeybindings({
 	border-radius: 24px;
 	display: flex;
 	flex-direction: column;
-	background-color: light-dark(#ffffff, #10121a);
-	border: 1px solid light-dark(rgba(0, 0, 0, 0.08), rgba(255, 255, 255, 0.08));
+	background-color: #0b0c10;
+	border: 1px solid rgba(255, 255, 255, 0.08);
 	box-shadow:
-		0 10px 30px -5px light-dark(rgba(0, 0, 0, 0.06), rgba(0, 0, 0, 0.45)),
-		0 0 0 1px light-dark(rgba(0, 0, 0, 0.04), rgba(255, 255, 255, 0.04));
+		0 14px 38px -6px rgba(0, 0, 0, 0.7),
+		0 0 0 1px rgba(255, 255, 255, 0.04);
 	transition: width var(--duration--snappy) var(--easing--ease-out),
 		min-width var(--duration--snappy) var(--easing--ease-out),
 		max-width var(--duration--snappy) var(--easing--ease-out);
@@ -410,143 +374,11 @@ useKeybindings({
 }
 
 .scrollAreaWrapperWithBottomBorder {
-	border-bottom: 1px solid light-dark(rgba(0, 0, 0, 0.06), rgba(255, 255, 255, 0.06));
+	border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .scrollAreaWrapperWithTopBorder {
-	border-top: 1px solid light-dark(rgba(0, 0, 0, 0.06), rgba(255, 255, 255, 0.06));
-}
-
-/* Plan Card Styles (Image 3) */
-.planCardContainer {
-	padding: 10px 12px 6px;
-	box-sizing: border-box;
-	width: 100%;
-
-	&.planCardCollapsed {
-		padding: 8px 4px 6px;
-		display: flex;
-		justify-content: center;
-	}
-}
-
-.planCard {
-	position: relative;
-	background: linear-gradient(135deg, #2563eb 0%, #4f46e5 50%, #7c3aed 100%);
-	border-radius: 16px;
-	padding: 14px 14px 12px;
-	color: #ffffff;
-	box-shadow: 0 8px 24px -4px rgba(79, 70, 229, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.3);
-	display: flex;
-	flex-direction: column;
-	gap: 8px;
-	overflow: hidden;
-
-	&::after {
-		content: '';
-		position: absolute;
-		top: -20px;
-		right: -20px;
-		width: 80px;
-		height: 80px;
-		background: radial-gradient(circle, rgba(255, 255, 255, 0.25) 0%, transparent 70%);
-		border-radius: 50%;
-		pointer-events: none;
-	}
-}
-
-.planCardHeader {
-	display: flex;
-	align-items: center;
-	gap: 10px;
-}
-
-.planBadgeIcon {
-	width: 30px;
-	height: 30px;
-	border-radius: 8px;
-	background: rgba(255, 255, 255, 0.2);
-	backdrop-filter: blur(8px);
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	color: #ffffff;
-	flex-shrink: 0;
-}
-
-.planInfo {
-	display: flex;
-	flex-direction: column;
-	line-height: 1.2;
-}
-
-.planTitle {
-	font-size: 11px;
-	color: rgba(255, 255, 255, 0.8);
-	font-weight: 500;
-	text-transform: uppercase;
-	letter-spacing: 0.04em;
-}
-
-.planSubtitle {
-	font-size: 13.5px;
-	font-weight: 700;
-	color: #ffffff;
-	margin-top: 1px;
-}
-
-.planDescription {
-	font-size: 11px;
-	line-height: 1.4;
-	color: rgba(255, 255, 255, 0.85);
-	margin: 0;
-}
-
-.upgradePillButton {
-	margin-top: 4px;
-	background: #ffffff;
-	color: #4338ca;
-	border: none;
-	border-radius: 20px;
-	padding: 6px 14px;
-	font-size: 11.5px;
-	font-weight: 700;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	gap: 6px;
-	cursor: pointer;
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-	transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-
-	&:hover {
-		background: #f8fafc;
-		transform: translateY(-1px);
-		box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-	}
-
-	&:active {
-		transform: translateY(0);
-	}
-}
-
-.collapsedPlanBadge {
-	width: 36px;
-	height: 36px;
-	border-radius: 50%;
-	background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
-	border: none;
-	color: #ffffff;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	cursor: pointer;
-	box-shadow: 0 4px 14px rgba(79, 70, 229, 0.4);
-	transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-
-	&:hover {
-		transform: scale(1.1);
-		box-shadow: 0 6px 20px rgba(79, 70, 229, 0.6);
-	}
+	border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 </style>
+

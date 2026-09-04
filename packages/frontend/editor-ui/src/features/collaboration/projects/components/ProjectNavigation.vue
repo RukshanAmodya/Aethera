@@ -308,13 +308,20 @@ onBeforeUnmount(() => {
 	padding: 12px 16px 6px;
 	font-size: 11px;
 	font-weight: 600;
-	color: light-dark(#64748b, #94a3b8);
+	color: #64748b;
 	text-transform: uppercase;
 	letter-spacing: 0.06em;
 }
 
 .projectItems {
 	padding: var(--spacing--2xs) var(--spacing--3xs);
+
+	&:has(.collapsed) {
+		padding: var(--spacing--2xs) 0;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
 }
 
 .upgradeLink {
@@ -334,18 +341,18 @@ onBeforeUnmount(() => {
 	border: none;
 	border-radius: 6px;
 	cursor: pointer;
-	color: light-dark(#64748b, #94a3b8);
+	color: #94a3b8;
 	font-size: 11px;
 	font-weight: 600;
 	text-transform: uppercase;
 	letter-spacing: 0.05em;
 
 	&:hover {
-		background-color: light-dark(rgba(0, 0, 0, 0.04), rgba(255, 255, 255, 0.04));
-		color: light-dark(#0f172a, #cbd5e1);
+		background-color: rgba(255, 255, 255, 0.05);
+		color: #ffffff;
 
 		.chevron {
-			color: light-dark(#0f172a, #cbd5e1);
+			color: #ffffff;
 		}
 	}
 
@@ -356,7 +363,7 @@ onBeforeUnmount(() => {
 }
 
 .chevron {
-	color: var(--color--text--tint-1);
+	color: #64748b;
 	transition: transform 0.15s ease;
 	flex-shrink: 0;
 }
@@ -385,7 +392,7 @@ onBeforeUnmount(() => {
 .plusBtn {
 	margin: 0;
 	padding: 0;
-	color: var(--color--text--tint-1);
+	color: #94a3b8;
 	display: none;
 }
 
@@ -403,7 +410,11 @@ onBeforeUnmount(() => {
 	padding: 0 var(--spacing--3xs) var(--spacing--2xs);
 
 	&.collapsed {
-		border-bottom: var(--border);
+		padding: 0 0 var(--spacing--2xs);
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 	}
 }
 
@@ -414,6 +425,12 @@ onBeforeUnmount(() => {
 .favoriteItem {
 	position: relative;
 
+	&.collapsed {
+		display: flex;
+		justify-content: center;
+		width: 100%;
+	}
+
 	&:hover .unpinButton,
 	.unpinButton:focus-visible {
 		opacity: 1;
@@ -421,8 +438,8 @@ onBeforeUnmount(() => {
 	}
 
 	&:not(.collapsed):hover a[role='menuitem'] {
-		background-color: var(--color--background--light-1);
-		color: var(--color--text--shade-1);
+		background-color: rgba(255, 255, 255, 0.06);
+		color: #ffffff;
 		padding-right: var(--spacing--lg);
 	}
 }
@@ -438,7 +455,7 @@ onBeforeUnmount(() => {
 	padding: var(--spacing--5xs);
 	background: none;
 	border: none;
-	color: var(--color--text--tint-2);
+	color: #94a3b8;
 	cursor: pointer;
 	opacity: 0;
 	pointer-events: none;
@@ -446,7 +463,7 @@ onBeforeUnmount(() => {
 
 	&:hover,
 	&:focus-visible {
-		color: var(--color--text);
+		color: #ffffff;
 	}
 }
 </style>
