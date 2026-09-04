@@ -1,4 +1,4 @@
-﻿import type {
+import type {
 	IExecuteFunctions,
 	IDataObject,
 	INodeExecutionData,
@@ -90,7 +90,7 @@ export class Replicate implements INodeType {
 				let postBody: IDataObject = { input: inputObj };
 
 				if (model.includes(':')) {
-					const [mName, version] = model.split(':');
+					const [, version] = model.split(':');
 					postUrl = 'https://api.replicate.com/v1/predictions';
 					postBody = { version, input: inputObj };
 				}

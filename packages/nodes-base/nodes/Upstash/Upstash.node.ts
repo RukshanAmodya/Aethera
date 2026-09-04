@@ -1,6 +1,7 @@
 import type {
 	IExecuteFunctions,
 	IDataObject,
+	IHttpRequestMethods,
 	INodeExecutionData,
 	INodeType,
 	INodeTypeDescription,
@@ -39,31 +40,31 @@ export class Upstash implements INodeType {
 						name: 'Get Value',
 						value: 'get',
 						description: 'Get the value of a key',
-						action: 'Get value of a key',
+						action: 'Get the value of a key',
 					},
 					{
 						name: 'Set Value',
 						value: 'set',
-						description: 'Set string/JSON value for a key',
-						action: 'Set value of a key',
+						description: 'Set string value of a key with optional TTL',
+						action: 'Set string value of a key with optional TTL',
 					},
 					{
 						name: 'Delete Key',
 						value: 'del',
-						description: 'Delete a key from Redis',
+						description: 'Delete a key',
 						action: 'Delete a key',
 					},
 					{
-						name: 'Increment (INCR)',
+						name: 'Increment Key',
 						value: 'incr',
-						description: 'Increment the integer value of a key (great for rate limiting/counters)',
-						action: 'Increment counter',
+						description: 'Increment integer value of a key by 1',
+						action: 'Increment integer value of a key by 1',
 					},
 					{
-						name: 'Execute Custom Command',
+						name: 'Custom REST Command',
 						value: 'custom',
-						description: 'Execute any arbitrary Redis command over Upstash REST (e.g. LPUSH, HSET, ZADD)',
-						action: 'Execute custom command',
+						description: 'Run arbitrary Redis command via Upstash REST API',
+						action: 'Run arbitrary Redis command via Upstash REST API',
 					},
 				],
 				default: 'get',
@@ -79,7 +80,7 @@ export class Upstash implements INodeType {
 						operation: ['custom'],
 					},
 				},
-				description: 'The key to get, set, delete, or increment',
+				description: 'The Redis key',
 			},
 			{
 				displayName: 'Value',
@@ -92,10 +93,10 @@ export class Upstash implements INodeType {
 						operation: ['set'],
 					},
 				},
-				description: 'The value to store in Redis',
+				description: 'The value to store',
 			},
 			{
-				displayName: 'TTL (Seconds, Optional)',
+				displayName: 'TTL (Seconds)',
 				name: 'ttl',
 				type: 'number',
 				default: 0,
@@ -104,10 +105,10 @@ export class Upstash implements INodeType {
 						operation: ['set'],
 					},
 				},
-				description: 'Time-to-live in seconds (EX). If 0 or omitted, the key will never expire.',
+				description: 'Expiration time in seconds (0 = no expiration)',
 			},
 			{
-				displayName: 'Command Arguments',
+				displayName: 'Command & Arguments',
 				name: 'commandArgs',
 				type: 'string',
 				default: '',
@@ -135,7 +136,7 @@ export class Upstash implements INodeType {
 
 				let path = '';
 				let body: IDataObject | IDataObject[] | string[] | undefined = undefined;
-				let method = 'GET';
+				let method: IHttpRequestMethods = 'GET';
 
 				if (operation === 'get') {
 					const key = this.getNodeParameter('key', i) as string;
