@@ -286,12 +286,13 @@ const {
 }
 
 .actionBtn {
-	color: #94a3b8 !important;
+	color: var(--color--text--tint-1, #94a3b8) !important;
 	border-radius: 8px !important;
+	transition: all 0.15s ease !important;
 
 	&:hover {
-		color: #ffffff !important;
-		background: rgba(255, 255, 255, 0.07) !important;
+		color: var(--color--text, #ffffff) !important;
+		background: var(--background--hover, rgba(255, 255, 255, 0.07)) !important;
 	}
 }
 
@@ -307,23 +308,23 @@ const {
 	display: flex;
 	align-items: center;
 	padding: 0 10px;
-	background: #18191f;
-	border: 1px solid rgba(255, 255, 255, 0.08);
-	border-radius: 10px;
-	color: #64748b;
+	background: var(--background--subtle, #18191f);
+	border: 1px solid var(--border-color--subtle, rgba(255, 255, 255, 0.08));
+	border-radius: 8px;
+	color: var(--text-color--subtler, #64748b);
 	cursor: pointer;
-	transition: all 0.2s ease;
+	transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 
 	&:hover {
-		background: #1f2129;
-		border-color: rgba(255, 255, 255, 0.16);
-		color: #94a3b8;
+		background: var(--background--hover, #1f2129);
+		border-color: var(--border-color--strong, rgba(255, 255, 255, 0.16));
+		color: var(--text-color--subtle, #94a3b8);
 	}
 }
 
 .searchIcon {
 	margin-right: 8px;
-	color: #64748b;
+	color: var(--text-color--subtler, #64748b);
 	flex-shrink: 0;
 }
 
@@ -332,18 +333,18 @@ const {
 	font-weight: 500;
 	flex: 1;
 	text-align: left;
-	color: #64748b;
+	color: var(--text-color--subtler, #64748b);
 }
 
 .shortcutKbd {
 	font-family: inherit;
 	font-size: 10.5px;
 	font-weight: 600;
-	background: #252833;
-	color: #94a3b8;
+	background: var(--background--hover, #252833);
+	color: var(--text-color--subtle, #94a3b8);
 	padding: 2px 6px;
 	border-radius: 6px;
-	border: 1px solid rgba(255, 255, 255, 0.06);
+	border: 1px solid var(--border-color--subtle, rgba(255, 255, 255, 0.06));
 	line-height: 1.2;
 }
 

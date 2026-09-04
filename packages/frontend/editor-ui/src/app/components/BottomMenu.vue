@@ -185,7 +185,7 @@ function onLogout() {
 	margin-top: auto;
 
 	&.collapsed {
-		border-top: 1px solid rgba(255, 255, 255, 0.06);
+		border-top: 1px solid var(--border-color--subtle, rgba(255, 255, 255, 0.06));
 	}
 }
 
@@ -202,10 +202,11 @@ function onLogout() {
 .popover {
 	padding: 8px;
 	min-width: 240px;
-	background: #181920;
-	border: 1px solid rgba(255, 255, 255, 0.1);
-	border-radius: 10px;
-	box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+	background: var(--background--surface, #181920);
+	border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+	border-radius: 12px;
+	box-shadow: 0 12px 32px -4px rgba(0, 0, 0, 0.25), 0 4px 12px rgba(0, 0, 0, 0.1);
+	backdrop-filter: blur(12px);
 }
 
 .popoverTitle {
@@ -213,14 +214,18 @@ function onLogout() {
 	margin-bottom: var(--spacing--3xs);
 	padding-left: var(--spacing--3xs);
 	margin-top: var(--spacing--xs);
-	color: #94a3b8;
+	color: var(--text-color--subtle, #94a3b8);
+	font-size: var(--font-size--2xs);
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
 }
 
 .divider {
 	display: block;
 	width: 100%;
 	padding-top: 4px;
-	border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+	border-bottom: 1px solid var(--border-color--subtle, rgba(255, 255, 255, 0.08));
 	margin-bottom: 4px;
 }
 </style>

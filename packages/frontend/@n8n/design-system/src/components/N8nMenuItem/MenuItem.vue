@@ -167,19 +167,22 @@ const tooltipPlacement = computed(() => {
 	gap: var(--spacing--4xs);
 	cursor: pointer;
 	color: var(--color--text);
-	border-radius: var(--spacing--4xs);
+	border-radius: 8px;
 	cursor: pointer;
 	min-width: 0;
 	width: 100%;
 	position: relative;
+	transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
 
 	&:hover:not(.disabled) .menuItemIcon {
 		color: var(--color--text--shade-1);
+		transform: scale(1.04);
 	}
 
 	&:global(.router-link-active),
 	&.active {
 		background-color: var(--color--background--light-1);
+		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 	}
 
 	&:hover:not(.active):not(:global(.router-link-active)):not(.disabled) {
@@ -221,6 +224,7 @@ const tooltipPlacement = computed(() => {
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), color 0.15s ease;
 
 	&.notification::after {
 		content: '';

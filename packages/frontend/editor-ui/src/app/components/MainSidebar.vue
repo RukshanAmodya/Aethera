@@ -339,8 +339,8 @@ useKeybindings({
 	height: 100%;
 	display: flex;
 	flex-direction: column;
-	border-right: 1px solid rgba(255, 255, 255, 0.08);
-	background-color: #0f1015 !important;
+	border-right: 1px solid var(--border-color--subtle, rgba(255, 255, 255, 0.08));
+	background-color: var(--color--background, #0f1015);
 	transition: width var(--duration--snappy) var(--easing--ease-out);
 	will-change: width;
 
@@ -364,10 +364,10 @@ useKeybindings({
 }
 
 .scrollAreaWrapperWithBottomBorder {
-	border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+	border-bottom: 1px solid var(--border-color--subtle, rgba(255, 255, 255, 0.06));
 }
 
 .scrollAreaWrapperWithTopBorder {
-	border-top: 1px solid rgba(255, 255, 255, 0.06);
+	border-top: 1px solid var(--border-color--subtle, rgba(255, 255, 255, 0.06));
 }
 </style>
