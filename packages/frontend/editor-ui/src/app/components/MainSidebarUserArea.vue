@@ -220,18 +220,41 @@ const onUserActionToggle = (action: string) => {
 .popover {
 	padding: 8px;
 	min-width: 230px;
-	background: #0f1118;
-	border: 1px solid rgba(255, 255, 255, 0.12);
-	border-radius: 12px;
-	box-shadow: 0 16px 40px -4px rgba(0, 0, 0, 0.75);
-	backdrop-filter: blur(16px);
-	-webkit-backdrop-filter: blur(16px);
+	background: #0f1118 !important;
+	border: 1px solid rgba(255, 255, 255, 0.12) !important;
+	border-radius: 14px !important;
+	box-shadow: 0 16px 40px -4px rgba(0, 0, 0, 0.85) !important;
+	backdrop-filter: blur(16px) !important;
+	-webkit-backdrop-filter: blur(16px) !important;
 
-	:global(.n8n-text) {
+	:global([role="menuitem"]),
+	:global(.n8n-menu-item),
+	:global([data-test-id="menu-item"]) {
+		color: #f1f5f9 !important;
+
+		&:hover {
+			background-color: rgba(239, 68, 68, 0.12) !important;
+			color: #f87171 !important;
+
+			:global(.n8n-text),
+			:global(span) {
+				color: #f87171 !important;
+			}
+
+			:global(.n8n-icon),
+			:global(svg) {
+				color: #f87171 !important;
+			}
+		}
+	}
+
+	:global(.n8n-text),
+	:global(span) {
 		color: #f1f5f9 !important;
 	}
 
-	:global(.n8n-icon) {
+	:global(.n8n-icon),
+	:global(svg) {
 		color: #cbd5e1 !important;
 	}
 }
@@ -245,12 +268,12 @@ const onUserActionToggle = (action: string) => {
 .popoverUserName {
 	font-size: 13px;
 	font-weight: 600;
-	color: #f8fafc;
+	color: #f8fafc !important;
 }
 
 .popoverUserEmail {
 	font-size: 11.5px;
-	color: #94a3b8;
+	color: #94a3b8 !important;
 	margin-top: 2px;
 }
 
