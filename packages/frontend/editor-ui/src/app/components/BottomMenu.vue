@@ -91,6 +91,9 @@ function onLogout() {
 			[$style.collapsed]: isCollapsed,
 		}"
 	>
+		<div v-if="!isCollapsed" :class="$style.sectionLabel">
+			<span>Account</span>
+		</div>
 		<div :class="$style.bottomMenuItems">
 			<template v-for="item in items" :key="item.id">
 				<!-- Help popover -->
@@ -191,6 +194,15 @@ function onLogout() {
 
 .bottomMenuItems {
 	padding: 4px 10px;
+}
+
+.sectionLabel {
+	padding: 10px 16px 4px;
+	font-size: 11px;
+	font-weight: 600;
+	color: #64748b;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
 }
 
 .resourceCenterMenuItem {

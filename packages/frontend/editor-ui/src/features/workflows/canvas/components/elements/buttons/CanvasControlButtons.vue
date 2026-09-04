@@ -170,6 +170,15 @@ function handleClickCollapseAll() {
 </template>
 
 <style module lang="scss">
+:global(.vue-flow__controls) {
+	background: light-dark(rgba(255, 255, 255, 0.9), rgba(22, 26, 38, 0.85)) !important;
+	backdrop-filter: blur(16px) !important;
+	border: 1px solid light-dark(rgba(0, 0, 0, 0.08), rgba(255, 255, 255, 0.12)) !important;
+	border-radius: 9999px !important;
+	padding: 4px 8px !important;
+	box-shadow: 0 10px 25px -4px rgba(0, 0, 0, 0.18), 0 2px 6px rgba(0, 0, 0, 0.08) !important;
+}
+
 .iconButton {
 	padding-left: 0;
 	padding-right: 0;

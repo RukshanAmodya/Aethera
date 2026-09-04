@@ -268,18 +268,15 @@ function onActivate(event: MouseEvent) {
 	align-items: center;
 	justify-content: center;
 	background: light-dark(
-		rgba(255, 255, 255, 0.82),
-		rgba(22, 26, 38, 0.75)
+		#ffffff,
+		#14161f
 	);
-	backdrop-filter: blur(16px) saturate(180%);
-	-webkit-backdrop-filter: blur(16px) saturate(180%);
-	background-clip: padding-box;
 	@include styles.canvas-node-border;
-	border-radius: var(--radius--lg);
+	border-radius: 16px;
 	box-shadow:
-		0 4px 20px -2px light-dark(rgba(0, 0, 0, 0.06), rgba(0, 0, 0, 0.35)),
-		0 1px 3px 0 light-dark(rgba(0, 0, 0, 0.04), rgba(0, 0, 0, 0.2)),
-		inset 0 1px 1px 0 light-dark(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.08));
+		0 4px 16px -2px light-dark(rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.4)),
+		0 1px 3px 0 light-dark(rgba(0, 0, 0, 0.03), rgba(0, 0, 0, 0.2)),
+		inset 0 1px 0 0 light-dark(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.06));
 	transition:
 		transform 0.18s cubic-bezier(0.16, 1, 0.3, 1),
 		box-shadow 0.18s cubic-bezier(0.16, 1, 0.3, 1),
@@ -288,10 +285,10 @@ function onActivate(event: MouseEvent) {
 	&:hover {
 		transform: translateY(-2px);
 		box-shadow:
-			0 10px 28px -4px light-dark(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.5)),
-			0 2px 6px 0 light-dark(rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.25)),
-			0 0 0 1px light-dark(rgba(99, 102, 241, 0.25), rgba(129, 140, 248, 0.35)),
-			inset 0 1px 1px 0 light-dark(rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.12));
+			0 12px 28px -4px light-dark(rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.5)),
+			0 2px 6px 0 light-dark(rgba(0, 0, 0, 0.04), rgba(0, 0, 0, 0.25)),
+			0 0 0 1px light-dark(rgba(99, 102, 241, 0.3), rgba(129, 140, 248, 0.35)),
+			inset 0 1px 0 0 light-dark(rgba(255, 255, 255, 1), rgba(255, 255, 255, 0.1));
 	}
 
 	&.trigger {

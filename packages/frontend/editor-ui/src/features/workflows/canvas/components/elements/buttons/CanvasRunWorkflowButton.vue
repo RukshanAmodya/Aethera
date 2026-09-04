@@ -165,16 +165,22 @@ function getNodeTypeByName(name: string): INodeTypeDescription | null {
 	position: relative;
 	display: flex;
 	align-items: stretch;
+	border-radius: 9999px;
+	box-shadow: 0 10px 24px -4px rgba(37, 99, 235, 0.4), 0 2px 6px rgba(0, 0, 0, 0.1);
+	overflow: hidden;
 }
 
 .button {
+	border-radius: 9999px !important;
+	font-weight: 600 !important;
+	letter-spacing: -0.01em !important;
+
 	.split & {
 		height: var(--height--xl);
-
-		padding-inline-start: var(--spacing--xs);
+		padding-inline-start: var(--spacing--sm);
 		padding-block: 0;
-		border-top-right-radius: 0;
-		border-bottom-right-radius: 0;
+		border-top-right-radius: 0 !important;
+		border-bottom-right-radius: 0 !important;
 	}
 
 	.split &[data-icon-only] {

@@ -152,7 +152,7 @@ const {
 					</template>
 				</N8nNavigationDropdown>
 
-				<!-- Toggle Sidebar Button -->
+				<!-- Toggle Sidebar Button (Circular chevron matching user design) -->
 				<KeyboardShortcutTooltip
 					:placement="isCollapsed ? 'right' : 'bottom'"
 					:label="
@@ -163,16 +163,19 @@ const {
 					:show-after="500"
 					:shortcut="{ keys: ['['] }"
 				>
-					<N8nIconButton
+					<button
 						id="toggle-sidebar-button"
-						:class="$style.actionBtn"
-						variant="ghost"
-						size="small"
-						icon="panel-left"
-						icon-size="medium"
-						aria-label="Toggle sidebar"
+						type="button"
+						:class="$style.collapseChevronBtn"
+						:aria-label="isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'"
 						@click="toggleCollapse"
-					/>
+					>
+						<N8nIcon
+							:icon="isCollapsed ? 'chevron-right' : 'chevron-left'"
+							size="xsmall"
+							:class="$style.collapseIcon"
+						/>
+					</button>
 				</KeyboardShortcutTooltip>
 			</div>
 		</div>
@@ -294,6 +297,38 @@ const {
 		color: var(--color--text, #ffffff) !important;
 		background: var(--background--hover, rgba(255, 255, 255, 0.07)) !important;
 	}
+}
+
+.collapseChevronBtn {
+	width: 28px;
+	height: 28px;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: rgba(255, 255, 255, 0.05);
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	color: #94a3b8;
+	cursor: pointer;
+	padding: 0;
+	transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+
+	&:hover {
+		background: rgba(255, 255, 255, 0.12);
+		border-color: rgba(255, 255, 255, 0.18);
+		color: #ffffff;
+		transform: scale(1.06);
+	}
+
+	&:active {
+		transform: scale(0.95);
+	}
+}
+
+.collapseIcon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 .searchContainer {

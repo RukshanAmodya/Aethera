@@ -73,7 +73,7 @@ watch(projectsCollapsed, (val) => localStorage.setItem(PROJECTS_COLLAPSED_KEY, S
 const home = computed<IMenuItem>(() => ({
 	id: 'home',
 	label: locale.baseText('projects.menu.overview'),
-	icon: 'house',
+	icon: 'grid-2x2',
 	route: {
 		to: { name: VIEWS.HOMEPAGE },
 	},
@@ -103,7 +103,7 @@ const getProjectMenuItem = (project: ProjectListItem): IMenuItem => ({
 const personalProject = computed<IMenuItem>(() => ({
 	id: projectsStore.personalProject?.id ?? '',
 	label: locale.baseText('projects.menu.personal'),
-	icon: 'user',
+	icon: 'arrow-left-right',
 	route: {
 		to: {
 			name: VIEWS.PROJECTS_WORKFLOWS,
@@ -157,6 +157,9 @@ onBeforeUnmount(() => {
 
 <template>
 	<div :class="$style.projects">
+		<div v-if="!props.collapsed" :class="$style.menuSectionLabel">
+			<span>Menu</span>
+		</div>
 		<div :class="[$style.home, props.collapsed ? $style.collapsed : '']">
 			<N8nMenuItem
 				v-if="isInstanceAiNavVisible"
@@ -299,6 +302,15 @@ onBeforeUnmount(() => {
 			display: block;
 		}
 	}
+}
+
+.menuSectionLabel {
+	padding: 12px 16px 6px;
+	font-size: 11px;
+	font-weight: 600;
+	color: #64748b;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
 }
 
 .projectItems {

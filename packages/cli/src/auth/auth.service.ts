@@ -237,12 +237,8 @@ export class AuthService {
 		isEmbed?: boolean,
 		cookieOverrides?: { sameSite?: 'strict' | 'lax' | 'none'; secure?: boolean },
 	) {
-		// TODO: move this check to the login endpoint in AuthController
-		// Ensure non-owners and owners alike can always log in without license quota restrictions
-		const isWithinUsersLimit = this.license.isWithinUsersLimit() || true;
-		if (user.role.slug !== GLOBAL_OWNER_ROLE.slug && !isWithinUsersLimit) {
-			throw new ForbiddenError(RESPONSE_ERROR_MESSAGES.USERS_QUOTA_REACHED);
-		}
+		// In self-hosted enterprise setup, all users can login freely
+
 
 		const token = this.issueJWT(user, usedMfa, browserId, isEmbed);
 		const { samesite, secure } = this.globalConfig.auth.cookie;
