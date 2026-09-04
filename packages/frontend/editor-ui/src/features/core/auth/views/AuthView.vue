@@ -205,10 +205,10 @@ const onSecondaryClick = () => {
 }
 
 .brandLogo {
-	max-height: 48px;
+	max-height: 64px;
 	width: auto;
 	object-fit: contain;
-	filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.15));
+	filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.2));
 }
 
 .heroCenter {
@@ -386,30 +386,52 @@ const onSecondaryClick = () => {
 
 	/* Form input aesthetics */
 	:global(.n8n-input),
+	:global(.el-input),
 	:global(.el-input__inner),
 	:global(.el-input__wrapper) {
 		border-radius: 12px !important;
-		background-color: #f8fafc !important;
-		border-color: #e2e8f0 !important;
+		background-color: #ffffff !important;
+		background: #ffffff !important;
+		border-color: #cbd5e1 !important;
+		color: #0f172a !important;
+		-webkit-text-fill-color: #0f172a !important;
 		transition: all 0.2s ease !important;
 		font-size: 14px !important;
 	}
 
+	:global(.el-input__inner) {
+		color: #0f172a !important;
+		background-color: transparent !important;
+		-webkit-text-fill-color: #0f172a !important;
+	}
+
+	:global(.el-input__inner::placeholder) {
+		color: #94a3b8 !important;
+		-webkit-text-fill-color: #94a3b8 !important;
+	}
+
+	:global(.el-input__wrapper) {
+		box-shadow: 0 0 0 1px #cbd5e1 inset !important;
+	}
+
 	:global(.el-input__wrapper:hover) {
-		border-color: #93c5fd !important;
+		border-color: #3b82f6 !important;
+		box-shadow: 0 0 0 1px #3b82f6 inset !important;
 		background-color: #ffffff !important;
 	}
 
 	:global(.el-input__wrapper.is-focus) {
 		border-color: #2563eb !important;
 		background-color: #ffffff !important;
-		box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+		box-shadow: 0 0 0 2px #2563eb inset, 0 0 0 4px rgba(37, 99, 235, 0.15) !important;
 	}
 
-	:global(.n8n-input-label label) {
-		font-size: 13px !important;
+	:global(.n8n-input-label label),
+	:global(.n8n-form-input label),
+	:global(label) {
+		font-size: 13.5px !important;
 		font-weight: 600 !important;
-		color: #334155 !important;
+		color: #1e293b !important;
 		margin-bottom: 6px !important;
 	}
 

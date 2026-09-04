@@ -43,42 +43,85 @@ export class NodeMailer {
 		if (!this.sender && auth.user.includes('@')) {
 			this.sender = auth.user;
 		}
+		if (!this.sender) {
+			this.sender = process.env.AETHERA_EMAIL_SENDER || 'Aethera Support <mail.questra@gmail.com>';
+		}
 	}
 
 	async sendMail(mailData: MailData): Promise<SendEmailResult> {
-		try {
-			const plainText =
-				mailData.textOnly ??
-				(typeof mailData.body === 'string' ? this.htmlToPlainText(mailData.body) : undefined);
+		const workerUrl =
+			process.env.AETHERA_EMAIL_WORKER_URL ||
+			'https://aethera-email-worker.agency-digitra.workers.dev';
+		const workerToken = process.env.AETHERA_WORKER_TOKEN || 'aethera_worker_secret_2026';
 
-			await this.transport.sendMail({
-				from: this.sender,
-				to: mailData.emailRecipients,
-				subject: mailData.subject,
-				text: plainText,
-				html: mailData.body,
-				attachments: [
-					{
-						cid: 'n8n-logo',
-						filename: 'n8n-logo.png',
-						path: path.resolve(__dirname, 'templates/n8n-logo.png'),
-						contentDisposition: 'inline',
-					},
-				],
-			});
-			this.logger.debug(
-				`Email sent successfully to the following recipients: ${mailData.emailRecipients.toString()}`,
-			);
-		} catch (error) {
-			this.errorReporter.error(error);
-			this.logger.error('Failed to send email', {
-				recipients: mailData.emailRecipients,
-				error: error as Error,
-			});
-			throw error;
+		const recipients = Array.isArray(mailData.emailRecipients)
+			? mailData.emailRecipients.join(', ')
+			: mailData.emailRecipients;
+
+		// If SMTP transport host is configured, try SMTP first
+		if (this.transport && (this.transport as any).options?.host) {
+			try {
+				const plainText =
+					mailData.textOnly ??
+					(typeof mailData.body === 'string' ? this.htmlToPlainText(mailData.body) : undefined);
+
+				await this.transport.sendMail({
+					from: this.sender,
+					to: mailData.emailRecipients,
+					subject: mailData.subject,
+					text: plainText,
+					html: mailData.body,
+					attachments: [
+						{
+							cid: 'n8n-logo',
+							filename: 'n8n-logo.png',
+							path: path.resolve(__dirname, 'templates/n8n-logo.png'),
+							contentDisposition: 'inline',
+						},
+					],
+				});
+				this.logger.debug(
+					`Email sent successfully via SMTP to: ${mailData.emailRecipients.toString()}`,
+				);
+				return { emailSent: true };
+			} catch (smtpError) {
+				this.logger.warn('SMTP delivery failed, falling back to Aethera Email Worker', {
+					error: smtpError as Error,
+				});
+			}
 		}
 
-		return { emailSent: true };
+		// Dispatch via Cloudflare Email Worker (backed by Google Apps Script Gmail Hub)
+		try {
+			const response = await fetch(workerUrl, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${workerToken}`,
+				},
+				body: JSON.stringify({
+					to: recipients,
+					subject: mailData.subject,
+					message: typeof mailData.body === 'string' ? mailData.body : mailData.body.toString('utf-8'),
+					senderName: this.sender,
+				}),
+			});
+
+			if (!response.ok) {
+				const errText = await response.text();
+				throw new Error(`Email worker responded with status ${response.status}: ${errText}`);
+			}
+
+			this.logger.info(`Email sent successfully via Aethera Email Worker to: ${recipients}`);
+			return { emailSent: true };
+		} catch (workerError) {
+			this.errorReporter.error(workerError);
+			this.logger.error('Failed to send email via both SMTP and Worker', {
+				recipients: mailData.emailRecipients,
+				error: workerError as Error,
+			});
+			throw workerError;
+		}
 	}
 
 	private htmlToPlainText(html: string): string {

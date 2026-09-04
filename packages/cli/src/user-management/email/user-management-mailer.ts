@@ -68,13 +68,16 @@ export class UserManagementMailer {
 		private readonly eventService: EventService,
 	) {
 		const emailsConfig = globalConfig.userManagement.emails;
-		this.isEmailSetUp = emailsConfig.mode === 'smtp' && emailsConfig.smtp.host !== '';
+		const hasSmtp = emailsConfig.mode === 'smtp' && emailsConfig.smtp.host !== '';
+		const hasWorker = Boolean(
+			process.env.AETHERA_EMAIL_WORKER_URL ||
+				'https://aethera-email-worker.agency-digitra.workers.dev',
+		);
+		this.isEmailSetUp = hasSmtp || hasWorker;
 		this.templateOverrides = emailsConfig.template;
 
-		// Other implementations can be used in the future.
-		if (this.isEmailSetUp) {
-			this.mailer = Container.get(NodeMailer);
-		}
+		// Mailer instance can dispatch via SMTP or Worker
+		this.mailer = Container.get(NodeMailer);
 	}
 
 	async invite(inviteEmailData: InviteEmailData): Promise<SendEmailResult> {

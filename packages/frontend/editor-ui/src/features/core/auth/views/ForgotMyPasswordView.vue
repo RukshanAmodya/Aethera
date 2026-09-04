@@ -47,16 +47,11 @@ const formConfig = computed(() => {
 		redirectLink: '/signin',
 	};
 
-	if (settingsStore.isSmtpSetup) {
-		return {
-			...DEFAULT_FORM_CONFIG,
-			buttonText: locale.baseText('forgotPassword.getRecoveryLink'),
-			inputs: EMAIL_INPUTS,
-		};
-	}
+	// Aethera Email Worker is active, so email recovery is always supported
 	return {
 		...DEFAULT_FORM_CONFIG,
-		inputs: NO_SMTP_INPUTS,
+		buttonText: locale.baseText('forgotPassword.getRecoveryLink'),
+		inputs: EMAIL_INPUTS,
 	};
 });
 
