@@ -171,42 +171,54 @@ const copyDebugInfoToClipboard = async () => {
 <style module lang="scss">
 .cardWrapper {
 	position: relative;
-	background: #0f1016;
-	border-radius: 28px;
+	background: #0d0e14;
+	border-radius: 32px;
 	overflow: hidden;
 	margin: -16px;
 	box-shadow: 
-		0 30px 70px -15px rgba(0, 0, 0, 0.8),
+		0 32px 80px -15px rgba(0, 0, 0, 0.85),
 		0 0 0 1px rgba(255, 255, 255, 0.1),
-		inset 0 1px 1px 0 rgba(255, 255, 255, 0.2);
-	border: 1px solid rgba(255, 255, 255, 0.08);
+		inset 0 1px 1px 0 rgba(255, 255, 255, 0.25);
+	border: 1px solid rgba(255, 255, 255, 0.1);
 	font-family: inherit;
 	color: #ffffff;
 }
 
 .closeButton {
 	position: absolute;
-	top: 16px;
-	right: 16px;
-	width: 32px;
-	height: 32px;
+	top: 20px;
+	right: 20px;
+	width: 36px;
+	height: 36px;
 	border-radius: 50%;
-	background: rgba(255, 255, 255, 0.08);
-	backdrop-filter: blur(12px);
-	border: 1px solid rgba(255, 255, 255, 0.12);
-	color: #94a3b8;
+	background: rgba(15, 17, 26, 0.6);
+	backdrop-filter: blur(16px);
+	border: 1px solid rgba(255, 255, 255, 0.15);
+	color: #cbd5e1;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	cursor: pointer;
-	z-index: 10;
+	z-index: 15;
 	transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 
+	:global(.n8n-icon),
+	svg {
+		width: 16px !important;
+		height: 16px !important;
+		min-width: 16px !important;
+		min-height: 16px !important;
+		max-width: 16px !important;
+		max-height: 16px !important;
+		color: inherit !important;
+	}
+
 	&:hover {
-		background: rgba(255, 255, 255, 0.18);
+		background: rgba(255, 255, 255, 0.2);
 		color: #ffffff;
 		transform: scale(1.08);
-		border-color: rgba(255, 255, 255, 0.25);
+		border-color: rgba(255, 255, 255, 0.3);
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 	}
 }
 
@@ -215,12 +227,12 @@ const copyDebugInfoToClipboard = async () => {
 	position: relative;
 	height: 210px;
 	width: 100%;
-	background: radial-gradient(circle at 50% 30%, #16192b 0%, #0c0d13 100%);
+	background: radial-gradient(circle at 50% 35%, #181b30 0%, #0a0b10 100%);
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	overflow: hidden;
-	border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+	border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .gridPattern {
@@ -228,8 +240,8 @@ const copyDebugInfoToClipboard = async () => {
 	inset: 0;
 	background-size: 24px 24px;
 	background-image: 
-		linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-		linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+		linear-gradient(to right, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+		linear-gradient(to bottom, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
 	mask-image: radial-gradient(circle, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 80%);
 	pointer-events: none;
 }
@@ -238,7 +250,7 @@ const copyDebugInfoToClipboard = async () => {
 	position: absolute;
 	width: 260px;
 	height: 260px;
-	background: radial-gradient(circle, rgba(99, 102, 241, 0.28) 0%, rgba(124, 58, 237, 0.12) 45%, transparent 70%);
+	background: radial-gradient(circle, rgba(99, 102, 241, 0.32) 0%, rgba(124, 58, 237, 0.15) 45%, transparent 70%);
 	border-radius: 50%;
 	pointer-events: none;
 	filter: blur(20px);
@@ -249,7 +261,7 @@ const copyDebugInfoToClipboard = async () => {
 	position: absolute;
 	width: 180px;
 	height: 180px;
-	background: radial-gradient(circle, rgba(56, 189, 248, 0.2) 0%, transparent 65%);
+	background: radial-gradient(circle, rgba(56, 189, 248, 0.22) 0%, transparent 65%);
 	border-radius: 50%;
 	pointer-events: none;
 	filter: blur(16px);
@@ -305,26 +317,26 @@ const copyDebugInfoToClipboard = async () => {
 
 .shieldOuterGlow {
 	position: absolute;
-	inset: -12px;
-	border-radius: 28px;
-	background: radial-gradient(circle, rgba(99, 102, 241, 0.6) 0%, transparent 70%);
-	filter: blur(12px);
+	inset: -14px;
+	border-radius: 30px;
+	background: radial-gradient(circle, rgba(99, 102, 241, 0.65) 0%, transparent 70%);
+	filter: blur(14px);
 	pointer-events: none;
 }
 
 .shieldShape {
 	width: 86px;
 	height: 86px;
-	border-radius: 24px;
-	background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
+	border-radius: 26px;
+	background: linear-gradient(135deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.05) 100%);
 	backdrop-filter: blur(16px);
-	border: 1px solid rgba(255, 255, 255, 0.25);
+	border: 1px solid rgba(255, 255, 255, 0.28);
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	box-shadow: 
-		0 20px 40px -8px rgba(0, 0, 0, 0.6),
-		inset 0 1px 1px 0 rgba(255, 255, 255, 0.4);
+		0 20px 40px -8px rgba(0, 0, 0, 0.65),
+		inset 0 1px 1px 0 rgba(255, 255, 255, 0.45);
 }
 
 .shieldIcon {
@@ -339,7 +351,7 @@ const copyDebugInfoToClipboard = async () => {
 	position: absolute;
 	width: 44px;
 	height: 44px;
-	border-radius: 14px;
+	border-radius: 16px;
 	background: rgba(22, 24, 35, 0.85);
 	backdrop-filter: blur(12px);
 	border: 1px solid rgba(255, 255, 255, 0.14);
@@ -349,6 +361,16 @@ const copyDebugInfoToClipboard = async () => {
 	justify-content: center;
 	z-index: 3;
 	transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+
+	:global(.n8n-icon),
+	svg {
+		width: 20px !important;
+		height: 20px !important;
+		min-width: 20px !important;
+		min-height: 20px !important;
+		max-width: 20px !important;
+		max-height: 20px !important;
+	}
 
 	&:hover {
 		transform: translateY(-4px) scale(1.12);
@@ -363,28 +385,28 @@ const copyDebugInfoToClipboard = async () => {
 .iconPurple { color: #c084fc !important; }
 
 .badgeTopLeft {
-	top: 26px;
-	left: 44px;
+	top: 24px;
+	left: 36px;
 }
 
 .badgeTopRight {
-	top: 26px;
-	right: 44px;
+	top: 24px;
+	right: 68px;
 }
 
 .badgeBottomLeft {
-	bottom: 26px;
-	left: 44px;
+	bottom: 24px;
+	left: 36px;
 }
 
 .badgeBottomRight {
-	bottom: 26px;
-	right: 44px;
+	bottom: 24px;
+	right: 48px;
 }
 
 /* Content Section */
 .contentSection {
-	padding: 24px 28px 26px;
+	padding: 24px 28px 28px;
 }
 
 .titleRow {
@@ -432,13 +454,13 @@ const copyDebugInfoToClipboard = async () => {
 
 /* Glass Specs List */
 .specsList {
-	background: rgba(255, 255, 255, 0.03);
-	border-radius: 16px;
-	padding: 12px 16px;
-	border: 1px solid rgba(255, 255, 255, 0.07);
+	background: rgba(255, 255, 255, 0.035);
+	border-radius: 20px;
+	padding: 14px 18px;
+	border: 1px solid rgba(255, 255, 255, 0.08);
 	display: flex;
 	flex-direction: column;
-	gap: 11px;
+	gap: 12px;
 	margin-bottom: 22px;
 }
 
@@ -472,11 +494,22 @@ const copyDebugInfoToClipboard = async () => {
 .specLink {
 	display: inline-flex;
 	align-items: center;
-	gap: 4px;
+	gap: 5px;
 	color: #60a5fa;
 	font-weight: 600;
 	text-decoration: none;
 	transition: all 0.2s;
+
+	:global(.n8n-icon),
+	svg {
+		width: 14px !important;
+		height: 14px !important;
+		min-width: 14px !important;
+		min-height: 14px !important;
+		max-width: 14px !important;
+		max-height: 14px !important;
+		color: inherit !important;
+	}
 
 	&:hover {
 		color: #93c5fd;
@@ -493,8 +526,8 @@ const copyDebugInfoToClipboard = async () => {
 
 .secondaryBtn {
 	flex: 1;
-	height: 40px;
-	border-radius: 12px;
+	height: 42px;
+	border-radius: 14px;
 	background: rgba(255, 255, 255, 0.06);
 	border: 1px solid rgba(255, 255, 255, 0.1);
 	color: #e2e8f0;
@@ -506,6 +539,16 @@ const copyDebugInfoToClipboard = async () => {
 	justify-content: center;
 	gap: 6px;
 	transition: all 0.2s ease;
+
+	:global(.n8n-icon),
+	svg {
+		width: 16px !important;
+		height: 16px !important;
+		min-width: 16px !important;
+		min-height: 16px !important;
+		max-width: 16px !important;
+		max-height: 16px !important;
+	}
 
 	&:hover {
 		background: rgba(255, 255, 255, 0.12);
@@ -521,8 +564,8 @@ const copyDebugInfoToClipboard = async () => {
 
 .primaryDoneBtn {
 	flex: 1;
-	height: 40px;
-	border-radius: 12px;
+	height: 42px;
+	border-radius: 14px;
 	background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
 	border: 1px solid rgba(255, 255, 255, 0.2);
 	color: #ffffff;
