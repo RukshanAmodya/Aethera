@@ -155,13 +155,8 @@ const mainMenuItems = computed<IMenuItem[]>(() => [
 		available: true,
 		children: settingsItems.value,
 	},
-	{
-		id: 'logout',
-		label: i18n.baseText('auth.signout'),
-		icon: 'door-open',
-		available: true,
-	},
 ]);
+
 
 const visibleMenuItems = computed<IMenuItem[]>(() =>
 	mainMenuItems.value
