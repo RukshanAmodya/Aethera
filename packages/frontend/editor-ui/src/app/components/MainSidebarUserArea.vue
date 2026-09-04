@@ -28,11 +28,6 @@ const displayEmail = computed(() => {
 
 const userMenuItems = ref<IMenuItem[]>([
 	{
-		id: 'settings',
-		icon: 'settings',
-		label: i18n.baseText('settings'),
-	},
-	{
 		id: 'logout',
 		icon: 'door-open',
 		label: i18n.baseText('auth.signout'),
@@ -44,15 +39,8 @@ const onLogout = () => {
 };
 
 const onUserActionToggle = (action: string) => {
-	switch (action) {
-		case 'logout':
-			onLogout();
-			break;
-		case 'settings':
-			void router.push({ name: VIEWS.SETTINGS });
-			break;
-		default:
-			break;
+	if (action === 'logout') {
+		onLogout();
 	}
 };
 </script>
