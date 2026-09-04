@@ -305,12 +305,26 @@ function onAddToChat() {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	background-color: var(--canvas--color--background);
-	border-radius: var(--radius);
+	background: light-dark(rgba(255, 255, 255, 0.85), rgba(22, 26, 38, 0.8));
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+	border: 1px solid light-dark(rgba(0, 0, 0, 0.08), rgba(255, 255, 255, 0.12));
+	border-radius: 9999px;
+	padding: 2px 4px;
+	box-shadow:
+		0 4px 16px -2px light-dark(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.4)),
+		0 1px 3px 0 light-dark(rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.2));
 	pointer-events: auto;
 
 	:global(.button) {
 		--button--color--text: var(--color--text--tint-1);
+		border-radius: 9999px;
+		transition: background-color 0.15s ease, color 0.15s ease;
+
+		&:hover {
+			--button--color--text: var(--color--text);
+			background-color: light-dark(rgba(0, 0, 0, 0.05), rgba(255, 255, 255, 0.08));
+		}
 	}
 }
 

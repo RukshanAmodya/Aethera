@@ -102,14 +102,29 @@ async function onClickTemplatesLink() {
 }
 
 .button {
-	background: var(--color--foreground--tint-2);
-	border: 2px dashed var(--color--foreground--shade-2);
-	border-radius: 8px;
+	background: light-dark(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.04));
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+	border: 1.5px dashed light-dark(rgba(0, 0, 0, 0.16), rgba(255, 255, 255, 0.18));
+	border-radius: var(--radius--lg);
 	padding: 0;
+	box-shadow: 0 4px 16px -2px light-dark(rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.25));
 
 	min-width: 100px;
 	min-height: 100px;
 	cursor: pointer;
+	transition:
+		border-color 0.18s ease,
+		box-shadow 0.18s ease,
+		transform 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+
+	&:hover {
+		border-color: var(--color--primary);
+		transform: translateY(-2px);
+		box-shadow:
+			0 10px 24px -4px light-dark(rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.35)),
+			0 0 16px -2px rgba(99, 102, 241, 0.35);
+	}
 }
 
 .label {

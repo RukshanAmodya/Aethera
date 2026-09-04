@@ -267,10 +267,32 @@ function onActivate(event: MouseEvent) {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	background: var(--canvas-node--color--background, var(--node--color--background));
+	background: light-dark(
+		rgba(255, 255, 255, 0.82),
+		rgba(22, 26, 38, 0.75)
+	);
+	backdrop-filter: blur(16px) saturate(180%);
+	-webkit-backdrop-filter: blur(16px) saturate(180%);
 	background-clip: padding-box;
 	@include styles.canvas-node-border;
 	border-radius: var(--radius--lg);
+	box-shadow:
+		0 4px 20px -2px light-dark(rgba(0, 0, 0, 0.06), rgba(0, 0, 0, 0.35)),
+		0 1px 3px 0 light-dark(rgba(0, 0, 0, 0.04), rgba(0, 0, 0, 0.2)),
+		inset 0 1px 1px 0 light-dark(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.08));
+	transition:
+		transform 0.18s cubic-bezier(0.16, 1, 0.3, 1),
+		box-shadow 0.18s cubic-bezier(0.16, 1, 0.3, 1),
+		border-color 0.18s ease;
+
+	&:hover {
+		transform: translateY(-2px);
+		box-shadow:
+			0 10px 28px -4px light-dark(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.5)),
+			0 2px 6px 0 light-dark(rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.25)),
+			0 0 0 1px light-dark(rgba(99, 102, 241, 0.25), rgba(129, 140, 248, 0.35)),
+			inset 0 1px 1px 0 light-dark(rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.12));
+	}
 
 	&.trigger {
 		border-radius: var(--trigger-node--radius) var(--radius--lg) var(--radius--lg)
@@ -366,11 +388,12 @@ function onActivate(event: MouseEvent) {
 	}
 
 	&.pinned {
-		--canvas-node--border-width: 2px;
+		--canvas-node--border-width: 1.5px;
 		--canvas-node--border-color: var(
 			--color-canvas-node-pinned-border-color,
 			var(--node--border-color--pinned)
 		);
+		box-shadow: 0 0 12px -2px rgba(168, 85, 247, 0.4);
 	}
 
 	&.disabled {
@@ -378,6 +401,8 @@ function onActivate(event: MouseEvent) {
 			--color-canvas-node-disabled-border-color,
 			var(--color--foreground)
 		);
+		opacity: 0.65;
+		filter: grayscale(0.5);
 	}
 
 	&.running {
@@ -389,11 +414,16 @@ function onActivate(event: MouseEvent) {
 	}
 
 	&.placeholder {
-		background: var(--color--foreground--tint-2);
-		border: 2px dashed var(--color--foreground--shade-2);
+		background: light-dark(rgba(240, 242, 245, 0.6), rgba(255, 255, 255, 0.04));
+		backdrop-filter: blur(8px);
+		border: 1.5px dashed light-dark(rgba(0, 0, 0, 0.18), rgba(255, 255, 255, 0.2));
+		box-shadow: none;
 		cursor: pointer;
 
 		&:hover {
+			border-color: var(--color--primary);
+			box-shadow: 0 0 16px -2px rgba(99, 102, 241, 0.3);
+
 			.icon {
 				color: var(--color--primary);
 			}
@@ -422,10 +452,10 @@ function onActivate(event: MouseEvent) {
 	position: absolute;
 	width: 100%;
 	min-width: calc(var(--canvas-node--width) * 2);
-	margin-top: var(--spacing--2xs);
+	margin-top: calc(var(--spacing--2xs) + 2px);
 	display: flex;
 	flex-direction: column;
-	gap: var(--spacing--4xs);
+	gap: 2px;
 	pointer-events: none;
 }
 
@@ -439,15 +469,18 @@ function onActivate(event: MouseEvent) {
 	-webkit-line-clamp: 2;
 	overflow: hidden;
 	overflow-wrap: anywhere;
-	font-weight: var(--font-weight--medium);
+	font-weight: 600;
+	letter-spacing: -0.01em;
 	line-height: var(--line-height--sm);
+	color: light-dark(var(--color--text--shade-1), #f1f5f9);
 }
 
 .subtitle {
 	width: 100%;
 	text-align: center;
-	color: var(--color--text--tint-1);
+	color: light-dark(var(--color--text--tint-1), #94a3b8);
 	font-size: var(--font-size--xs);
+	letter-spacing: 0.01em;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -459,10 +492,17 @@ function onActivate(event: MouseEvent) {
 	position: absolute;
 	bottom: var(--canvas-node--status-icons--margin);
 	right: var(--canvas-node--status-icons--margin);
+	filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
 }
 
 .icon {
 	flex-grow: 0;
 	flex-shrink: 0;
+	filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.08));
+	transition: transform 0.18s ease;
+
+	.node:hover & {
+		transform: scale(1.05);
+	}
 }
 </style>

@@ -35,21 +35,24 @@ const isOutputHandle = computed(() => props.handleClasses === 'source');
 	width: var(--handle--indicator--width);
 	height: var(--handle--indicator--height);
 	border-radius: 50%;
-	background: light-dark(var(--color--neutral-white), var(--color--neutral-850));
-	border: 1px solid
+	background: light-dark(#ffffff, #1e2433);
+	border: 1.5px solid
 		light-dark(
 			oklch(var(--handle--border--lightness--light, 0.68) 0 0),
 			oklch(var(--handle--border--lightness--dark, 0.5) 0 0)
 		);
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
 	transition:
-		transform 0.2s ease,
-		background 0.2s ease,
-		border-width 0.1s ease;
+		transform 0.18s cubic-bezier(0.16, 1, 0.3, 1),
+		background 0.18s ease,
+		border-color 0.18s ease,
+		box-shadow 0.18s ease;
 
 	.wrapper.output:hover & {
-		border: 1.5px solid light-dark(var(--color--neutral-300), var(--color--neutral-300));
-		background: light-dark(var(--color--neutral-100), var(--color--neutral-700));
-		transform: scale(1.5);
+		border: 1.5px solid #6366f1;
+		background: light-dark(#f8fafc, #2b3245);
+		box-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
+		transform: scale(1.4);
 	}
 }
 </style>

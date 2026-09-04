@@ -267,9 +267,9 @@ watch(
 @use './_canvasNodeStyles.scss' as styles;
 
 .card {
-	--agent-card--border-color: var(--border-color);
-	--agent-card--header-dot-color: var(--border-color);
-	--agent-card--radius: 12px;
+	--agent-card--border-color: light-dark(rgba(0, 0, 0, 0.1), rgba(255, 255, 255, 0.12));
+	--agent-card--header-dot-color: light-dark(rgba(0, 0, 0, 0.1), rgba(255, 255, 255, 0.12));
+	--agent-card--radius: 14px;
 
 	position: relative;
 	// Own stacking context so the header/body/glow z-indexes below stay local and
@@ -277,6 +277,20 @@ watch(
 	isolation: isolate;
 	// Width is bound inline from AGENT_NODE_SIZE — see cardStyle in the script.
 	border-radius: var(--agent-card--radius);
+	box-shadow:
+		0 4px 20px -2px light-dark(rgba(0, 0, 0, 0.06), rgba(0, 0, 0, 0.35)),
+		0 1px 3px 0 light-dark(rgba(0, 0, 0, 0.04), rgba(0, 0, 0, 0.2));
+	transition:
+		transform 0.18s cubic-bezier(0.16, 1, 0.3, 1),
+		box-shadow 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+
+	&:hover {
+		transform: translateY(-2px);
+		box-shadow:
+			0 10px 28px -4px light-dark(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.5)),
+			0 2px 6px 0 light-dark(rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.25)),
+			0 0 0 1px light-dark(rgba(99, 102, 241, 0.25), rgba(129, 140, 248, 0.35));
+	}
 }
 
 .surface {
@@ -294,7 +308,7 @@ watch(
 	// Extra bottom padding: the body overlaps up into it by one radius so its
 	// rounded top sits on the dotted header.
 	padding: var(--spacing--sm) var(--spacing--sm) var(--spacing--lg);
-	border: 2px solid var(--agent-card--border-color);
+	border: 1px solid var(--agent-card--border-color);
 	border-radius: var(--agent-card--radius) var(--agent-card--radius) 0 0;
 
 	// Solid surface base + a dot grid,
@@ -384,9 +398,11 @@ watch(
 	flex-direction: column;
 	gap: var(--spacing--sm);
 	padding: var(--spacing--sm);
-	border: 2px solid var(--agent-card--border-color);
+	border: 1px solid var(--agent-card--border-color);
 	border-radius: var(--agent-card--radius);
-	background: var(--background--surface);
+	background: light-dark(rgba(255, 255, 255, 0.9), rgba(22, 26, 38, 0.9));
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
 }
 
 .modelRow {
