@@ -866,6 +866,7 @@
       "dist/nodes/Wekan/Wekan.node.js",
       "dist/nodes/WhatsApp/WhatsAppTrigger.node.js",
       "dist/nodes/WhatsApp/WhatsApp.node.js",
+      "dist/nodes/WhisperAudio/WhisperAudio.node.js",
       "dist/nodes/Wise/Wise.node.js",
       "dist/nodes/Wise/WiseTrigger.node.js",
       "dist/nodes/WooCommerce/WooCommerce.node.js",
