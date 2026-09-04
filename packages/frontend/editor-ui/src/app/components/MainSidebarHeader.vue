@@ -18,6 +18,7 @@ import KeyboardShortcutTooltip from '@/app/components/KeyboardShortcutTooltip.vu
 import { useSettingsStore } from '@n8n/stores/settings.store';
 import { useGlobalEntityCreation } from '@/app/composables/useGlobalEntityCreation';
 import aetheraLogo from '@/features/core/auth/views/aethera-logo.png';
+import aetheraIcon from '@/features/core/auth/views/aethera-icon.png';
 
 defineProps<{
 	isCollapsed: boolean;
@@ -70,9 +71,16 @@ const {
 		<div :class="$style.brandRow">
 			<RouterLink :to="{ name: VIEWS.HOMEPAGE }" :class="$style.brandLink">
 				<img
+					v-if="isCollapsed"
+					:src="aetheraIcon"
+					alt="Aethera"
+					:class="$style.collapsedIcon"
+				/>
+				<img
+					v-else
 					:src="aetheraLogo"
 					alt="Aethera"
-					:class="[$style.realLogo, { [$style.realLogoCollapsed]: isCollapsed }]"
+					:class="$style.realLogo"
 				/>
 			</RouterLink>
 
@@ -263,9 +271,12 @@ const {
 	display: block;
 }
 
-.realLogoCollapsed {
+.collapsedIcon {
+	width: 28px;
 	height: 28px;
-	max-width: 28px;
+	object-fit: contain;
+	display: block;
+	border-radius: 6px;
 }
 
 .headerActions {
