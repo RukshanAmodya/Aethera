@@ -153,16 +153,6 @@ function onLogout() {
 								/>
 								<N8nMenuItem v-else :item="child" @click="() => handleSelect(child.id)" />
 							</template>
-							<span :class="$style.divider" />
-							<N8nMenuItem
-								:data-test-id="'main-sidebar-log-out'"
-								:item="{
-									id: 'sign-out',
-									label: i18n.baseText('auth.signout'),
-									icon: 'door-open',
-								}"
-								@click="onLogout"
-							/>
 						</div>
 					</template>
 					<template #trigger>
