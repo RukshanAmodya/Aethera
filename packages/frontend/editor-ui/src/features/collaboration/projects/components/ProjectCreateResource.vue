@@ -46,22 +46,38 @@ defineExpose({
 <style lang="scss" module>
 .buttonGroup {
 	display: inline-flex;
+	border-radius: 9999px;
+	overflow: hidden;
+	box-shadow: 0 4px 14px -2px rgba(6, 78, 59, 0.35);
 
 	:global(> .button) {
+		background: #064e3b !important;
+		border-color: #064e3b !important;
+		color: #ffffff !important;
+		font-weight: 600;
+
+		&:hover {
+			background: #04382a !important;
+			border-color: #04382a !important;
+		}
+
 		&:not(:first-child) {
 			border-radius: 0;
 		}
 
 		&:first-child {
-			border-top-right-radius: 0;
-			border-bottom-right-radius: 0;
+			border-radius: 9999px 0 0 9999px !important;
+			padding-left: 18px;
+			padding-right: 14px;
 		}
 	}
 }
 
 .buttonGroupDropdown {
-	border-left: 1px solid var(--color--black-alpha-100);
-	border-top-left-radius: 0;
-	border-bottom-left-radius: 0;
+	border-left: 1px solid rgba(255, 255, 255, 0.15) !important;
+	border-radius: 0 9999px 9999px 0 !important;
+	background: #064e3b !important;
+	border-color: #064e3b !important;
+	color: #ffffff !important;
 }
 </style>

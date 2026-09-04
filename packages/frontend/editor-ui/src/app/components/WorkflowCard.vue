@@ -809,22 +809,32 @@ const tags = computed(
 
 <style lang="scss" module>
 .cardLink {
-	transition: box-shadow 0.3s ease;
+	transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 	cursor: pointer;
 	padding: 0;
 	align-items: stretch;
+	border-radius: 16px !important;
+	background: light-dark(#ffffff, #11131a) !important;
+	border: 1px solid light-dark(rgba(0, 0, 0, 0.08), rgba(255, 255, 255, 0.08)) !important;
+	box-shadow: 0 4px 14px -2px light-dark(rgba(0, 0, 0, 0.03), rgba(0, 0, 0, 0.4)) !important;
+	margin-bottom: 10px;
 
 	&:hover {
-		box-shadow: var(--shadow--card-hover);
+		transform: translateY(-2px);
+		box-shadow: 0 10px 28px -4px light-dark(rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.6)) !important;
+		border-color: light-dark(rgba(16, 185, 129, 0.3), rgba(34, 197, 94, 0.35)) !important;
 	}
 }
 
 .cardHeading {
 	display: flex;
 	align-items: center;
-	font-size: var(--font-size--sm);
+	font-size: 15px;
+	font-weight: 600;
+	letter-spacing: -0.01em;
 	word-break: break-word;
-	padding: var(--spacing--sm) 0 0 var(--spacing--sm);
+	padding: 14px 0 2px 18px;
+	color: light-dark(#0f172a, #f8fafc);
 }
 
 .cardHeadingArchived {
@@ -836,12 +846,12 @@ const tags = computed(
 }
 
 .cardDescription {
-	min-height: var(--spacing--xl);
+	min-height: 24px;
 	display: flex;
 	align-items: center;
-	padding: 0 0 var(--spacing--sm) var(--spacing--sm);
-	font-size: var(--font-size--2xs);
-	color: var(--color--text--tint-1);
+	padding: 0 0 14px 18px;
+	font-size: 12px;
+	color: light-dark(#64748b, #94a3b8);
 	gap: var(--spacing--2xs);
 }
 
@@ -867,12 +877,12 @@ const tags = computed(
 
 .cardActions {
 	display: flex;
-	gap: var(--spacing--2xs);
+	gap: 10px;
 	flex-direction: row;
 	justify-content: center;
 	align-items: center;
 	align-self: stretch;
-	padding: 0 var(--spacing--sm) 0 0;
+	padding: 0 18px 0 0;
 	cursor: default;
 }
 

@@ -553,18 +553,40 @@ const onSelect = (action: string, source: CreateSource) => {
 <style lang="scss" module>
 .projectHeader {
 	display: flex;
-	align-items: flex-start;
+	align-items: center;
 	justify-content: space-between;
-	min-height: var(--spacing--3xl);
+	min-height: 52px;
+	margin-bottom: var(--spacing--md);
+	padding-top: var(--spacing--3xs);
 }
 
 .projectDetails {
 	display: flex;
 	align-items: center;
+	gap: 12px;
+}
+
+.headerActions {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+
+	:global(h2) {
+		font-size: 26px !important;
+		font-weight: 700 !important;
+		letter-spacing: -0.02em !important;
+		color: light-dark(#0f172a, #f8fafc) !important;
+		line-height: 1.2 !important;
+	}
+
+	:global(.n8n-text) {
+		font-size: 13px !important;
+		color: light-dark(#64748b, #94a3b8) !important;
+	}
 }
 
 .actions {
-	padding: var(--spacing--2xs) 0 var(--spacing--xs);
+	padding: var(--spacing--xs) 0;
 }
 
 .projectDescriptionWrapper {

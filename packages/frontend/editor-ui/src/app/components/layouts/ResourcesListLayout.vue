@@ -803,13 +803,14 @@ defineExpose({
 
 	.sort-and-filter {
 		display: flex;
-		gap: var(--spacing--4xs);
+		gap: 8px;
 		align-items: center;
 
 		input {
 			min-height: 0;
-			width: 196px;
-			height: 32px;
+			width: 220px;
+			height: 36px;
+			border-radius: 9999px !important;
 		}
 	}
 
@@ -821,8 +822,13 @@ defineExpose({
 }
 
 .search {
-	max-width: 196px;
+	max-width: 240px;
 	justify-self: end;
+
+	:global(.el-input__wrapper) {
+		border-radius: 9999px !important;
+		padding: 4px 14px !important;
+	}
 
 	@include mixins.breakpoint('sm-and-down') {
 		max-width: 100%;
