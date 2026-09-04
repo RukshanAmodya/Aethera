@@ -4,11 +4,11 @@
 		<mj-section padding="0 20px">
 			<mj-column>
 				<mj-include path="./_logo.mjml" />
-				<mj-text font-size="22px" font-weight="400">
+				<mj-text font-size="22px" font-weight="700" color="#0f172a">
 					You have been added to the <b>{{ projectName }}</b> project as {{ role }}
 				</mj-text>
-				<mj-text>This gives you access to all the workflows and credentials in that project.</mj-text>
-				<mj-button href="{{projectUrl}}">View project</mj-button>
+				<mj-text font-size="16px" color="#334155">This gives you access to all the workflows and credentials in that project.</mj-text>
+				<mj-button href="{{projectUrl}}">View Project</mj-button>
 				<mj-include path="./_footer.mjml" />
 			</mj-column>
 		</mj-section>

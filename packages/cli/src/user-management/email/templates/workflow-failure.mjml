@@ -4,17 +4,12 @@
 		<mj-section padding="0 20px">
 			<mj-column>
 				<mj-include path="./_logo.mjml" />
-				<mj-text>Hi {{firstName}},</mj-text>
-				<mj-text>⚠️ Your workflow "{{workflowName}}" ran into an error.</mj-text>
-				<mj-text>Set up an error workflow now to get instant alerts on Gmail, Slack or any tool of your choice.</mj-text>
-				<mj-button href="{{instanceURL}}/templates/2159">Set up my Error Workflow</mj-button>
-				<mj-text>
-					<ul style="padding-left: 20px; margin: 0;">
-						<li style="margin-bottom: 8px;"><a href="https://www.youtube.com/watch?v=bTF3tACqPRU" style="color: #007bff; text-decoration: none;">Tutorial</a></li>
-						<li><a href="https://docs.n8n.io/flow-logic/error-handling/" style="color: #007bff; text-decoration: none;">Docs</a></li>
-					</ul>
-				</mj-text>
-				<mj-text>Happy automating,<br />The n8n team</mj-text>
+				<mj-text font-size="20px" font-weight="700" color="#dc2626">⚠️ Workflow Error Alert</mj-text>
+				<mj-text font-size="16px" color="#334155">Hi {{firstName}},</mj-text>
+				<mj-text font-size="16px" color="#334155">Your workflow <b>"{{workflowName}}"</b> encountered an execution error.</mj-text>
+				<mj-text font-size="15px" color="#475569">You can inspect the execution log and diagnose the error using the button below:</mj-text>
+				<mj-button href="{{workflowUrl}}">Inspect Workflow Execution</mj-button>
+				<mj-text font-size="14px" color="#64748b">Happy automating,<br /><b>The Aethera Team</b></mj-text>
 				<mj-include path="./_footer.mjml" />
 			</mj-column>
 		</mj-section>

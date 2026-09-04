@@ -86,7 +86,7 @@ export class UserManagementMailer {
 		const template = await this.getTemplate('user-invited');
 		return await this.mailer.sendMail({
 			emailRecipients: inviteEmailData.email,
-			subject: 'You have been invited to n8n',
+			subject: 'You have been invited to Aethera',
 			body: template({ ...this.basePayload, ...inviteEmailData }),
 		});
 	}
@@ -97,7 +97,7 @@ export class UserManagementMailer {
 		const template = await this.getTemplate('password-reset-requested');
 		return await this.mailer.sendMail({
 			emailRecipients: passwordResetData.email,
-			subject: 'n8n password reset',
+			subject: 'Aethera Password Reset',
 			body: template({ ...this.basePayload, ...passwordResetData }),
 		});
 	}
@@ -116,7 +116,7 @@ export class UserManagementMailer {
 
 		return await this.mailer.sendMail({
 			emailRecipients: apiKey.user.email,
-			subject: 'Your n8n API key was revoked',
+			subject: 'Your Aethera API key was revoked',
 			body: template({
 				...this.basePayload,
 				email: apiKey.user.email,
@@ -146,7 +146,7 @@ export class UserManagementMailer {
 
 		return await this.mailer.sendMail({
 			emailRecipients: owner.email,
-			subject: 'Your n8n MCP client access was revoked',
+			subject: 'Your Aethera MCP client access was revoked',
 			body: template({
 				...this.basePayload,
 				email: owner.email,
@@ -265,7 +265,7 @@ export class UserManagementMailer {
 				workflowName: workflow.name,
 				workflowUrl: `${baseUrl}/workflow/${workflow.id}`,
 			}),
-			subjectBuilder: () => 'n8n has automatically autodeactivated a workflow',
+			subjectBuilder: () => 'Aethera has automatically deactivated a workflow',
 			messageType: 'Workflow auto-deactivated',
 		});
 	}
@@ -290,7 +290,7 @@ export class UserManagementMailer {
 				workflowName: workflow.name,
 				workflowUrl: `${baseUrl}/workflow/${workflow.id}`,
 			}),
-			subjectBuilder: () => `${sharer.firstName} has shared an n8n workflow with you`,
+			subjectBuilder: () => `${sharer.firstName} has shared an Aethera workflow with you`,
 			messageType: 'Workflow shared',
 		});
 	}
@@ -315,7 +315,7 @@ export class UserManagementMailer {
 				credentialsName,
 				credentialsListUrl: `${baseUrl}/home/credentials`,
 			}),
-			subjectBuilder: () => `${sharer.firstName} has shared an n8n credential with you`,
+			subjectBuilder: () => `${sharer.firstName} has shared an Aethera credential with you`,
 			messageType: 'Credentials shared',
 		});
 	}

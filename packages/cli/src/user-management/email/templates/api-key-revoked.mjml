@@ -4,14 +4,14 @@
 		<mj-section padding="0 20px">
 			<mj-column>
 				<mj-include path="./_logo.mjml" />
-				<mj-text font-size="22px" font-weight="400">Your API key was revoked</mj-text>
-				<mj-text>
+				<mj-text font-size="22px" font-weight="700" color="#0f172a">Your API key was revoked</mj-text>
+				<mj-text font-size="16px" color="#334155">
 					Your API key <b>"{{label}}"</b> (••••{{suffix}}) on <b>{{domain}}</b> was revoked by <b>{{revokedBy}}</b> on {{revokedAt}}.
 				</mj-text>
-				<mj-text>
-					Any integrations or scripts still using this key have stopped working. If you still need API access, you can create a new key.
+				<mj-text font-size="16px" color="#334155">
+					Any integrations or automated scripts using this key have been stopped. If you still need API access, you can generate a new key from your settings.
 				</mj-text>
-				<mj-button href="{{createApiKeyUrl}}">Create new API key</mj-button>
+				<mj-button href="{{createApiKeyUrl}}">Create New API Key</mj-button>
 				<mj-include path="./_footer.mjml" />
 			</mj-column>
 		</mj-section>

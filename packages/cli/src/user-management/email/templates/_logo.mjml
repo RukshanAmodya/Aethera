@@ -1,1 +1,14 @@
-<mj-image src="cid:n8n-logo" href="https://n8n.io/" align="left" width="125px" alt="n8n" padding-top="20px" padding-bottom="40px" />
+<mj-text padding-top="24px" padding-bottom="28px" padding-left="12px">
+	<table border="0" cellpadding="0" cellspacing="0" style="vertical-align: middle;">
+		<tr>
+			<td style="vertical-align: middle; padding-right: 12px;">
+				<div style="width: 38px; height: 38px; border-radius: 10px; background: linear-gradient(135deg, #2563eb, #1d4ed8); text-align: center; line-height: 38px; color: #ffffff; font-weight: 800; font-size: 20px; font-family: Inter, Helvetica, Arial, sans-serif; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);">
+					A
+				</div>
+			</td>
+			<td style="vertical-align: middle;">
+				<span style="font-size: 22px; font-weight: 700; color: #0f172a; letter-spacing: -0.5px; font-family: Inter, Helvetica, Arial, sans-serif;">Aethera</span>
+			</td>
+		</tr>
+	</table>
+</mj-text>
