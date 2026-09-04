@@ -37,14 +37,12 @@ import identity from 'lodash/identity';
 import { modalRegistry } from '@n8n/frontend-module-sdk';
 import { useTelemetry } from '@n8n/composables/useTelemetry';
 
-let savedTheme: ThemeOption = 'system';
+let savedTheme: ThemeOption = 'light';
 
 try {
 	const value = getThemeOverride();
-	if (value !== null) {
-		savedTheme = value;
-		applyThemeToBody(value);
-	}
+	savedTheme = value || 'light';
+	applyThemeToBody(savedTheme);
 } catch (e) {}
 
 type UiStore = ReturnType<typeof useUIStore>;

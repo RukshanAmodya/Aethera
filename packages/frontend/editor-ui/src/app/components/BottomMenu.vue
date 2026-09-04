@@ -188,7 +188,7 @@ function onLogout() {
 	margin-top: auto;
 
 	&.collapsed {
-		border-top: 1px solid var(--border-color--subtle, rgba(255, 255, 255, 0.06));
+		border-top: 1px solid light-dark(rgba(0, 0, 0, 0.06), rgba(255, 255, 255, 0.06));
 	}
 }
 
@@ -200,24 +200,24 @@ function onLogout() {
 	padding: 10px 16px 4px;
 	font-size: 11px;
 	font-weight: 600;
-	color: #64748b;
+	color: light-dark(#64748b, #94a3b8);
 	text-transform: uppercase;
 	letter-spacing: 0.06em;
 }
 
 .resourceCenterMenuItem {
 	:global(.n8n-text) {
-		color: #38bdf8 !important;
+		color: #0284c7 !important;
 	}
 }
 
 .popover {
 	padding: 8px;
 	min-width: 240px;
-	background: var(--background--surface, #181920);
-	border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+	background: light-dark(#ffffff, #181920);
+	border: 1px solid light-dark(rgba(0, 0, 0, 0.1), rgba(255, 255, 255, 0.1));
 	border-radius: 12px;
-	box-shadow: 0 12px 32px -4px rgba(0, 0, 0, 0.25), 0 4px 12px rgba(0, 0, 0, 0.1);
+	box-shadow: 0 12px 32px -4px light-dark(rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0.25)), 0 4px 12px light-dark(rgba(0, 0, 0, 0.06), rgba(0, 0, 0, 0.1));
 	backdrop-filter: blur(12px);
 }
 
@@ -226,7 +226,7 @@ function onLogout() {
 	margin-bottom: var(--spacing--3xs);
 	padding-left: var(--spacing--3xs);
 	margin-top: var(--spacing--xs);
-	color: var(--text-color--subtle, #94a3b8);
+	color: light-dark(#64748b, #94a3b8);
 	font-size: var(--font-size--2xs);
 	font-weight: 600;
 	text-transform: uppercase;
@@ -237,7 +237,7 @@ function onLogout() {
 	display: block;
 	width: 100%;
 	padding-top: 4px;
-	border-bottom: 1px solid var(--border-color--subtle, rgba(255, 255, 255, 0.08));
+	border-bottom: 1px solid light-dark(rgba(0, 0, 0, 0.08), rgba(255, 255, 255, 0.08));
 	margin-bottom: 4px;
 }
 </style>

@@ -229,7 +229,7 @@ const {
 		padding: 12px 6px;
 		align-items: center;
 		gap: 10px;
-		border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+		border-bottom: 1px solid light-dark(rgba(0, 0, 0, 0.06), rgba(255, 255, 255, 0.06));
 
 		.brandRow {
 			flex-direction: column;
@@ -289,13 +289,13 @@ const {
 }
 
 .actionBtn {
-	color: var(--color--text--tint-1, #94a3b8) !important;
+	color: light-dark(#64748b, #94a3b8) !important;
 	border-radius: 8px !important;
 	transition: all 0.15s ease !important;
 
 	&:hover {
-		color: var(--color--text, #ffffff) !important;
-		background: var(--background--hover, rgba(255, 255, 255, 0.07)) !important;
+		color: light-dark(#0f172a, #ffffff) !important;
+		background: light-dark(rgba(0, 0, 0, 0.05), rgba(255, 255, 255, 0.07)) !important;
 	}
 }
 
@@ -306,17 +306,17 @@ const {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	background: rgba(255, 255, 255, 0.05);
-	border: 1px solid rgba(255, 255, 255, 0.08);
-	color: #94a3b8;
+	background: light-dark(rgba(0, 0, 0, 0.04), rgba(255, 255, 255, 0.05));
+	border: 1px solid light-dark(rgba(0, 0, 0, 0.08), rgba(255, 255, 255, 0.08));
+	color: light-dark(#64748b, #94a3b8);
 	cursor: pointer;
 	padding: 0;
 	transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 
 	&:hover {
-		background: rgba(255, 255, 255, 0.12);
-		border-color: rgba(255, 255, 255, 0.18);
-		color: #ffffff;
+		background: light-dark(rgba(0, 0, 0, 0.08), rgba(255, 255, 255, 0.12));
+		border-color: light-dark(rgba(0, 0, 0, 0.14), rgba(255, 255, 255, 0.18));
+		color: light-dark(#0f172a, #ffffff);
 		transform: scale(1.06);
 	}
 
@@ -343,23 +343,23 @@ const {
 	display: flex;
 	align-items: center;
 	padding: 0 10px;
-	background: var(--background--subtle, #18191f);
-	border: 1px solid var(--border-color--subtle, rgba(255, 255, 255, 0.08));
+	background: light-dark(#f8fafc, #18191f);
+	border: 1px solid light-dark(rgba(0, 0, 0, 0.08), rgba(255, 255, 255, 0.08));
 	border-radius: 8px;
-	color: var(--text-color--subtler, #64748b);
+	color: light-dark(#64748b, #94a3b8);
 	cursor: pointer;
 	transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 
 	&:hover {
-		background: var(--background--hover, #1f2129);
-		border-color: var(--border-color--strong, rgba(255, 255, 255, 0.16));
-		color: var(--text-color--subtle, #94a3b8);
+		background: light-dark(#f1f5f9, #1f2129);
+		border-color: light-dark(rgba(0, 0, 0, 0.16), rgba(255, 255, 255, 0.16));
+		color: light-dark(#0f172a, #ffffff);
 	}
 }
 
 .searchIcon {
 	margin-right: 8px;
-	color: var(--text-color--subtler, #64748b);
+	color: light-dark(#94a3b8, #64748b);
 	flex-shrink: 0;
 }
 
@@ -368,18 +368,18 @@ const {
 	font-weight: 500;
 	flex: 1;
 	text-align: left;
-	color: var(--text-color--subtler, #64748b);
+	color: light-dark(#64748b, #94a3b8);
 }
 
 .shortcutKbd {
 	font-family: inherit;
 	font-size: 10.5px;
 	font-weight: 600;
-	background: var(--background--hover, #252833);
-	color: var(--text-color--subtle, #94a3b8);
+	background: light-dark(#ffffff, #252833);
+	color: light-dark(#64748b, #94a3b8);
 	padding: 2px 6px;
 	border-radius: 6px;
-	border: 1px solid var(--border-color--subtle, rgba(255, 255, 255, 0.06));
+	border: 1px solid light-dark(rgba(0, 0, 0, 0.08), rgba(255, 255, 255, 0.06));
 	line-height: 1.2;
 }
 

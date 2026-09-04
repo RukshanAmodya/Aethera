@@ -2,7 +2,7 @@
 import { computed, onBeforeUnmount, onMounted, ref, nextTick, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useI18n } from '@n8n/i18n';
-import { N8nScrollArea, N8nResizeWrapper, N8nIcon, type IMenuItem } from '@n8n/design-system';
+import { N8nScrollArea, N8nIcon, type IMenuItem } from '@n8n/design-system';
 import { ABOUT_MODAL_KEY, VIEWS, WHATS_NEW_MODAL_KEY } from '@/app/constants';
 import { hasPermission } from '@/app/utils/rbac/permissions';
 import { useRootStore } from '@n8n/stores/useRootStore';
@@ -295,22 +295,12 @@ useKeybindings({
 </script>
 
 <template>
-	<N8nResizeWrapper
+	<aside
 		id="side-menu"
 		:class="{
 			[$style.sideMenu]: true,
 			[$style.sideMenuCollapsed]: isCollapsed,
-			[$style.sideMenuResizing]: isResizing,
 		}"
-		:width="sidebarWidth"
-		:style="isCollapsed ? {} : { width: `${sidebarWidth}px` }"
-		:supported-directions="['right']"
-		:min-width="MIN_SIDEBAR_WIDTH"
-		:max-width="MAX_SIDEBAR_WIDTH"
-		:grid-size="8"
-		@resizestart="onResizeStart"
-		@resize="onResize"
-		@resizeend="onResizeEnd"
 	>
 		<MainSidebarHeader
 			:is-collapsed="isCollapsed"
@@ -376,32 +366,37 @@ useKeybindings({
 
 		<MainSidebarUserArea :is-collapsed="isCollapsed" />
 		<MainSidebarSourceControl :is-collapsed="isCollapsed" />
-	</N8nResizeWrapper>
+	</aside>
 </template>
 
 <style lang="scss" module>
 .sideMenu {
 	position: relative;
+	width: 240px;
+	min-width: 240px;
+	max-width: 240px;
 	height: calc(100% - 16px);
 	margin: 8px;
 	border-radius: 24px;
 	display: flex;
 	flex-direction: column;
-	background-color: var(--color--background, #0f1015);
-	border: 1px solid var(--border-color--subtle, rgba(255, 255, 255, 0.08));
-	box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.04);
-	transition: width var(--duration--snappy) var(--easing--ease-out);
+	background-color: light-dark(#ffffff, #10121a);
+	border: 1px solid light-dark(rgba(0, 0, 0, 0.08), rgba(255, 255, 255, 0.08));
+	box-shadow:
+		0 10px 30px -5px light-dark(rgba(0, 0, 0, 0.06), rgba(0, 0, 0, 0.45)),
+		0 0 0 1px light-dark(rgba(0, 0, 0, 0.04), rgba(255, 255, 255, 0.04));
+	transition: width var(--duration--snappy) var(--easing--ease-out),
+		min-width var(--duration--snappy) var(--easing--ease-out),
+		max-width var(--duration--snappy) var(--easing--ease-out);
 	will-change: width;
 	overflow: hidden;
+	box-sizing: border-box;
 
 	&.sideMenuCollapsed {
 		width: 58px;
-		min-width: auto;
+		min-width: 58px;
+		max-width: 58px;
 		border-radius: 24px;
-	}
-
-	&.sideMenuResizing {
-		transition: none;
 	}
 }
 
@@ -415,11 +410,11 @@ useKeybindings({
 }
 
 .scrollAreaWrapperWithBottomBorder {
-	border-bottom: 1px solid var(--border-color--subtle, rgba(255, 255, 255, 0.06));
+	border-bottom: 1px solid light-dark(rgba(0, 0, 0, 0.06), rgba(255, 255, 255, 0.06));
 }
 
 .scrollAreaWrapperWithTopBorder {
-	border-top: 1px solid var(--border-color--subtle, rgba(255, 255, 255, 0.06));
+	border-top: 1px solid light-dark(rgba(0, 0, 0, 0.06), rgba(255, 255, 255, 0.06));
 }
 
 /* Plan Card Styles (Image 3) */

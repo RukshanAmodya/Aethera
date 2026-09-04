@@ -308,7 +308,7 @@ onBeforeUnmount(() => {
 	padding: 12px 16px 6px;
 	font-size: 11px;
 	font-weight: 600;
-	color: #64748b;
+	color: light-dark(#64748b, #94a3b8);
 	text-transform: uppercase;
 	letter-spacing: 0.06em;
 }
@@ -334,18 +334,18 @@ onBeforeUnmount(() => {
 	border: none;
 	border-radius: 6px;
 	cursor: pointer;
-	color: #64748b;
+	color: light-dark(#64748b, #94a3b8);
 	font-size: 11px;
 	font-weight: 600;
 	text-transform: uppercase;
 	letter-spacing: 0.05em;
 
 	&:hover {
-		background-color: rgba(255, 255, 255, 0.04);
-		color: #94a3b8;
+		background-color: light-dark(rgba(0, 0, 0, 0.04), rgba(255, 255, 255, 0.04));
+		color: light-dark(#0f172a, #cbd5e1);
 
 		.chevron {
-			color: #cbd5e1;
+			color: light-dark(#0f172a, #cbd5e1);
 		}
 	}
 
