@@ -15,6 +15,7 @@ import ExperimentalInPlaceNodeSettings from '../../../../experimental/components
 import CanvasNodeTooltip from './parts/CanvasNodeTooltip.vue';
 import CanvasNodeDisabledStrikeThrough from './parts/CanvasNodeDisabledStrikeThrough.vue';
 import CanvasNodeStatusIcons from './parts/CanvasNodeStatusIcons.vue';
+import CanvasNodeDefaultBentoCard from './parts/CanvasNodeDefaultBentoCard.vue';
 import NodeIcon from '@/app/components/NodeIcon.vue';
 import { useRoute } from 'vue-router';
 import { VIEWS } from '@/app/constants';
@@ -46,8 +47,10 @@ const {
 	executionWaitingForNext,
 	executionRunning,
 	hasRunData,
+	runDataIterations,
 	render,
 	isNotInstalledCommunityNode,
+	node,
 } = useCanvasNode();
 const { hasPrivateCredential, tooltipText: privateCredentialTooltip } =
 	useNodePrivateCredential(name);
@@ -248,6 +251,17 @@ function onActivate(event: MouseEvent) {
 				{{ subtitle }}
 			</div>
 		</div>
+		<CanvasNodeDefaultBentoCard
+			v-if="!renderOptions.configuration && !renderOptions.placeholder"
+			:label="label"
+			:subtitle="subtitle"
+			:node-type="node?.data?.value?.type"
+			:is-trigger="renderOptions.trigger"
+			:is-disabled="isDisabled"
+			:execution-status="executionStatus"
+			:has-run-data="hasRunData"
+			:run-data-iterations="runDataIterations"
+		/>
 		<CanvasNodeStatusIcons v-if="!isDisabled" :class="$style.statusIcons" />
 	</div>
 </template>
@@ -445,15 +459,7 @@ function onActivate(event: MouseEvent) {
 /* stylelint-enable */
 
 .description {
-	top: 100%;
-	position: absolute;
-	width: 100%;
-	min-width: calc(var(--canvas-node--width) * 2);
-	margin-top: calc(var(--spacing--2xs) + 2px);
-	display: flex;
-	flex-direction: column;
-	gap: 2px;
-	pointer-events: none;
+	display: none;
 }
 
 .label,
