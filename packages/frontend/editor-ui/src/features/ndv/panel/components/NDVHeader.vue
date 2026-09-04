@@ -88,29 +88,31 @@ function onRename(newNodeName: string) {
 	align-items: center;
 	justify-content: space-between;
 	gap: var(--spacing--2xs);
-	padding: var(--spacing--4xs);
+	padding: var(--spacing--2xs) var(--spacing--xs);
 	background: var(--color--background--light-3);
+	border-bottom: 1px solid var(--border-color--subtle);
+	backdrop-filter: blur(12px);
 }
 
 .content {
 	display: flex;
 	align-items: center;
-	gap: var(--spacing--2xs);
-	margin-left: var(--spacing--2xs);
+	gap: var(--spacing--xs);
+	margin-left: var(--spacing--4xs);
 }
 
 .actions {
 	display: flex;
 	align-items: center;
-	gap: var(--spacing--4xs);
+	gap: var(--spacing--3xs);
 }
 
 .actions button:hover {
-	background-color: var(--color--background);
+	background-color: var(--background--hover);
 }
 
 .actions > *:not(:last-child) {
-	border-right: var(--border);
+	border-right: 1px solid var(--border-color--subtle);
 	padding-right: var(--spacing--2xs);
 }
 

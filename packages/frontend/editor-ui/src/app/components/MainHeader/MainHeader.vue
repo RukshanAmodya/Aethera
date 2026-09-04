@@ -297,13 +297,17 @@ async function onWorkflowDeactivated() {
 	background-color: var(--color--background--light-3);
 	width: 100%;
 	box-sizing: border-box;
-	border-bottom: var(--border-width) var(--border-style) var(--color--foreground);
+	border-bottom: 1px solid var(--border-color--subtle, var(--color--foreground));
+	backdrop-filter: blur(16px);
+	-webkit-backdrop-filter: blur(16px);
+	transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
 .canvas-only {
 	min-height: 0;
 	border-bottom: none;
 	background-color: transparent;
+	backdrop-filter: none;
 }
 
 .top-menu {

@@ -165,7 +165,9 @@ function onUpdate(raw: AcceptableValue) {
 	vertical-align: middle;
 	background-color: var(--color--foreground);
 	padding: var(--n8n-segment-control--padding);
-	border-radius: var(--radius--2xs);
+	border-radius: 9999px;
+	border: 1px solid var(--border-color--subtle);
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
 .mini {

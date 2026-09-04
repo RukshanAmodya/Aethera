@@ -42,7 +42,7 @@ withDefaults(defineProps<SegmentControlItemProps>(), {
 	justify-content: center;
 	border: none;
 	flex: 1;
-	border-radius: var(--radius--3xs);
+	border-radius: 9999px;
 	background: transparent;
 	height: 100%;
 	padding: var(--n8n-segment-control--item-padding);
@@ -56,6 +56,7 @@ withDefaults(defineProps<SegmentControlItemProps>(), {
 	-webkit-font-smoothing: antialiased;
 	text-rendering: optimizeLegibility;
 	-webkit-tap-highlight-color: transparent;
+	transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 
 	&:focus {
 		outline: none;
@@ -70,6 +71,7 @@ withDefaults(defineProps<SegmentControlItemProps>(), {
 	&[data-state='checked'] {
 		color: var(--text-color);
 		background-color: var(--color--foreground--tint-2);
+		box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
 	}
 
 	&[data-state='checked'][data-disabled] {

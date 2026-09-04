@@ -26,9 +26,13 @@ textarea {
 }
 
 // Dialog
+// Dialog & Overlays
 .el-overlay {
-	background-color: var(--dialog--overlay--color--background--dark);
+	background-color: rgba(0, 0, 0, 0.45);
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
 	pointer-events: auto;
+	transition: opacity 0.2s ease;
 }
 
 #app-modals .el-overlay {
@@ -36,61 +40,84 @@ textarea {
 }
 
 .el-dialog {
-	border: var(--border);
-	box-shadow: 0 6px 16px rgb(68 28 23 / 6%);
-	border-radius: 8px;
+	border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+	background-color: var(--dialog--color--background, var(--color--background));
+	box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.35), 0 0 0 1px var(--border-color--subtle);
+	border-radius: 16px;
+	overflow: hidden;
 
 	&.classic {
 		.el-dialog__header {
-			padding: 15px 20px;
+			padding: 20px 24px;
+			border-bottom: 1px solid var(--border-color--subtle);
 		}
 
 		.el-dialog__headerbtn {
 			position: absolute;
-			top: 0;
-			right: -50px;
-			color: var(--color--foreground--tint-2);
-			background-color: var(--color--background--shade-2);
-			border-radius: 0 18px 18px 0;
+			top: 16px;
+			right: 16px;
+			color: var(--color--text--tint-2);
+			background-color: var(--background--hover);
+			border-radius: 8px;
 			z-index: 110;
-			font-size: 1.7em;
+			font-size: 1.2em;
 			text-align: center;
-			line-height: 30px;
-			height: 50px;
-			width: 50px;
+			line-height: 32px;
+			height: 32px;
+			width: 32px;
+			transition: all 0.15s ease;
+
 			.el-dialog__close {
-				color: var(--color--foreground--tint-2);
+				color: var(--color--text--tint-2);
 				font-weight: var(--font-weight--regular);
 			}
-			.el-dialog__close:hover {
-				transform: scale(1.2);
+
+			&:hover {
+				background-color: var(--background--active);
+				transform: scale(1.05);
 			}
 		}
+
 		.el-dialog__body {
 			color: var(--color--text--shade-1);
-			padding: 0 20px 20px;
+			padding: 20px 24px;
 		}
+
 		.el-dialog__title {
-			color: var(--color--text--shade-1);
+			color: var(--color--text);
+			font-weight: 600;
+			font-size: var(--font-size--md);
 		}
 	}
 }
 
 .el-message-box {
-	background-color: var(--dialog--color--background);
-	border: none;
+	background-color: var(--dialog--color--background, var(--color--background));
+	border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+	border-radius: 16px;
+	box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.35);
+	padding: 20px;
+
 	.el-message-box__headerbtn {
 		.el-message-box__close {
 			color: var(--color--text--shade-1);
+			transition: transform 0.15s ease;
+
+			&:hover {
+				transform: scale(1.1);
+			}
 		}
 	}
+
 	.el-message-box__content,
 	.el-message-box__title {
-		color: var(--color--text--shade-1);
+		color: var(--color--text);
 	}
+
 	.el-message-box-icon {
 		width: var(--spacing--lg);
 		height: var(--spacing--lg);
+
 		&--warning {
 			color: var(--color--warning);
 		}
@@ -110,8 +137,15 @@ textarea {
 }
 
 // Notification Message
-.el-message p {
-	line-height: 1.5em;
+.el-message {
+	border-radius: 12px !important;
+	box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.25) !important;
+	border: 1px solid var(--border-color--subtle) !important;
+	backdrop-filter: blur(12px) !important;
+
+	p {
+		line-height: 1.5em;
+	}
 }
 
 // Table
@@ -260,4 +294,30 @@ body.dragging-resource {
 	[data-droppable] {
 		pointer-events: auto;
 	}
+}
+
+// Apple / Stripe Sleek Minimalist Scrollbars
+::-webkit-scrollbar {
+	width: 6px;
+	height: 6px;
+}
+
+::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+	background: var(--border-color--strong, rgba(255, 255, 255, 0.18));
+	border-radius: 9999px;
+	transition: background 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: var(--text-color--subtler, rgba(255, 255, 255, 0.35));
+}
+
+// Text Selection
+::selection {
+	background-color: var(--color--primary, #ff6d5a);
+	color: #ffffff;
 }
