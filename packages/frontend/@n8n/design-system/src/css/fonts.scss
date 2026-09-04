@@ -5,11 +5,27 @@
 @use './fonts/inter';
 
 @font-face {
+	font-family: 'Nunito';
+	font-style: italic;
+	font-weight: 200 1000;
+	font-display: swap;
+	src: url('../../assets/fonts/NunitoVariable-Italic.woff2') format('woff2');
+}
+
+@font-face {
+	font-family: NunitoVariable;
+	font-style: italic;
+	font-weight: 200 1000;
+	font-display: swap;
+	src: url('../../assets/fonts/NunitoVariable-Italic.woff2') format('woff2');
+}
+
+@font-face {
 	font-family: InterVariable;
 	font-style: italic;
 	font-weight: 100 900;
 	font-display: swap;
-	src: url('../../assets/fonts/InterVariable-Italic.woff2') format('woff2');
+	src: url('../../assets/fonts/NunitoVariable-Italic.woff2') format('woff2');
 }
 
 @font-face {

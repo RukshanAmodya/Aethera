@@ -6,9 +6,25 @@
 // `src/css/fonts/`, so the relative `url()` below resolves the same inside the
 // monorepo and from a published tarball.
 @font-face {
+	font-family: 'Nunito';
+	font-style: normal;
+	font-weight: 200 1000;
+	font-display: swap;
+	src: url('../../../assets/fonts/NunitoVariable.woff2') format('woff2');
+}
+
+@font-face {
+	font-family: NunitoVariable;
+	font-style: normal;
+	font-weight: 200 1000;
+	font-display: swap;
+	src: url('../../../assets/fonts/NunitoVariable.woff2') format('woff2');
+}
+
+@font-face {
 	font-family: InterVariable;
 	font-style: normal;
 	font-weight: 100 900;
 	font-display: swap;
-	src: url('../../../assets/fonts/InterVariable.woff2') format('woff2');
+	src: url('../../../assets/fonts/NunitoVariable.woff2') format('woff2');
 }

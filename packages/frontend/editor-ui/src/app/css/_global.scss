@@ -1,8 +1,17 @@
 :root {
+	--font-family: 'Nunito', NunitoVariable, InterVariable, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 	--navbar--height: 64px;
 	--header--height: 65;
 	--content-container--width: 1280px;
 	--banner--height: 48px;
+}
+
+body,
+input,
+button,
+select,
+textarea {
+	font-family: var(--font-family) !important;
 }
 
 .clickable {
