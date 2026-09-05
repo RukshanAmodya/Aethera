@@ -756,20 +756,20 @@
 	--lm-chat--user--border-color: var(--color--green-600);
 
 	// Canvas
-	--canvas--color--background: #08090d;
-	--canvas--dot--color: rgba(16, 185, 129, 0.22);
-	--canvas--read-only-line--color: rgba(255, 255, 255, 0.1);
-	--canvas--color--selected: rgba(16, 185, 129, 0.4);
-	--canvas--color--selected-transparent: rgba(16, 185, 129, 0.12);
-	--canvas--label--color: #34d399;
-	--canvas--label--color--background: rgba(8, 9, 13, 0.85);
+	--canvas--color--background: var(--color--neutral-950);
+	--canvas--dot--color: var(--color--neutral-700);
+	--canvas--read-only-line--color: var(--color--neutral-900);
+	--canvas--color--selected: var(--color--white-alpha-400);
+	--canvas--color--selected-transparent: var(--canvas--color--selected);
+	--canvas--label--color: var(--color--neutral-500);
+	--canvas--label--color--background: oklch(from var(--canvas--color--background) l c h / 0.85);
 
 	// Nodes
-	--node--color--background: #10121a;
-	--node--color--background--executing: #161a26;
-	--node--color--background--executing-1: #161a26;
-	--node--border-color--pinned: var(--color--secondary);
-	--node--type-main--color: #34d399;
+	--node--color--background: var(--color--neutral-850);
+	--node--color--background--executing: var(--color--neutral-700);
+	--node--color--background--executing-1: var(--color--neutral-700);
+	--node--border-color--pinned: var(--color--purple-500);
+	--node--type-main--color: var(--color--neutral-400);
 
 	// Sticky
 	--sticky--color--background: var(--color--yellow-900);

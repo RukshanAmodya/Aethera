@@ -37,8 +37,7 @@ const {
 }
 
 .success {
-	color: var(--color--success, #22c55e);
-	filter: drop-shadow(0 0 6px rgba(34, 197, 94, 0.7));
+	color: var(--color--success);
 }
 
 .error {

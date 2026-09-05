@@ -27,9 +27,8 @@ const classes = computed(() => {
 
 const edgeStyle = computed(() => ({
 	...(connectionType.value === NodeConnectionTypes.Main ? {} : { strokeDasharray: '5,6' }),
-	strokeWidth: 2.2,
-	stroke: '#22c55e',
-	filter: 'drop-shadow(0 0 6px rgba(34, 197, 94, 0.6))',
+	strokeWidth: 2,
+	stroke: 'var(--color--foreground--shade-2)',
 }));
 
 const renderData = computed(() =>
