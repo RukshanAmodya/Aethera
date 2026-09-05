@@ -70,18 +70,8 @@ const {
 		<!-- Brand Row: Logo + Actions -->
 		<div :class="$style.brandRow">
 			<RouterLink :to="{ name: VIEWS.HOMEPAGE }" :class="$style.brandLink">
-				<img
-					v-if="isCollapsed"
-					:src="aetheraIcon"
-					alt="Aethera"
-					:class="$style.collapsedIcon"
-				/>
-				<img
-					v-else
-					:src="aetheraLogo"
-					alt="Aethera"
-					:class="$style.realLogo"
-				/>
+				<img v-if="isCollapsed" :src="aetheraIcon" alt="Aethera" :class="$style.collapsedIcon" />
+				<img v-else :src="aetheraLogo" alt="Aethera" :class="$style.realLogo" />
 			</RouterLink>
 
 			<div :class="$style.headerActions">
@@ -180,8 +170,6 @@ const {
 			</div>
 		</div>
 
-
-
 		<!-- Modern Search Pill Bar (Expanded mode) -->
 		<div v-if="!isCollapsed && !settingsStore.isCanvasOnly" :class="$style.searchContainer">
 			<button
@@ -192,7 +180,10 @@ const {
 			>
 				<N8nIcon icon="search" size="small" :class="$style.searchIcon" />
 				<span :class="$style.searchPlaceholder">Search...</span>
-				<kbd :class="$style.shortcutKbd">⌘K</kbd>
+				<kbd :class="$style.shortcutKbd">
+					<span>⌘</span>
+					<span>K</span>
+				</kbd>
 			</button>
 		</div>
 
@@ -257,7 +248,6 @@ const {
 		}
 	}
 }
-
 
 .brandRow {
 	display: flex;
@@ -409,6 +399,9 @@ const {
 }
 
 .shortcutKbd {
+	display: inline-flex;
+	align-items: center;
+	gap: 2px;
 	font-family: inherit;
 	font-size: 10.5px;
 	font-weight: 600;
@@ -418,6 +411,7 @@ const {
 	border-radius: 6px;
 	border: 1px solid rgba(255, 255, 255, 0.08);
 	line-height: 1.2;
+	letter-spacing: 0.5px;
 }
 
 .iconButton {
