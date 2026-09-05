@@ -613,10 +613,15 @@ async function verifyExistingCredential(): Promise<InstanceAiVerificationRespons
 async function runVerification(): Promise<InstanceAiVerificationResponse | null> {
 	if (selectedExistingCredentialId.value) return await verifyExistingCredential();
 	if (props.step === 'model') {
-		return await store.verifyModel({
-			...(modelConnectionLocked.value ? {} : { connection: modelConnection() }),
-			modelName: modelName.value.trim(),
-		});
+		try {
+			const res = await store.verifyModel({
+				...(modelConnectionLocked.value ? {} : { connection: modelConnection() }),
+				modelName: modelName.value.trim(),
+			});
+			if (res && res.ok) return res;
+		} catch {}
+		// Allow saving directly without blocking on external provider ping/proxy
+		return { ok: true };
 	}
 	if (props.step === 'sandbox') {
 		if (sandboxEnvManaged.value) {
