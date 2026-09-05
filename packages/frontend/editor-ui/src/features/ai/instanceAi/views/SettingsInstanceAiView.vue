@@ -514,52 +514,6 @@ function openAiUsageSettings() {
 							<N8nSettingsRowConfigure v-else :value="modelValue" />
 						</template>
 					</N8nSettingsRow>
-
-					<N8nSettingsRow
-						v-if="showSandboxRow"
-						:class="{ [$style.dim]: isOff }"
-						:clickable="!isOff && isSandboxConfigured && !isSandboxEnvManaged"
-						data-test-id="n8n-agent-sandbox-row"
-						@click="openSandboxDialog"
-					>
-						<template #info>
-							<N8nText bold size="medium" color="text-dark">
-								{{ i18n.baseText('settings.n8nAgent.sandbox.label') }}
-							</N8nText>
-							<N8nText size="small" :color="sandboxDescription.warning ? 'warning' : 'text-light'">
-								{{ i18n.baseText(sandboxDescription.key) }}
-							</N8nText>
-						</template>
-						<template v-if="!isOff" #action>
-							<N8nButton
-								v-if="isSandboxEnvManaged && !isSandboxConfigured"
-								variant="solid"
-								size="medium"
-								:label="i18n.baseText('settings.n8nAgent.sandbox.enable')"
-								:disabled="store.isSaving"
-								data-test-id="n8n-agent-sandbox-enable"
-								@click="enableEnvironmentSandboxIfNeeded"
-							/>
-							<N8nText
-								v-else-if="isSandboxEnvManaged"
-								size="small"
-								color="text-light"
-								data-test-id="n8n-agent-sandbox-env-value"
-							>
-								{{ sandboxValue }}
-							</N8nText>
-							<N8nButton
-								v-else-if="!isSandboxConfigured"
-								variant="solid"
-								size="medium"
-								:label="i18n.baseText('settings.n8nAgent.sandbox.add')"
-								:disabled="store.isSaving"
-								data-test-id="n8n-agent-sandbox-add"
-								@click="openSandboxDialog"
-							/>
-							<N8nSettingsRowConfigure v-else :value="sandboxValue" />
-						</template>
-					</N8nSettingsRow>
 				</N8nSettingsRowGroup>
 			</N8nSettingsSection>
 
@@ -759,14 +713,6 @@ function openAiUsageSettings() {
 			:setup="setupChain"
 			@update:open="setDialogOpen('model', $event)"
 			@saved="handleModelSaved"
-		/>
-		<ConnectionDialog
-			v-if="showSandboxRow && !isSandboxEnvManaged"
-			kind="sandbox"
-			:open="activeDialog === 'sandbox'"
-			:setup="showCredentialsRows && setupChain"
-			@update:open="setDialogOpen('sandbox', $event)"
-			@saved="handleSandboxSaved"
 		/>
 		<ConnectionDialog
 			v-if="showCredentialsRows && !isSearchEnvManaged"

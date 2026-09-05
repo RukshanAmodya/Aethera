@@ -70,18 +70,6 @@ const i18n = useI18n();
 							description: i18n.baseText('instanceAi.onboarding.model.description'),
 							value: modelValue,
 						},
-						{
-							id: 'sandbox' as const,
-							title: i18n.baseText('instanceAi.onboarding.sandbox.label'),
-							description: i18n.baseText('instanceAi.onboarding.sandbox.description'),
-							value: sandboxValue,
-						},
-						{
-							id: 'search' as const,
-							title: i18n.baseText('instanceAi.onboarding.search.label'),
-							description: i18n.baseText('instanceAi.onboarding.search.description'),
-							value: searchValue,
-						},
 					]"
 					:key="item.id"
 					:title="item.title"
