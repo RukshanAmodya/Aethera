@@ -159,6 +159,29 @@ function onEdgeLabelMouseLeave() {
 		:style="edgeStyles"
 		v-bind="$attrs"
 	>
+		<defs>
+			<!-- Top / Coral Flow Gradient -->
+			<linearGradient id="edgeGradientCoral" x1="0%" y1="0%" x2="100%" y2="100%">
+				<stop offset="0%" stop-color="#ff4d6d" stop-opacity="1" />
+				<stop offset="60%" stop-color="#ff758f" stop-opacity="0.8" />
+				<stop offset="100%" stop-color="#ffa8b6" stop-opacity="0.2" />
+			</linearGradient>
+
+			<!-- Emerald / Green Flow Gradient -->
+			<linearGradient id="edgeGradientGreen" x1="0%" y1="0%" x2="100%" y2="100%">
+				<stop offset="0%" stop-color="#22c55e" stop-opacity="1" />
+				<stop offset="60%" stop-color="#4ade80" stop-opacity="0.8" />
+				<stop offset="100%" stop-color="#86efac" stop-opacity="0.2" />
+			</linearGradient>
+
+			<!-- Violet / Indigo Flow Gradient -->
+			<linearGradient id="edgeGradientViolet" x1="0%" y1="0%" x2="100%" y2="100%">
+				<stop offset="0%" stop-color="#6366f1" stop-opacity="1" />
+				<stop offset="60%" stop-color="#818cf8" stop-opacity="0.8" />
+				<stop offset="100%" stop-color="#c7d2fe" stop-opacity="0.2" />
+			</linearGradient>
+		</defs>
+
 		<slot name="highlight" v-bind="{ segments }" />
 
 		<BaseEdge
@@ -172,19 +195,21 @@ function onEdgeLabelMouseLeave() {
 			:interaction-width="40"
 		/>
 
-		<!-- Smooth flowing energy beam when edge is running -->
+		<!-- Smooth flowing gradient energy beam when edge is running -->
 		<template v-if="isRunning">
 			<path
 				v-for="segment in segments"
 				:key="`flow-glow-${segment[0]}`"
 				:d="segment[0]"
 				:class="$style.runningFlowGlow"
+				pathLength="100"
 			/>
 			<path
 				v-for="segment in segments"
 				:key="`flow-${segment[0]}`"
 				:d="segment[0]"
 				:class="$style.runningFlow"
+				pathLength="100"
 			/>
 		</template>
 	</g>
@@ -208,7 +233,12 @@ function onEdgeLabelMouseLeave() {
 				@add="onAdd"
 				@delete="onDelete"
 			/>
-			<div v-else :class="$style.edgeLabel">{{ label }}</div>
+			<div v-else-if="label" :class="$style.edgeLabelContainer">
+				<span :class="$style.edgeLabelIf">If</span>
+				<span :class="[$style.edgeLabel, { [$style.trueBranch]: label.toLowerCase().includes('true') || label.toLowerCase().includes('replied'), [$style.falseBranch]: label.toLowerCase().includes('false') || label.toLowerCase().includes('no reply') }]">
+					{{ label }}
+				</span>
+			</div>
 		</div>
 	</EdgeLabelRenderer>
 </template>
@@ -222,43 +252,53 @@ function onEdgeLabelMouseLeave() {
 		--canvas-edge--color,
 		light-dark(
 			oklch(var(--canvas-edge--color--lightness--light) 0 0),
-			oklch(var(--canvas-edge--color--lightness--dark) 0 0)
+			#252830
 		)
 	) !important;
 	/* stylelint-disable-next-line @n8n/css-var-naming */
-	stroke-width: calc(2 * var(--canvas-zoom-compensation-factor, 1)) !important;
-	stroke-linecap: square;
+	stroke-width: calc(2.2px * var(--canvas-zoom-compensation-factor, 1)) !important;
+	stroke-linecap: round;
 }
 
 .runningFlowGlow {
 	fill: none;
-	stroke: var(--color--primary, #6366f1);
+	stroke: url(#edgeGradientGreen);
 	/* stylelint-disable-next-line @n8n/css-var-naming */
-	stroke-width: calc(3.5px * var(--canvas-zoom-compensation-factor, 1));
+	stroke-width: calc(4px * var(--canvas-zoom-compensation-factor, 1));
 	stroke-linecap: round;
-	stroke-dasharray: 48 120;
-	opacity: 0.35;
+	stroke-dasharray: 35 100;
+	filter: drop-shadow(0 0 6px #22c55e);
+	opacity: 0.6;
 	pointer-events: none;
-	animation: flowingBeam 1.4s linear infinite;
+	animation: flowingBeam 1.8s linear infinite;
 }
 
 .runningFlow {
 	fill: none;
-	stroke: var(--color--primary, #6366f1);
+	stroke: url(#edgeGradientGreen);
 	/* stylelint-disable-next-line @n8n/css-var-naming */
-	stroke-width: calc(2.2px * var(--canvas-zoom-compensation-factor, 1));
+	stroke-width: calc(2.5px * var(--canvas-zoom-compensation-factor, 1));
 	stroke-linecap: round;
-	stroke-dasharray: 32 136;
+	stroke-dasharray: 35 100;
+	filter: drop-shadow(0 0 4px #22c55e);
 	pointer-events: none;
-	animation: flowingBeam 1.4s linear infinite;
+	animation: flowingBeam 1.8s linear infinite;
 }
 
 @keyframes flowingBeam {
-	from {
-		stroke-dashoffset: 168;
+	0% {
+		stroke-dashoffset: 135;
+		opacity: 0;
 	}
-	to {
+	20% {
+		opacity: 1;
+	}
+	80% {
+		opacity: 1;
+	}
+	100% {
 		stroke-dashoffset: 0;
+		opacity: 0;
 	}
 }
 
@@ -275,11 +315,44 @@ function onEdgeLabelMouseLeave() {
 	}
 }
 
-.edgeLabel {
+.edgeLabelContainer {
 	/* stylelint-disable-next-line @n8n/css-var-naming */
 	transform: scale(var(--canvas-zoom-compensation-factor, 1)) translate(0, var(--label-translate-y));
-	color: var(--canvas--label--color);
-	font-size: var(--font-size--xs);
-	background-color: var(--canvas--label--color--background);
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+}
+
+.edgeLabelIf {
+	font-size: 11px;
+	color: #9ca3af;
+	background: #1a1c22;
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	border-radius: 9999px;
+	padding: 2px 8px;
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+.edgeLabel {
+	font-size: 11px;
+	font-weight: 500;
+	color: #9ca3af;
+	background: #1a1c22;
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	border-radius: 9999px;
+	padding: 2px 10px;
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+
+	&.trueBranch {
+		color: #4ade80;
+		background: #0c2617;
+		border-color: rgba(34, 197, 94, 0.3);
+	}
+
+	&.falseBranch {
+		color: #f87171;
+		background: #2a1318;
+		border-color: rgba(255, 77, 109, 0.3);
+	}
 }
 </style>

@@ -35,7 +35,7 @@ import * as workflowUtils from 'n8n-workflow/common';
 
 export const GRID_SIZE = 16;
 
-export const DEFAULT_NODE_SIZE: [number, number] = [GRID_SIZE * 6, GRID_SIZE * 6];
+export const DEFAULT_NODE_SIZE: [number, number] = [GRID_SIZE * 18, GRID_SIZE * 8];
 export const CONFIGURATION_NODE_RADIUS = (GRID_SIZE * 5) / 2;
 export const CONFIGURATION_NODE_SIZE: [number, number] = [
 	CONFIGURATION_NODE_RADIUS * 2,

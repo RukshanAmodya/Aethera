@@ -756,20 +756,20 @@
 	--lm-chat--user--border-color: var(--color--green-600);
 
 	// Canvas
-	--canvas--color--background: var(--color--neutral-950);
-	--canvas--dot--color: var(--color--neutral-700);
-	--canvas--read-only-line--color: var(--color--neutral-900);
-	--canvas--color--selected: var(--color--white-alpha-400);
-	--canvas--color--selected-transparent: var(--canvas--color--selected);
-	--canvas--label--color: var(--color--neutral-500);
-	--canvas--label--color--background: oklch(from var(--canvas--color--background) l c h / 0.85);
+	--canvas--color--background: #0b0c0e;
+	--canvas--dot--color: rgba(255, 255, 255, 0.12);
+	--canvas--read-only-line--color: rgba(255, 255, 255, 0.08);
+	--canvas--color--selected: #ff4d6d;
+	--canvas--color--selected-transparent: rgba(255, 77, 109, 0.15);
+	--canvas--label--color: #9ca3af;
+	--canvas--label--color--background: #1a1c22;
 
 	// Nodes
-	--node--color--background: var(--color--neutral-850);
-	--node--color--background--executing: var(--color--neutral-700);
-	--node--color--background--executing-1: var(--color--neutral-700);
-	--node--border-color--pinned: var(--color--purple-500);
-	--node--type-main--color: var(--color--neutral-400);
+	--node--color--background: #141518;
+	--node--color--background--executing: #1a1c22;
+	--node--color--background--executing-1: #1a1c22;
+	--node--border-color--pinned: var(--color--secondary);
+	--node--type-main--color: #3b4252;
 
 	// Sticky
 	--sticky--color--background: var(--color--yellow-900);
