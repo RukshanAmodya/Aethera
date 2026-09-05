@@ -105,23 +105,24 @@ function onToggleAssistant() {
 
 <template>
 	<aside :class="$style.canvasSidebar">
-		<!-- Top Section: Back Button / Aethera Logo -->
-		<div :class="$style.topSection">
-			<button
-				type="button"
-				:class="$style.backButton"
-				:title="i18n.baseText('generic.back') || 'Back to Projects'"
-				@click="goBack"
-			>
-				<img :src="aetheraIcon" alt="Back" :class="$style.brandIcon" />
-				<span :class="$style.backArrowOverlay">
-					<N8nIcon icon="chevron-left" size="medium" />
-				</span>
-			</button>
-		</div>
-
-		<!-- Centered Main Floating Tool Panel -->
+		<!-- Unified Centered Floating Tool Panel with Brand/Back Button at top -->
 		<div :class="$style.toolPanel">
+			<!-- Aethera Brand Logo / Back Button -->
+			<KeyboardShortcutTooltip :label="i18n.baseText('generic.back') || 'Back to Projects'">
+				<button
+					type="button"
+					:class="[$style.toolBtn, $style.backButton]"
+					@click="goBack"
+				>
+					<img :src="aetheraIcon" alt="Back" :class="$style.brandIcon" />
+					<span :class="$style.backArrowOverlay">
+						<N8nIcon icon="chevron-left" size="medium" />
+					</span>
+				</button>
+			</KeyboardShortcutTooltip>
+
+			<div :class="$style.divider" />
+
 			<!-- Add Node (+) -->
 			<KeyboardShortcutTooltip label="Add Node" :shortcut="{ keys: ['Tab'] }">
 				<button
@@ -199,40 +200,33 @@ function onToggleAssistant() {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	justify-content: space-between;
-	padding: 8px 0;
+	justify-content: center;
+	padding: 0;
 	box-sizing: border-box;
 	z-index: 100;
 	pointer-events: auto;
 }
 
-.topSection {
-	width: 100%;
+.toolPanel {
+	margin: auto 0;
 	display: flex;
-	justify-content: center;
-	padding-top: 4px;
+	flex-direction: column;
+	align-items: center;
+	gap: 6px;
+	padding: 6px;
+	border-radius: 20px;
+	background: #14151a;
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	box-shadow: 0 12px 32px -4px rgba(0, 0, 0, 0.65), 0 2px 8px rgba(0, 0, 0, 0.4);
+	backdrop-filter: blur(16px);
+	-webkit-backdrop-filter: blur(16px);
 }
 
 .backButton {
 	position: relative;
-	width: 40px;
-	height: 40px;
-	border-radius: 12px;
-	background: #15171e;
-	border: 1px solid rgba(255, 255, 255, 0.08);
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	cursor: pointer;
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-	transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 	overflow: hidden;
 
 	&:hover {
-		transform: scale(1.05);
-		border-color: rgba(255, 255, 255, 0.2);
-		background: #1e212b;
-
 		.brandIcon {
 			opacity: 0;
 			transform: scale(0.6);
@@ -246,10 +240,10 @@ function onToggleAssistant() {
 }
 
 .brandIcon {
-	width: 22px;
-	height: 22px;
+	width: 20px;
+	height: 20px;
 	object-fit: contain;
-	transition: all 0.2s ease;
+	transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .backArrowOverlay {
@@ -260,22 +254,7 @@ function onToggleAssistant() {
 	color: #ffffff;
 	opacity: 0;
 	transform: scale(1.3);
-	transition: all 0.2s ease;
-}
-
-.toolPanel {
-	margin: auto 0;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	gap: 6px;
-	padding: 6px;
-	border-radius: 18px;
-	background: #14151a;
-	border: 1px solid rgba(255, 255, 255, 0.08);
-	box-shadow: 0 12px 32px -4px rgba(0, 0, 0, 0.65), 0 2px 8px rgba(0, 0, 0, 0.4);
-	backdrop-filter: blur(16px);
-	-webkit-backdrop-filter: blur(16px);
+	transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .toolBtn {
