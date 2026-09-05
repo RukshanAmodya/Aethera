@@ -148,7 +148,7 @@ const onUserActionToggle = (action: string) => {
 		border-color: rgba(255, 255, 255, 0.16);
 
 		.ellipsisBtn {
-			color: #ffffff !important;
+			color: #fff !important;
 		}
 	}
 }
@@ -199,7 +199,7 @@ const onUserActionToggle = (action: string) => {
 	padding: 2px !important;
 
 	&:hover {
-		color: #ffffff !important;
+		color: #fff !important;
 		background: rgba(255, 255, 255, 0.08) !important;
 	}
 }

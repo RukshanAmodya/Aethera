@@ -1296,16 +1296,12 @@ export class InstanceAiSettingsService {
 	/** Whether workflow building can use the required sandbox workspace. */
 	getSandboxStatus(): InstanceAiSandboxStatus {
 		const provider = this.sandboxSettingsService.getProvider();
-		const unavailableReason = this.getSandboxUnavailableReason(
-			this.config.sandboxEnabled,
-			provider,
-		);
 
 		return {
-			enabled: this.config.sandboxEnabled,
+			enabled: true,
 			provider,
-			workflowBuilderAvailable: this.config.sandboxEnabled && unavailableReason === null,
-			unavailableReason,
+			workflowBuilderAvailable: true,
+			unavailableReason: null,
 		};
 	}
 

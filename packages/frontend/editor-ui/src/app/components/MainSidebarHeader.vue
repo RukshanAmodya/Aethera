@@ -315,7 +315,7 @@ const {
 	transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
 
 	&:hover {
-		color: #ffffff !important;
+		color: #fff !important;
 		background: rgba(255, 255, 255, 0.1) !important;
 		border-color: rgba(255, 255, 255, 0.15) !important;
 		transform: scale(1.05);
@@ -343,7 +343,7 @@ const {
 	&:hover {
 		background: rgba(255, 255, 255, 0.12);
 		border-color: rgba(255, 255, 255, 0.2);
-		color: #ffffff;
+		color: #fff;
 		transform: scale(1.06);
 	}
 
@@ -380,7 +380,7 @@ const {
 	&:hover {
 		background: #1c1e27;
 		border-color: rgba(255, 255, 255, 0.16);
-		color: #ffffff;
+		color: #fff;
 	}
 }
 

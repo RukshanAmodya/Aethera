@@ -547,11 +547,10 @@ function handleShelfSuggestionInsert(payload: {
 						@upgrade-click="goToUpgrade('instance-ai', 'upgrade-instance-ai')"
 						@dismiss="creditBanner.dismiss()"
 					/>
-					<WorkflowBuilderUnavailableNotice v-if="!settingsStore.isWorkflowBuilderAvailable" />
 					<InstanceAiInput
 						ref="chatInputRef"
 						:is-submitting="isStartingThread"
-						:is-workflow-builder-available="settingsStore.isWorkflowBuilderAvailable"
+						:is-workflow-builder-available="true"
 						@submit="handleSubmit"
 					>
 						<template #footer v-if="projectsStore.myProjects.length > 1">
@@ -565,7 +564,7 @@ function handleShelfSuggestionInsert(payload: {
 			<InstanceAiSplitEmptyState
 				v-else-if="isSplitVariantEnabled"
 				:project-id="selectedProject"
-				:disabled="isStartingThread || !settingsStore.isWorkflowBuilderAvailable"
+				:disabled="isStartingThread"
 				:writing="splitWriting"
 				@submit-suggestion="handleShelfSuggestionSubmit"
 				@insert-suggestion="handleShelfSuggestionInsert"
@@ -584,11 +583,10 @@ function handleShelfSuggestionInsert(payload: {
 							@upgrade-click="goToUpgrade('instance-ai', 'upgrade-instance-ai')"
 							@dismiss="creditBanner.dismiss()"
 						/>
-						<WorkflowBuilderUnavailableNotice v-if="!settingsStore.isWorkflowBuilderAvailable" />
 						<InstanceAiInput
 							ref="chatInputRef"
 							:is-submitting="isStartingThread"
-							:is-workflow-builder-available="settingsStore.isWorkflowBuilderAvailable"
+							:is-workflow-builder-available="true"
 							:placeholder-key="INSTANCE_AI_SPLIT_EMPTY_STATE_PLACEHOLDER_KEY"
 							:preview-prompt-key="splitWriting ? null : splitPreviewPromptKey"
 							:fixed-rows="INSTANCE_AI_SPLIT_FIXED_ROWS"
@@ -613,8 +611,7 @@ function handleShelfSuggestionInsert(payload: {
 					<InstanceAiFreeNudge
 						:eligible="
 							store.creditsQuota !== undefined &&
-							!creditBanner.visible.value &&
-							settingsStore.isWorkflowBuilderAvailable
+							!creditBanner.visible.value
 						"
 					/>
 					<CreditWarningBanner
@@ -625,12 +622,11 @@ function handleShelfSuggestionInsert(payload: {
 						@upgrade-click="goToUpgrade('instance-ai', 'upgrade-instance-ai')"
 						@dismiss="creditBanner.dismiss()"
 					/>
-					<WorkflowBuilderUnavailableNotice v-if="!settingsStore.isWorkflowBuilderAvailable" />
 					<InstanceAiInput
 						ref="chatInputRef"
 						:class="inputPulsing && $style.inputPulse"
 						:is-submitting="isStartingThread"
-						:is-workflow-builder-available="settingsStore.isWorkflowBuilderAvailable"
+						:is-workflow-builder-available="true"
 						:contextual-suggestion="templatePreviewPrompt"
 						:placeholder-key="
 							showTemplateExamples ? INSTANCE_AI_TEMPLATE_EXAMPLES_PLACEHOLDER_KEY : undefined

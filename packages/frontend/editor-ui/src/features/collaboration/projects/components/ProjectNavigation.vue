@@ -349,10 +349,10 @@ onBeforeUnmount(() => {
 
 	&:hover {
 		background-color: rgba(255, 255, 255, 0.05);
-		color: #ffffff;
+		color: #fff;
 
 		.chevron {
-			color: #ffffff;
+			color: #fff;
 		}
 	}
 
@@ -439,7 +439,7 @@ onBeforeUnmount(() => {
 
 	&:not(.collapsed):hover a[role='menuitem'] {
 		background-color: rgba(255, 255, 255, 0.06);
-		color: #ffffff;
+		color: #fff;
 		padding-right: var(--spacing--lg);
 	}
 }
@@ -463,7 +463,7 @@ onBeforeUnmount(() => {
 
 	&:hover,
 	&:focus-visible {
-		color: #ffffff;
+		color: #fff;
 	}
 }
 </style>

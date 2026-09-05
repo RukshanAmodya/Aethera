@@ -487,7 +487,7 @@ function onActivate(event: MouseEvent) {
 	align-items: center;
 	justify-content: center;
 	background: light-dark(
-		#ffffff,
+		#fff,
 		#0f1118
 	);
 	@include styles.canvas-node-border;
@@ -721,7 +721,7 @@ function onActivate(event: MouseEvent) {
 	transform: translateX(-50%);
 	width: 256px;
 	margin-top: 12px;
-	background: light-dark(#ffffff, #0f1118);
+	background: light-dark(#fff, #0f1118);
 	border: 1px solid light-dark(rgba(0, 0, 0, 0.08), rgba(255, 255, 255, 0.1));
 	border-radius: 14px;
 	padding: 10px 12px;

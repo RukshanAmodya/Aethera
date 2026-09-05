@@ -411,11 +411,11 @@ useKeybindings({
 			border-color: rgba(255, 255, 255, 0.1) !important;
 
 			:global(.n8n-text) {
-				color: #ffffff !important;
+				color: #fff !important;
 			}
 
 			:global(svg) {
-				color: #ffffff !important;
+				color: #fff !important;
 				transform: scale(1.06);
 			}
 		}
@@ -432,13 +432,13 @@ useKeybindings({
 			backdrop-filter: blur(16px);
 
 			:global(.n8n-text) {
-				color: #ffffff !important;
+				color: #fff !important;
 				font-weight: 600;
 				text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
 			}
 
 			:global(svg) {
-				color: #ffffff !important;
+				color: #fff !important;
 				filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.4));
 			}
 		}

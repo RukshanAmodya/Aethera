@@ -814,7 +814,7 @@ const tags = computed(
 	padding: 0;
 	align-items: stretch;
 	border-radius: 16px !important;
-	background: light-dark(#ffffff, #11131a) !important;
+	background: light-dark(#fff, #11131a) !important;
 	border: 1px solid light-dark(rgba(0, 0, 0, 0.08), rgba(255, 255, 255, 0.08)) !important;
 	box-shadow: 0 4px 14px -2px light-dark(rgba(0, 0, 0, 0.03), rgba(0, 0, 0, 0.4)) !important;
 	margin-bottom: 10px;

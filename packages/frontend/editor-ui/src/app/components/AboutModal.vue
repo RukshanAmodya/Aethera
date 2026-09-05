@@ -181,7 +181,7 @@ const copyDebugInfoToClipboard = async () => {
 		inset 0 1px 1px 0 rgba(255, 255, 255, 0.25);
 	border: 1px solid rgba(255, 255, 255, 0.1);
 	font-family: inherit;
-	color: #ffffff;
+	color: #fff;
 }
 
 .closeButton {
@@ -215,7 +215,7 @@ const copyDebugInfoToClipboard = async () => {
 
 	&:hover {
 		background: rgba(255, 255, 255, 0.2);
-		color: #ffffff;
+		color: #fff;
 		transform: scale(1.08);
 		border-color: rgba(255, 255, 255, 0.3);
 		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
@@ -420,7 +420,7 @@ const copyDebugInfoToClipboard = async () => {
 	font-size: 21px;
 	font-weight: 700;
 	letter-spacing: -0.02em;
-	color: #ffffff;
+	color: #fff;
 	margin: 0;
 }
 
@@ -449,7 +449,7 @@ const copyDebugInfoToClipboard = async () => {
 	font-size: 13.5px;
 	line-height: 1.5;
 	color: #94a3b8;
-	margin: 0 0 20px 0;
+	margin: 0 0 20px;
 }
 
 /* Glass Specs List */
@@ -553,7 +553,7 @@ const copyDebugInfoToClipboard = async () => {
 	&:hover {
 		background: rgba(255, 255, 255, 0.12);
 		border-color: rgba(255, 255, 255, 0.18);
-		color: #ffffff;
+		color: #fff;
 		transform: translateY(-1px);
 	}
 
@@ -568,7 +568,7 @@ const copyDebugInfoToClipboard = async () => {
 	border-radius: 14px;
 	background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
 	border: 1px solid rgba(255, 255, 255, 0.2);
-	color: #ffffff;
+	color: #fff;
 	font-size: 13px;
 	font-weight: 600;
 	cursor: pointer;

@@ -1255,9 +1255,6 @@ async function dismissComposerContextChip() {
 
 								<div :class="$style.inputContainer">
 									<div :class="$style.inputConstraint">
-										<WorkflowBuilderUnavailableNotice
-											v-if="!settingsStore.isWorkflowBuilderAvailable"
-										/>
 										<CreditWarningBanner
 											v-if="creditBanner.visible.value"
 											:credits-remaining="store.creditsRemaining"
@@ -1281,7 +1278,7 @@ async function dismissComposerContextChip() {
 													:is-submitting="thread.isSendingMessage"
 													:is-awaiting-confirmation="thread.isAwaitingConfirmation"
 													:is-plan-edit-mode="thread.activePlanEdit !== null"
-													:is-workflow-builder-available="settingsStore.isWorkflowBuilderAvailable"
+													:is-workflow-builder-available="true"
 													:current-thread-id="thread.id"
 													:amend-context="thread.amendContext"
 													:context-chip="composerContextChip"

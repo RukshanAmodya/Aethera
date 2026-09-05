@@ -229,7 +229,7 @@ const trackTabClick = (insightType: keyof InsightsSummary) => {
 	min-height: 136px;
 	padding: 16px 18px;
 	border-radius: 18px;
-	background: light-dark(#ffffff, #11131a);
+	background: light-dark(#fff, #11131a);
 	border: 1px solid light-dark(rgba(0, 0, 0, 0.08), rgba(255, 255, 255, 0.08));
 	box-shadow:
 		0 6px 18px -4px light-dark(rgba(0, 0, 0, 0.04), rgba(0, 0, 0, 0.5)),
@@ -268,12 +268,12 @@ const trackTabClick = (insightType: keyof InsightsSummary) => {
 
 		.arrowPill {
 			background: rgba(255, 255, 255, 0.14);
-			color: #ffffff;
+			color: #fff;
 			border: 1px solid rgba(255, 255, 255, 0.2);
 		}
 
 		.valueNumber {
-			color: #ffffff !important;
+			color: #fff !important;
 		}
 
 		.unit {
@@ -294,7 +294,7 @@ const trackTabClick = (insightType: keyof InsightsSummary) => {
 
 			.arrowPill {
 				background: rgba(255, 255, 255, 0.25);
-				color: #ffffff;
+				color: #fff;
 			}
 		}
 	}

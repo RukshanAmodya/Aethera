@@ -102,12 +102,8 @@ export const useInstanceAiSettingsStore = defineStore('instanceAiSettings', () =
 	const isCloudManaged = computed(
 		() => settingsStore.moduleSettings?.['instance-ai']?.cloudManaged === true,
 	);
-	const isSandboxEnabled = computed(
-		() => settingsStore.moduleSettings?.['instance-ai']?.sandboxEnabled === true,
-	);
-	const isWorkflowBuilderAvailable = computed(
-		() => settingsStore.moduleSettings?.['instance-ai']?.workflowBuilderAvailable ?? true,
-	);
+	const isSandboxEnabled = computed(() => true);
+	const isWorkflowBuilderAvailable = computed(() => true);
 	/**
 	 * Setup panel v2 gate — the single FE accessor; the backing mechanism (env var
 	 * today) stays swappable. Named with the instanceAi prefix because the canvas
@@ -134,13 +130,9 @@ export const useInstanceAiSettingsStore = defineStore('instanceAiSettings', () =
 			proxyEnabled: prev?.proxyEnabled ?? false,
 			cloudManaged: prev?.cloudManaged ?? false,
 			setupCompleted: configuration.setupCompleted,
-			sandboxEnabled: adminRes.sandboxEnabled,
-			workflowBuilderAvailable: adminRes.sandboxEnabled
-				? (prev?.workflowBuilderAvailable ?? true)
-				: false,
-			sandboxUnavailableReason: adminRes.sandboxEnabled
-				? (prev?.sandboxUnavailableReason ?? null)
-				: null,
+			sandboxEnabled: true,
+			workflowBuilderAvailable: true,
+			sandboxUnavailableReason: null,
 			runDebugEnabled: prev?.runDebugEnabled ?? false,
 			instanceAiSetupPanelEnabled: prev?.instanceAiSetupPanelEnabled ?? false,
 		};

@@ -124,8 +124,8 @@ const onSecondaryClick = () => {
 	justify-content: center;
 	background-color: #121316;
 	background-image:
-		radial-gradient(at 15% 15%, rgba(37, 99, 235, 0.12) 0px, transparent 50%),
-		radial-gradient(at 85% 85%, rgba(56, 189, 248, 0.08) 0px, transparent 50%);
+		radial-gradient(at 15% 15%, rgba(37, 99, 235, 0.12) 0, transparent 50%),
+		radial-gradient(at 85% 85%, rgba(56, 189, 248, 0.08) 0, transparent 50%);
 	padding: 24px;
 	box-sizing: border-box;
 	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
@@ -136,7 +136,7 @@ const onSecondaryClick = () => {
 	width: 100%;
 	max-width: 1080px;
 	min-height: 660px;
-	background: #ffffff;
+	background: #fff;
 	border-radius: 28px;
 	box-shadow:
 		0 20px 50px -10px rgba(0, 0, 0, 0.45),
@@ -160,7 +160,7 @@ const onSecondaryClick = () => {
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
-	color: #ffffff;
+	color: #fff;
 	position: relative;
 	overflow: hidden;
 	box-sizing: border-box;
@@ -228,7 +228,7 @@ const onSecondaryClick = () => {
 	border-radius: 9999px;
 	font-size: 13px;
 	font-weight: 500;
-	color: #ffffff;
+	color: #fff;
 	margin-bottom: 20px;
 	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
@@ -238,8 +238,8 @@ const onSecondaryClick = () => {
 	font-weight: 700;
 	line-height: 1.2;
 	letter-spacing: -0.02em;
-	color: #ffffff;
-	margin: 0 0 12px 0;
+	color: #fff;
+	margin: 0 0 12px;
 	text-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
 }
 
@@ -285,13 +285,13 @@ const onSecondaryClick = () => {
 }
 
 .stepActive {
-	background: #ffffff;
-	border-color: #ffffff;
+	background: #fff;
+	border-color: #fff;
 	box-shadow: 0 10px 25px -4px rgba(0, 0, 0, 0.15);
 
 	.stepBadge {
 		background: #2563eb;
-		color: #ffffff;
+		color: #fff;
 	}
 
 	.stepTitle {
@@ -300,7 +300,7 @@ const onSecondaryClick = () => {
 	}
 
 	&:hover {
-		background: #ffffff;
+		background: #fff;
 	}
 }
 
@@ -309,7 +309,7 @@ const onSecondaryClick = () => {
 	height: 26px;
 	border-radius: 50%;
 	background: rgba(255, 255, 255, 0.28);
-	color: #ffffff;
+	color: #fff;
 	font-size: 13px;
 	font-weight: 600;
 	display: flex;
@@ -333,7 +333,7 @@ const onSecondaryClick = () => {
 /* Right Form Column */
 .formColumn {
 	flex: 1 1 52%;
-	background: #ffffff;
+	background: #fff;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -387,13 +387,13 @@ const onSecondaryClick = () => {
 	/* Form input aesthetics */
 	:global(.n8n-input),
 	:global(.el-input) {
-		--input--color--background: #ffffff !important;
+		--input--color--background: #fff !important;
 		--input--color--text: #0f172a !important;
 		--input--placeholder--color: #94a3b8 !important;
 		--input--border-color: #cbd5e1 !important;
 		--input--border--shadow: 0 0 0 1px #cbd5e1 !important;
-		--color--neutral-white: #ffffff !important;
-		--color--neutral-950: #ffffff !important;
+		--color--neutral-white: #fff !important;
+		--color--neutral-950: #fff !important;
 		--color--text--shade-1: #0f172a !important;
 		--color--text--tint-1: #94a3b8 !important;
 		width: 100% !important;
@@ -403,8 +403,8 @@ const onSecondaryClick = () => {
 	:global(.n8n-input__wrapper),
 	:global([class*="inputWrapper"]),
 	:global(.el-input__wrapper) {
-		background-color: #ffffff !important;
-		background: #ffffff !important;
+		background-color: #fff !important;
+		background: #fff !important;
 		border-radius: 12px !important;
 		box-shadow: 0 0 0 1px #cbd5e1 inset !important;
 		transition: all 0.2s ease !important;
@@ -415,8 +415,8 @@ const onSecondaryClick = () => {
 	:global([class*="inputWrapper"]:hover),
 	:global(.el-input__wrapper:hover) {
 		box-shadow: 0 0 0 1px #3b82f6 inset !important;
-		background-color: #ffffff !important;
-		background: #ffffff !important;
+		background-color: #fff !important;
+		background: #fff !important;
 	}
 
 	:global(.n8n-input > div:focus-within),
@@ -424,8 +424,8 @@ const onSecondaryClick = () => {
 	:global([class*="inputWrapper"]:focus-within),
 	:global(.el-input__wrapper.is-focus) {
 		box-shadow: 0 0 0 2px #2563eb inset, 0 0 0 4px rgba(37, 99, 235, 0.15) !important;
-		background-color: #ffffff !important;
-		background: #ffffff !important;
+		background-color: #fff !important;
+		background: #fff !important;
 	}
 
 	:global(.n8n-input input),
@@ -467,7 +467,7 @@ const onSecondaryClick = () => {
 		border-color: #2563eb !important;
 		font-size: 15px !important;
 		font-weight: 600 !important;
-		color: #ffffff !important;
+		color: #fff !important;
 		box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3) !important;
 		transition: all 0.2s ease !important;
 

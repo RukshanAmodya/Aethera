@@ -35,7 +35,7 @@ const isOutputHandle = computed(() => props.handleClasses === 'source');
 	width: var(--handle--indicator--width);
 	height: var(--handle--indicator--height);
 	border-radius: 50%;
-	background: light-dark(#ffffff, #0d1117);
+	background: light-dark(#fff, #0d1117);
 	border: 1.5px solid
 		light-dark(
 			oklch(var(--handle--border--lightness--light, 0.68) 0 0),

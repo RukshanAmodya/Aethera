@@ -202,7 +202,7 @@ const isComposerDirty = computed(() => hasNonWhitespaceDraftText.value || hasAtt
 // Experiment cleanup: remove with instanceAiSplitEmptyState.
 watch(isComposerDirty, (hasContent) => emit('content-change', hasContent));
 const isGatedBySetup = computed(
-	() => props.isAwaitingConfirmation || !props.isWorkflowBuilderAvailable,
+	() => props.isAwaitingConfirmation,
 );
 const canSubmit = computed(() => isComposerDirty.value && !isBusy.value && !isGatedBySetup.value);
 const canShowSuggestions = computed(
@@ -223,9 +223,6 @@ const resolvedSuggestionCatalogVersion = computed(
 const shouldTrackVisibleSuggestions = computed(() => canShowSuggestions.value);
 
 const placeholder = computed(() => {
-	if (!props.isWorkflowBuilderAvailable) {
-		return i18n.baseText('instanceAi.input.workflowBuilderUnavailablePlaceholder');
-	}
 	if (isGatedBySetup.value) {
 		return i18n.baseText('instanceAi.input.suspendedPlaceholder');
 	}

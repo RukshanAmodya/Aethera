@@ -188,23 +188,23 @@ const tooltipPlacement = computed(() => {
 
 		.menuItemText,
 		:global(.n8n-text).menuItemText {
-			color: #ffffff !important;
+			color: #fff !important;
 			font-weight: 600;
 		}
 
 		.menuItemIcon,
 		.menuItemIcon :global(.n8n-icon) {
-			color: #ffffff !important;
+			color: #fff !important;
 		}
 	}
 
 	&:hover:not(.active):not(:global(.router-link-active)):not(.disabled) {
 		background-color: rgba(255, 255, 255, 0.08) !important;
-		color: #ffffff !important;
+		color: #fff !important;
 
 		.menuItemText,
 		:global(.n8n-text).menuItemText {
-			color: #ffffff !important;
+			color: #fff !important;
 		}
 
 		.menuItemIcon,
