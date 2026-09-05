@@ -214,7 +214,7 @@ function onEdgeLabelMouseLeave() {
 		</template>
 	</g>
 
-	<EdgeLabelRenderer>
+	<EdgeLabelRenderer v-if="renderToolbar">
 		<div
 			data-test-id="edge-label"
 			:data-source-node-name="data.source?.node"
@@ -226,19 +226,12 @@ function onEdgeLabelMouseLeave() {
 			@mouseleave="onEdgeLabelMouseLeave"
 		>
 			<CanvasEdgeToolbar
-				v-if="renderToolbar"
 				:type="connectionType"
 				:target-node="targetNode"
 				:source-node="sourceNode"
 				@add="onAdd"
 				@delete="onDelete"
 			/>
-			<div v-else-if="label" :class="$style.edgeLabelContainer">
-				<span :class="$style.edgeLabelIf">If</span>
-				<span :class="[$style.edgeLabel, { [$style.trueBranch]: label.toLowerCase().includes('true') || label.toLowerCase().includes('replied'), [$style.falseBranch]: label.toLowerCase().includes('false') || label.toLowerCase().includes('no reply') }]">
-					{{ label }}
-				</span>
-			</div>
 		</div>
 	</EdgeLabelRenderer>
 </template>

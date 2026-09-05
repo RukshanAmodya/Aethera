@@ -203,6 +203,83 @@ const footerStatus = computed(() => {
 	return { text: 'Ready', type: 'ready' };
 });
 
+const nodeCategory = computed(() => {
+	const type = (node?.data?.value?.type || '').toLowerCase();
+	const nameStr = (label.value || '').toLowerCase();
+
+	if (
+		renderOptions.value.trigger ||
+		type.includes('trigger') ||
+		type.includes('webhook') ||
+		nameStr.includes('when') ||
+		nameStr.includes('schedule')
+	) {
+		return { icon: '⚡', label: 'Trigger' };
+	}
+	if (
+		type.includes('openai') ||
+		type.includes('anthropic') ||
+		type.includes('agent') ||
+		type.includes('llm') ||
+		type.includes('ai') ||
+		nameStr.includes('ai') ||
+		nameStr.includes('claude') ||
+		nameStr.includes('gpt')
+	) {
+		return { icon: '🤖', label: 'AI Agent' };
+	}
+	if (
+		type.includes('code') ||
+		type.includes('function') ||
+		type.includes('javascript') ||
+		type.includes('python')
+	) {
+		return { icon: '💻', label: 'Script' };
+	}
+	if (
+		type.includes('if') ||
+		type.includes('switch') ||
+		type.includes('filter') ||
+		type.includes('router') ||
+		nameStr.includes('if') ||
+		nameStr.includes('switch') ||
+		nameStr.includes('score')
+	) {
+		return { icon: '🔀', label: 'Logic' };
+	}
+	if (
+		type.includes('sheet') ||
+		type.includes('airtable') ||
+		type.includes('database') ||
+		type.includes('postgres') ||
+		type.includes('sql') ||
+		type.includes('table')
+	) {
+		return { icon: '📊', label: 'Database' };
+	}
+	if (
+		type.includes('slack') ||
+		type.includes('discord') ||
+		type.includes('telegram') ||
+		type.includes('email') ||
+		type.includes('mail')
+	) {
+		return { icon: '💬', label: 'Message' };
+	}
+	if (
+		type.includes('edit') ||
+		type.includes('set') ||
+		nameStr.includes('set') ||
+		nameStr.includes('edit')
+	) {
+		return { icon: '✏️', label: 'Fields' };
+	}
+	if (type.includes('wait') || nameStr.includes('wait')) {
+		return { icon: '⏳', label: 'Wait' };
+	}
+	return { icon: '⚙️', label: 'Action' };
+});
+
 const footerLeftInfo = computed(() => {
 	if (runDataIterations.value && runDataIterations.value > 1) {
 		return `${runDataIterations.value} runs`;
@@ -210,10 +287,7 @@ const footerLeftInfo = computed(() => {
 	if (hasRunData.value) {
 		return '1 item';
 	}
-	if (renderOptions.value.trigger) {
-		return 'Trigger event';
-	}
-	return 'Output ready';
+	return '';
 });
 
 function openContextMenu(event: MouseEvent) {
@@ -257,7 +331,7 @@ function onActivate(event: MouseEvent) {
 		/>
 		<CanvasNodeDisabledStrikeThrough v-if="isStrikethroughVisible" />
 
-		<!-- Card Content: Header (Icon Box + Titles) -->
+		<!-- Card Content: Header (Icon Box + Titles + Aligned Status Icon) -->
 		<div :class="$style.header">
 			<div :class="$style.iconBox">
 				<NodeIcon
@@ -279,17 +353,17 @@ function onActivate(event: MouseEvent) {
 					({{ i18n.baseText('node.disabled') }})
 				</span>
 			</div>
+			<CanvasNodeStatusIcons v-if="!isDisabled" :class="$style.statusIcons" />
 		</div>
 
 		<!-- Card Content: Footer (Left Meta + Right Connected Status) -->
 		<div :class="$style.footer">
 			<div :class="$style.footerLeft">
-				<div :class="$style.avatarStack">
-					<span :class="[$style.avatar, $style.avatar1]">⚡</span>
-					<span :class="[$style.avatar, $style.avatar2]">🤖</span>
-					<span :class="[$style.avatar, $style.avatar3]">📊</span>
-				</div>
-				<span :class="$style.footerLeftText">{{ footerLeftInfo }}</span>
+				<span :class="$style.categoryBadge">
+					<span :class="$style.categoryIcon">{{ nodeCategory.icon }}</span>
+					<span :class="$style.categoryLabel">{{ nodeCategory.label }}</span>
+				</span>
+				<span v-if="footerLeftInfo" :class="$style.footerLeftText">{{ footerLeftInfo }}</span>
 			</div>
 
 			<div :class="[$style.statusBadge, $style[footerStatus.type]]">
@@ -297,8 +371,6 @@ function onActivate(event: MouseEvent) {
 				<span>{{ footerStatus.text }}</span>
 			</div>
 		</div>
-
-		<CanvasNodeStatusIcons v-if="!isDisabled" :class="$style.statusIcons" />
 	</div>
 </template>
 
@@ -361,6 +433,7 @@ function onActivate(event: MouseEvent) {
 	align-items: center;
 	gap: 12px;
 	min-width: 0;
+	position: relative;
 }
 
 .iconBox {
@@ -383,6 +456,7 @@ function onActivate(event: MouseEvent) {
 	min-width: 0;
 	flex: 1;
 	overflow: hidden;
+	padding-right: 24px;
 }
 
 .label {
@@ -422,41 +496,29 @@ function onActivate(event: MouseEvent) {
 .footerLeft {
 	display: flex;
 	align-items: center;
-	gap: 6px;
+	gap: 8px;
 }
 
-.avatarStack {
-	display: flex;
-	align-items: center;
-	margin-left: 2px;
-}
-
-.avatar {
+.categoryBadge {
 	display: inline-flex;
 	align-items: center;
-	justify-content: center;
-	width: 20px;
-	height: 20px;
-	border-radius: 50%;
+	gap: 4px;
+	padding: 2.5px 8px;
+	border-radius: 7px;
+	background: #202228;
+	border: 1px solid rgba(255, 255, 255, 0.06);
+	color: #9ca3af;
+}
+
+.categoryIcon {
+	font-size: 11px;
+}
+
+.categoryLabel {
 	font-size: 10px;
-	border: 1.5px solid #141518;
-	margin-left: -6px;
-
-	&:first-child {
-		margin-left: 0;
-	}
-}
-
-.avatar1 {
-	background: #f97316;
-}
-
-.avatar2 {
-	background: #06b6d4;
-}
-
-.avatar3 {
-	background: #ec4899;
+	font-weight: 600;
+	letter-spacing: 0.03em;
+	text-transform: uppercase;
 }
 
 .footerLeftText {
@@ -540,8 +602,8 @@ function onActivate(event: MouseEvent) {
 
 .statusIcons {
 	position: absolute;
-	top: -6px;
-	right: -6px;
+	top: 0;
+	right: 0;
 	z-index: 10;
 }
 
