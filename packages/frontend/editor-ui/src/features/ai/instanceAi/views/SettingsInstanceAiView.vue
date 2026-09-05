@@ -275,14 +275,13 @@ function setDialogOpen(kind: InstanceAiConnectionKind, isOpen: boolean) {
 }
 
 function openModelDialog() {
-	if (isModelReadOnly.value) return;
 	setupChain.value = false;
 	activeDialog.value = 'model';
 }
 
 function openModelSetup() {
-	setupChain.value =
-		(!isSandboxConfigured.value && !isSandboxEnvManaged.value) || searchState.value === 'notset';
+	setupChain.value = false;
+	enableAfterSetup.value = true;
 	activeDialog.value = 'model';
 }
 
@@ -305,37 +304,17 @@ function openSearchSetup(): void {
 /** Returns whether the chain may continue (false only when enabling failed). */
 async function finishSetup(): Promise<boolean> {
 	setupChain.value = false;
-	if (!enableAfterSetup.value) {
-		activeDialog.value = null;
-		return true;
-	}
-
 	enableAfterSetup.value = false;
+	activeDialog.value = null;
 	const enabled = await store.persistEnabled(true);
-	if (enabled) activeDialog.value = null;
 	return enabled;
 }
 
 async function handleModelSaved() {
-	if ((setupChain.value || enableAfterSetup.value) && !(await enableEnvironmentSandboxIfNeeded()))
-		return;
-	if (setupChain.value) {
-		if (isSandboxConfigured.value || isSandboxEnvManaged.value) {
-			openSearchSetup();
-		} else {
-			activeDialog.value = 'sandbox';
-		}
-		return;
-	}
 	await finishSetup();
 }
 
 async function handleSandboxSaved() {
-	const chainSearch = setupChain.value && searchState.value === 'notset';
-	if (chainSearch) {
-		openSearchSetup();
-		return;
-	}
 	await finishSetup();
 }
 
@@ -362,28 +341,7 @@ onMounted(() => {
 });
 
 async function handleEnable() {
-	if (!showCredentialsRows.value && (!showSandboxRow.value || isSandboxConfigured.value)) {
-		await store.persistEnabled(true);
-		return;
-	}
-
-	if (showCredentialsRows.value && !isModelConfigured.value) {
-		openModelSetup();
-		return;
-	}
-
-	const modelCredentialId = store.settings?.modelCredentialId;
-	if (
-		showCredentialsRows.value &&
-		modelCredentialId &&
-		store.canManageInstanceCredentials &&
-		(!modelCredential.value ||
-			!(await testSavedCredential(
-				modelCredentialId,
-				modelCredential.value.name,
-				modelCredential.value.type,
-			)))
-	) {
+	if (!isModelConfigured.value && !isModelReadOnly.value) {
 		openModelSetup();
 		return;
 	}
@@ -527,8 +485,7 @@ function openAiUsageSettings() {
 
 					<N8nSettingsRow
 						v-if="showCredentialsRows"
-						:class="{ [$style.dim]: isOff }"
-						:clickable="!isOff && isModelConfigured && !isModelReadOnly"
+						:clickable="true"
 						data-test-id="n8n-agent-model-row"
 						@click="openModelDialog"
 					>
@@ -544,7 +501,7 @@ function openAiUsageSettings() {
 								{{ i18n.baseText(modelDescription.key) }}
 							</N8nText>
 						</template>
-						<template v-if="!isOff" #action>
+						<template #action>
 							<N8nButton
 								v-if="!isModelConfigured"
 								variant="solid"
@@ -554,14 +511,6 @@ function openAiUsageSettings() {
 								data-test-id="n8n-agent-model-add"
 								@click="openModelSetup"
 							/>
-							<N8nText
-								v-else-if="isModelReadOnly"
-								size="small"
-								color="text-light"
-								data-test-id="n8n-agent-model-env-value"
-							>
-								{{ modelValue }}
-							</N8nText>
 							<N8nSettingsRowConfigure v-else :value="modelValue" />
 						</template>
 					</N8nSettingsRow>
