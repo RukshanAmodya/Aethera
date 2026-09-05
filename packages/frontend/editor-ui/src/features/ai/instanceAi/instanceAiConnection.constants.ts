@@ -9,6 +9,7 @@ import { SANDBOX_PROVIDER_LABELS } from './constants';
 export type InstanceAiModelProvider =
 	| 'anthropic'
 	| 'openai'
+	| 'groq'
 	| 'openrouter'
 	| 'agentrouter'
 	| 'custom';
@@ -17,6 +18,12 @@ export type InstanceAiSearchProvider = 'searxng' | 'brave' | 'disabled';
 export const INSTANCE_AI_CURATED_MODELS = {
 	anthropic: ['claude-opus-5', 'claude-sonnet-5'],
 	openai: ['gpt-5.6-sol', 'gpt-5.6-terra'],
+	groq: [
+		'llama-3.3-70b-versatile',
+		'llama-3.1-8b-instant',
+		'mixtral-8x7b-32768',
+		'gemma2-9b-it',
+	],
 	openrouter: [
 		'anthropic/claude-opus-5',
 		'anthropic/claude-sonnet-5',
@@ -48,6 +55,12 @@ export const INSTANCE_AI_MODEL_PROVIDERS = [
 		placeholder: 'sk-…',
 	},
 	{
+		id: 'groq',
+		credentialType: 'groqApi',
+		label: 'Groq',
+		placeholder: 'gsk_…',
+	},
+	{
 		id: 'openrouter',
 		credentialType: 'openRouterApi',
 		label: 'OpenRouter',
@@ -76,9 +89,8 @@ export const INSTANCE_AI_SANDBOX_PROVIDERS = [
 	{
 		id: 'n8n-sandbox',
 		label: SANDBOX_PROVIDER_LABELS['n8n-sandbox'],
-		onboardingLabel: 'n8n Sandbox',
+		onboardingLabel: 'Aethera Sandbox',
 	},
-	{ id: 'daytona', label: SANDBOX_PROVIDER_LABELS.daytona, onboardingLabel: 'Daytona' },
 ] as const satisfies ReadonlyArray<{
 	id: InstanceAiSandboxProvider;
 	label: string;

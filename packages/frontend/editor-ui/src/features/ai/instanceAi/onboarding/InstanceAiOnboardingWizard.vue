@@ -306,6 +306,7 @@ async function credentialData(id: string | null | undefined): Promise<unknown> {
 
 function modelProviderForCredentialType(type: string): InstanceAiModelProvider {
 	if (type === 'anthropicApi') return 'anthropic';
+	if (type === 'groqApi') return 'groq';
 	if (type === 'openRouterApi') return 'openrouter';
 	if (type === 'agentRouterApi') return 'agentrouter';
 	return 'openai';
@@ -989,25 +990,16 @@ const existingCredentialLabel = (credential: InstanceAiProviderConnection) =>
 							<span :class="$style.optionTitle">
 								<N8nText bold step="sm">{{ provider.onboardingLabel }}</N8nText>
 								<N8nBadge
-									:theme="provider.id === 'n8n-sandbox' ? 'secondary' : 'default'"
+									theme="secondary"
 									size="small"
-									:show-border="provider.id !== 'n8n-sandbox'"
 									:class="$style.optionBadge"
 									bold
 								>
-									{{
-										provider.id === 'n8n-sandbox'
-											? i18n.baseText('instanceAi.onboarding.sandbox.freeRecommended')
-											: i18n.baseText('instanceAi.onboarding.sandbox.paid')
-									}}
+									{{ i18n.baseText('instanceAi.onboarding.sandbox.freeRecommended') }}
 								</N8nBadge>
 							</span>
 							<N8nText color="text-base" step="sm" :class="$style.optionDescription">
-								{{
-									provider.id === 'n8n-sandbox'
-										? i18n.baseText('instanceAi.onboarding.sandbox.n8nDescription')
-										: i18n.baseText('instanceAi.onboarding.sandbox.daytonaDescription')
-								}}
+								{{ i18n.baseText('instanceAi.onboarding.sandbox.n8nDescription') }}
 							</N8nText>
 						</span>
 					</div>
