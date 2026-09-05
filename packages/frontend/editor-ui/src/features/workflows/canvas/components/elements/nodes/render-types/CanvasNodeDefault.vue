@@ -203,6 +203,41 @@ const footerStatus = computed(() => {
 	return { text: 'Ready', type: 'ready' };
 });
 
+const executionTimeMs = computed(() => {
+	const tasks = renderData.value.executionRunDataByNodeId?.get(id.value)?.value;
+	if (!tasks || tasks.length === 0) return null;
+	// Calculate sum or last task execution time
+	let totalMs = 0;
+	let hasValid = false;
+	for (const task of tasks) {
+		if (typeof task.executionTime === 'number' && task.executionTime >= 0) {
+			totalMs += task.executionTime;
+			hasValid = true;
+		}
+	}
+	return hasValid ? totalMs : null;
+});
+
+function formatExecutionTime(ms: number): string {
+	if (ms < 1000) {
+		return `${ms}ms`;
+	}
+	const totalSeconds = ms / 1000;
+	if (totalSeconds < 60) {
+		// e.g. 1.2s or 45s
+		const sec = totalSeconds < 10 ? totalSeconds.toFixed(1) : Math.round(totalSeconds);
+		return `${sec}s`;
+	}
+	const minutes = Math.floor(totalSeconds / 60);
+	const remainingSec = Math.round(totalSeconds % 60);
+	if (minutes < 60) {
+		return remainingSec > 0 ? `${minutes}m ${remainingSec}s` : `${minutes}m`;
+	}
+	const hours = Math.floor(minutes / 60);
+	const remainingMin = minutes % 60;
+	return remainingMin > 0 ? `${hours}h ${remainingMin}m` : `${hours}h`;
+}
+
 const nodeCategory = computed(() => {
 	const type = (node?.data?.value?.type || '').toLowerCase();
 	const nameStr = (label.value || '').toLowerCase();
@@ -214,7 +249,7 @@ const nodeCategory = computed(() => {
 		nameStr.includes('when') ||
 		nameStr.includes('schedule')
 	) {
-		return { icon: '⚡', label: 'Trigger' };
+		return 'Trigger';
 	}
 	if (
 		type.includes('openai') ||
@@ -226,7 +261,7 @@ const nodeCategory = computed(() => {
 		nameStr.includes('claude') ||
 		nameStr.includes('gpt')
 	) {
-		return { icon: '🤖', label: 'AI Agent' };
+		return 'AI Agent';
 	}
 	if (
 		type.includes('code') ||
@@ -234,7 +269,7 @@ const nodeCategory = computed(() => {
 		type.includes('javascript') ||
 		type.includes('python')
 	) {
-		return { icon: '💻', label: 'Script' };
+		return 'Script';
 	}
 	if (
 		type.includes('if') ||
@@ -245,7 +280,7 @@ const nodeCategory = computed(() => {
 		nameStr.includes('switch') ||
 		nameStr.includes('score')
 	) {
-		return { icon: '🔀', label: 'Logic' };
+		return 'Logic';
 	}
 	if (
 		type.includes('sheet') ||
@@ -255,7 +290,7 @@ const nodeCategory = computed(() => {
 		type.includes('sql') ||
 		type.includes('table')
 	) {
-		return { icon: '📊', label: 'Database' };
+		return 'Database';
 	}
 	if (
 		type.includes('slack') ||
@@ -264,7 +299,7 @@ const nodeCategory = computed(() => {
 		type.includes('email') ||
 		type.includes('mail')
 	) {
-		return { icon: '💬', label: 'Message' };
+		return 'Message';
 	}
 	if (
 		type.includes('edit') ||
@@ -272,12 +307,22 @@ const nodeCategory = computed(() => {
 		nameStr.includes('set') ||
 		nameStr.includes('edit')
 	) {
-		return { icon: '✏️', label: 'Fields' };
+		return 'Fields';
 	}
 	if (type.includes('wait') || nameStr.includes('wait')) {
-		return { icon: '⏳', label: 'Wait' };
+		return 'Wait';
 	}
-	return { icon: '⚙️', label: 'Action' };
+	return 'Action';
+});
+
+const executionTimeDisplay = computed(() => {
+	if (executionTimeMs.value !== null) {
+		return formatExecutionTime(executionTimeMs.value);
+	}
+	if (executionStatus.value === 'running') {
+		return 'running...';
+	}
+	return nodeCategory.value;
 });
 
 const footerLeftInfo = computed(() => {
@@ -360,8 +405,21 @@ function onActivate(event: MouseEvent) {
 		<div :class="$style.footer">
 			<div :class="$style.footerLeft">
 				<span :class="$style.categoryBadge">
-					<span :class="$style.categoryIcon">{{ nodeCategory.icon }}</span>
-					<span :class="$style.categoryLabel">{{ nodeCategory.label }}</span>
+					<svg
+						:class="$style.timeIcon"
+						width="12"
+						height="12"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+					>
+						<circle cx="12" cy="12" r="10" />
+						<polyline points="12 6 12 12 16 14" />
+					</svg>
+					<span :class="$style.categoryLabel">{{ executionTimeDisplay }}</span>
 				</span>
 				<span v-if="footerLeftInfo" :class="$style.footerLeftText">{{ footerLeftInfo }}</span>
 			</div>
@@ -502,23 +560,27 @@ function onActivate(event: MouseEvent) {
 .categoryBadge {
 	display: inline-flex;
 	align-items: center;
-	gap: 4px;
+	gap: 4.5px;
 	padding: 2.5px 8px;
 	border-radius: 7px;
-	background: #202228;
+	background: #1c1e24;
 	border: 1px solid rgba(255, 255, 255, 0.06);
 	color: #9ca3af;
 }
 
-.categoryIcon {
-	font-size: 11px;
+.timeIcon {
+	width: 11px;
+	height: 11px;
+	color: #94a3b8;
+	opacity: 0.85;
 }
 
 .categoryLabel {
-	font-size: 10px;
-	font-weight: 600;
-	letter-spacing: 0.03em;
-	text-transform: uppercase;
+	font-size: 10.5px;
+	font-weight: 500;
+	letter-spacing: 0.02em;
+	color: #cbd5e1;
+	font-variant-numeric: tabular-nums;
 }
 
 .footerLeftText {
