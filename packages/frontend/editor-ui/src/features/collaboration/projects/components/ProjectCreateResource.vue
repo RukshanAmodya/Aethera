@@ -48,17 +48,17 @@ defineExpose({
 	display: inline-flex;
 	border-radius: 9999px;
 	overflow: hidden;
-	box-shadow: 0 4px 14px -2px rgba(6, 78, 59, 0.35);
+	box-shadow: 0 4px 14px -2px rgba(255, 109, 90, 0.35);
 
 	:global(> .button) {
-		background: #064e3b !important;
-		border-color: #064e3b !important;
+		background: #ff6d5a !important;
+		border-color: #ff6d5a !important;
 		color: #ffffff !important;
 		font-weight: 600;
 
 		&:hover {
-			background: #04382a !important;
-			border-color: #04382a !important;
+			background: #e85642 !important;
+			border-color: #e85642 !important;
 		}
 
 		&:not(:first-child) {
@@ -74,10 +74,15 @@ defineExpose({
 }
 
 .buttonGroupDropdown {
-	border-left: 1px solid rgba(255, 255, 255, 0.15) !important;
+	border-left: 1px solid rgba(255, 255, 255, 0.25) !important;
 	border-radius: 0 9999px 9999px 0 !important;
-	background: #064e3b !important;
-	border-color: #064e3b !important;
+	background: #ff6d5a !important;
+	border-color: #ff6d5a !important;
 	color: #ffffff !important;
+
+	&:hover {
+		background: #e85642 !important;
+		border-color: #e85642 !important;
+	}
 }
 </style>
