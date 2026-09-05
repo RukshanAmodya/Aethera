@@ -101,7 +101,6 @@ onBeforeUnmount(() => {
 			<LogsPanel />
 		</template>
 		<template v-if="!isCanvasOnly" #overlays>
-			<AskAssistantFloatingButton v-if="assistantStore.isFloatingButtonShown" />
 			<CanvasChatOverlay v-if="chatHubPanelStore.isFloatingChatEnabled" />
 		</template>
 	</BaseLayout>

@@ -2000,22 +2000,6 @@ defineExpose({
 			/>
 		</Transition>
 
-		<CanvasControlButtons
-			v-if="!hideControls"
-			data-test-id="canvas-controls"
-			:class="$style.canvasControls"
-			:position="controlsPosition"
-			:show-interactive="false"
-			:zoom="viewport.zoom"
-			:read-only="readOnly"
-			:is-experimental-ndv-active="isExperimentalNdvActive"
-			@zoom-to-fit="onFitView"
-			@zoom-in="onZoomIn"
-			@zoom-out="onZoomOut"
-			@tidy-up="onTidyUp({ source: 'canvas-button' })"
-			@toggle-zoom-mode="onToggleZoomMode"
-		/>
-
 		<Suspense>
 			<ContextMenu @action="onContextMenuAction" />
 		</Suspense>
