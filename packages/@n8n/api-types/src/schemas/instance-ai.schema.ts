@@ -1990,8 +1990,7 @@ export function deriveInstanceAiSetupState(
 		sandboxType: sandboxSource === 'none' ? null : settings.sandboxProvider,
 		sandboxCredentialId,
 		webSearchSource,
-		setupCompleted:
-			modelSource !== 'none' && sandboxSource !== 'none' && webSearchSource !== 'none',
+		setupCompleted: modelSource !== 'none',
 	};
 }
 
