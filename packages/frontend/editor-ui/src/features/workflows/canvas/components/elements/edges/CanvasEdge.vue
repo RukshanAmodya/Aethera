@@ -160,26 +160,33 @@ function onEdgeLabelMouseLeave() {
 		v-bind="$attrs"
 	>
 		<defs>
-			<!-- Top / Coral Flow Gradient -->
-			<linearGradient id="edgeGradientCoral" x1="0%" y1="0%" x2="100%" y2="100%">
-				<stop offset="0%" stop-color="#ff4d6d" stop-opacity="1" />
-				<stop offset="60%" stop-color="#ff758f" stop-opacity="0.8" />
-				<stop offset="100%" stop-color="#ffa8b6" stop-opacity="0.2" />
+			<!-- Multi-stop neon energy gradient for ultra smooth laser data transfer -->
+			<linearGradient id="edgeGradientLaser" x1="0%" y1="0%" x2="100%" y2="0%">
+				<stop offset="0%" stop-color="#38bdf8" stop-opacity="0" />
+				<stop offset="20%" stop-color="#38bdf8" stop-opacity="0.3" />
+				<stop offset="50%" stop-color="#818cf8" stop-opacity="0.8" />
+				<stop offset="85%" stop-color="#c084fc" stop-opacity="1" />
+				<stop offset="100%" stop-color="#ffffff" stop-opacity="1" />
 			</linearGradient>
 
-			<!-- Emerald / Green Flow Gradient -->
-			<linearGradient id="edgeGradientGreen" x1="0%" y1="0%" x2="100%" y2="100%">
-				<stop offset="0%" stop-color="#22c55e" stop-opacity="1" />
-				<stop offset="60%" stop-color="#4ade80" stop-opacity="0.8" />
-				<stop offset="100%" stop-color="#86efac" stop-opacity="0.2" />
+			<!-- Cyan-Emerald neon beam -->
+			<linearGradient id="edgeGradientCyberPulse" x1="0%" y1="0%" x2="100%" y2="0%">
+				<stop offset="0%" stop-color="#10b981" stop-opacity="0" />
+				<stop offset="30%" stop-color="#06b6d4" stop-opacity="0.5" />
+				<stop offset="70%" stop-color="#3b82f6" stop-opacity="0.9" />
+				<stop offset="95%" stop-color="#60a5fa" stop-opacity="1" />
+				<stop offset="100%" stop-color="#ffffff" stop-opacity="1" />
 			</linearGradient>
 
-			<!-- Violet / Indigo Flow Gradient -->
-			<linearGradient id="edgeGradientViolet" x1="0%" y1="0%" x2="100%" y2="100%">
-				<stop offset="0%" stop-color="#6366f1" stop-opacity="1" />
-				<stop offset="60%" stop-color="#818cf8" stop-opacity="0.8" />
-				<stop offset="100%" stop-color="#c7d2fe" stop-opacity="0.2" />
-			</linearGradient>
+			<!-- Soft glow filter for light dissipation -->
+			<filter id="laserGlowFilter" x="-30%" y="-30%" width="160%" height="160%">
+				<feGaussianBlur stdDeviation="3" result="blur" />
+				<feMerge>
+					<feMergeNode in="blur" />
+					<feMergeNode in="blur" />
+					<feMergeNode in="SourceGraphic" />
+				</feMerge>
+			</filter>
 		</defs>
 
 		<slot name="highlight" v-bind="{ segments }" />
@@ -195,20 +202,30 @@ function onEdgeLabelMouseLeave() {
 			:interaction-width="40"
 		/>
 
-		<!-- Smooth flowing gradient energy beam when edge is running -->
+		<!-- Smooth flowing shader-like energy stream when edge is running -->
 		<template v-if="isRunning">
+			<!-- Layer 1: Ambient soft aura glow -->
 			<path
 				v-for="segment in segments"
-				:key="`flow-glow-${segment[0]}`"
+				:key="`flow-ambient-${segment[0]}`"
 				:d="segment[0]"
-				:class="$style.runningFlowGlow"
+				:class="$style.runningAmbientGlow"
 				pathLength="100"
 			/>
+			<!-- Layer 2: Main streaming laser beam -->
 			<path
 				v-for="segment in segments"
-				:key="`flow-${segment[0]}`"
+				:key="`flow-laser-${segment[0]}`"
 				:d="segment[0]"
-				:class="$style.runningFlow"
+				:class="$style.runningLaserStream"
+				pathLength="100"
+			/>
+			<!-- Layer 3: High-speed core data pulse -->
+			<path
+				v-for="segment in segments"
+				:key="`flow-core-${segment[0]}`"
+				:d="segment[0]"
+				:class="$style.runningCorePulse"
 				pathLength="100"
 			/>
 		</template>
@@ -253,34 +270,63 @@ function onEdgeLabelMouseLeave() {
 	stroke-linecap: round;
 }
 
-.runningFlowGlow {
+.runningAmbientGlow {
 	fill: none;
-	stroke: url(#edgeGradientGreen);
+	stroke: url(#edgeGradientCyberPulse);
 	/* stylelint-disable-next-line @n8n/css-var-naming */
-	stroke-width: calc(4px * var(--canvas-zoom-compensation-factor, 1));
+	stroke-width: calc(6px * var(--canvas-zoom-compensation-factor, 1));
 	stroke-linecap: round;
-	stroke-dasharray: 35 100;
-	filter: drop-shadow(0 0 6px #22c55e);
-	opacity: 0.6;
+	stroke-dasharray: 28 72;
+	filter: url(#laserGlowFilter);
+	opacity: 0.7;
 	pointer-events: none;
-	animation: flowingBeam 1.8s linear infinite;
+	animation: flowingDataStream 1.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
-.runningFlow {
+.runningLaserStream {
 	fill: none;
-	stroke: url(#edgeGradientGreen);
+	stroke: url(#edgeGradientLaser);
 	/* stylelint-disable-next-line @n8n/css-var-naming */
-	stroke-width: calc(2.5px * var(--canvas-zoom-compensation-factor, 1));
+	stroke-width: calc(3px * var(--canvas-zoom-compensation-factor, 1));
 	stroke-linecap: round;
-	stroke-dasharray: 35 100;
-	filter: drop-shadow(0 0 4px #22c55e);
+	stroke-dasharray: 25 75;
+	filter: drop-shadow(0 0 5px #818cf8);
 	pointer-events: none;
-	animation: flowingBeam 1.8s linear infinite;
+	animation: flowingDataStream 1.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
-@keyframes flowingBeam {
+.runningCorePulse {
+	fill: none;
+	stroke: #ffffff;
+	/* stylelint-disable-next-line @n8n/css-var-naming */
+	stroke-width: calc(1.8px * var(--canvas-zoom-compensation-factor, 1));
+	stroke-linecap: round;
+	stroke-dasharray: 6 94;
+	filter: drop-shadow(0 0 4px #ffffff) drop-shadow(0 0 8px #38bdf8);
+	pointer-events: none;
+	animation: flowingCoreData 1.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes flowingDataStream {
 	0% {
-		stroke-dashoffset: 135;
+		stroke-dashoffset: 100;
+		opacity: 0;
+	}
+	15% {
+		opacity: 0.9;
+	}
+	85% {
+		opacity: 0.9;
+	}
+	100% {
+		stroke-dashoffset: 0;
+		opacity: 0;
+	}
+}
+
+@keyframes flowingCoreData {
+	0% {
+		stroke-dashoffset: 100;
 		opacity: 0;
 	}
 	20% {
