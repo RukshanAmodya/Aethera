@@ -755,14 +755,6 @@ const existingCredentialLabel = (credential: InstanceAiProviderConnection) =>
 					</N8nText>
 				</div>
 
-				<N8nCallout v-if="modelConnectionLocked" theme="warning">
-					<span>{{ i18n.baseText('instanceAi.onboarding.env.title') }}</span>
-					{{ i18n.baseText('instanceAi.onboarding.env.description') }}
-					<N8nLink :to="ENV_DOCS_URL" size="small" new-window>
-						{{ i18n.baseText('instanceAi.onboarding.env.docs') }}
-					</N8nLink>
-				</N8nCallout>
-
 				<N8nInputLabel
 					v-if="showExistingCredentialSelect"
 					:class="$style.compactLabel"
@@ -792,19 +784,7 @@ const existingCredentialLabel = (credential: InstanceAiProviderConnection) =>
 						:label="i18n.baseText('instanceAi.onboarding.model.provider')"
 						input-name="assistant-model-provider"
 					>
-						<N8nInput
-							v-if="modelConnectionLocked || readOnly || selectedExistingCredentialId"
-							id="assistant-model-provider"
-							:model-value="
-								selectedExistingCredential
-									? credentialProviderLabel(selectedExistingCredential)
-									: STATIC_SECRET_MASK
-							"
-							disabled
-							:data-test-id="surface === 'settings' ? 'n8n-agent-model-provider-input' : undefined"
-						/>
 						<N8nSelect
-							v-else
 							id="assistant-model-provider"
 							:model-value="modelProvider"
 							:teleported="true"
@@ -825,9 +805,7 @@ const existingCredentialLabel = (credential: InstanceAiProviderConnection) =>
 					</N8nInputLabel>
 
 					<N8nInputLabel
-						v-if="
-							modelProvider === 'custom' && !modelConnectionLocked && !selectedExistingCredentialId
-						"
+						v-if="modelProvider === 'custom'"
 						:class="$style.compactLabel"
 						:label="i18n.baseText('instanceAi.onboarding.model.baseUrl')"
 						input-name="assistant-model-base-url"
@@ -856,12 +834,7 @@ const existingCredentialLabel = (credential: InstanceAiProviderConnection) =>
 							type="password"
 							autocomplete="off"
 							:spellcheck="false"
-							:disabled="modelConnectionLocked || readOnly || Boolean(selectedExistingCredentialId)"
-							:placeholder="
-								modelConnectionLocked || readOnly || selectedExistingCredentialId
-									? STATIC_SECRET_MASK
-									: modelConfig.placeholder
-							"
+							:placeholder="modelConfig.placeholder"
 							:data-test-id="
 								surface === 'settings' ? 'n8n-agent-model-api-key-input' : 'assistant-model-api-key'
 							"
@@ -874,12 +847,11 @@ const existingCredentialLabel = (credential: InstanceAiProviderConnection) =>
 						input-name="assistant-model-name"
 					>
 						<N8nSelect
-							v-if="modelOptions.length && !modelNameLocked"
+							v-if="modelOptions.length"
 							id="assistant-model-name"
 							:model-value="modelName"
 							:teleported="true"
 							filterable
-							:disabled="readOnly"
 							:data-test-id="
 								surface === 'settings' ? 'n8n-agent-model-name-input' : 'assistant-model-name'
 							"
@@ -901,8 +873,7 @@ const existingCredentialLabel = (credential: InstanceAiProviderConnection) =>
 							id="assistant-model-name"
 							v-model="modelName"
 							class="ph-no-capture"
-							:disabled="modelNameLocked || readOnly"
-							:placeholder="modelNameLocked ? STATIC_SECRET_MASK : 'qwen3-coder'"
+							placeholder="llama-3.3-70b-versatile"
 							:spellcheck="false"
 							:data-test-id="
 								surface === 'settings' ? 'n8n-agent-model-name-input' : 'assistant-model-name'
