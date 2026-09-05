@@ -39,7 +39,7 @@ export function deriveInstanceAiConfiguration(
 		sandboxConfigured,
 		searchCredential,
 		searchState,
-		setupCompleted: state?.setupCompleted ?? false,
+		setupCompleted: modelConfigured,
 		hasSetupProgress: modelConfigured || sandboxConfigured || searchState !== 'notset',
 	};
 }
