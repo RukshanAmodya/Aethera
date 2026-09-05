@@ -50,10 +50,9 @@ const props = withDefaults(
 		eventBus?: EventBus<CanvasEventBusEvents>;
 		readOnly?: boolean;
 		groupExpansionMode?: GroupExpansionMode;
-		canExecute?: boolean;
-		executing?: boolean;
 		suppressInteraction?: boolean;
 		stripedBackground?: boolean;
+		hideControls?: boolean;
 		initialViewport?: ViewportTransform | null;
 	}>(),
 	{
@@ -63,6 +62,7 @@ const props = withDefaults(
 		showFallbackNodes: true,
 		suppressInteraction: false,
 		stripedBackground: true,
+		hideControls: false,
 		groupExpansionMode: undefined,
 	},
 );
@@ -314,6 +314,7 @@ defineExpose({
 				:executing="executing"
 				:suppress-interaction="suppressInteraction"
 				:striped-background="stripedBackground"
+				:hide-controls="hideControls"
 				:initial-viewport="initialViewport"
 				v-bind="$attrs"
 			/>

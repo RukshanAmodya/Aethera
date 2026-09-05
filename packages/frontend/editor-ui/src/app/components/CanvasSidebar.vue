@@ -11,6 +11,8 @@ import { canvasEventBus } from '@/features/workflows/canvas/canvas.eventBus';
 import { useProjectsStore } from '@/features/collaboration/projects/projects.store';
 import { injectWorkflowDocumentStore } from '@/app/stores/workflowDocument.store';
 import KeyboardShortcutTooltip from '@/app/components/KeyboardShortcutTooltip.vue';
+import TidyUpIcon from '@/app/components/TidyUpIcon.vue';
+import { N8nIcon } from '@n8n/design-system';
 import aetheraIcon from '@/features/core/auth/views/aethera-icon.png';
 import { useI18n } from '@n8n/i18n';
 
@@ -113,18 +115,7 @@ function onToggleAssistant() {
 			>
 				<img :src="aetheraIcon" alt="Back" :class="$style.brandIcon" />
 				<span :class="$style.backArrowOverlay">
-					<svg
-						width="14"
-						height="14"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2.5"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-					>
-						<polyline points="15 18 9 12 15 6" />
-					</svg>
+					<N8nIcon icon="chevron-left" size="medium" />
 				</span>
 			</button>
 		</div>
@@ -138,98 +129,35 @@ function onToggleAssistant() {
 					:class="[$style.toolBtn, isNodeCreatorOpen && $style.active]"
 					@click="onToggleAddNode"
 				>
-					<svg
-						width="16"
-						height="16"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2.2"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-					>
-						<line x1="12" y1="5" x2="12" y2="19" />
-						<line x1="5" y1="12" x2="19" y2="12" />
-					</svg>
+					<N8nIcon icon="plus" size="medium" />
 				</button>
 			</KeyboardShortcutTooltip>
 
 			<!-- Zoom to Fit / Maximize -->
 			<KeyboardShortcutTooltip label="Zoom to Fit" :shortcut="{ keys: ['1'] }">
 				<button type="button" :class="$style.toolBtn" @click="onFitView">
-					<svg
-						width="15"
-						height="15"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2.2"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-					>
-						<path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
-					</svg>
+					<N8nIcon icon="maximize" size="medium" />
 				</button>
 			</KeyboardShortcutTooltip>
 
 			<!-- Zoom In (+) -->
 			<KeyboardShortcutTooltip label="Zoom In" :shortcut="{ keys: ['+'] }">
 				<button type="button" :class="$style.toolBtn" @click="onZoomIn">
-					<svg
-						width="15"
-						height="15"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2.2"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-					>
-						<circle cx="11" cy="11" r="8" />
-						<line x1="21" y1="21" x2="16.65" y2="16.65" />
-						<line x1="11" y1="8" x2="11" y2="14" />
-						<line x1="8" y1="11" x2="14" y2="11" />
-					</svg>
+					<N8nIcon icon="zoom-in" size="medium" />
 				</button>
 			</KeyboardShortcutTooltip>
 
 			<!-- Zoom Out (-) -->
 			<KeyboardShortcutTooltip label="Zoom Out" :shortcut="{ keys: ['-'] }">
 				<button type="button" :class="$style.toolBtn" @click="onZoomOut">
-					<svg
-						width="15"
-						height="15"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2.2"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-					>
-						<circle cx="11" cy="11" r="8" />
-						<line x1="21" y1="21" x2="16.65" y2="16.65" />
-						<line x1="8" y1="11" x2="14" y2="11" />
-					</svg>
+					<N8nIcon icon="zoom-out" size="medium" />
 				</button>
 			</KeyboardShortcutTooltip>
 
 			<!-- Tidy Up / Auto Arrange -->
 			<KeyboardShortcutTooltip label="Tidy Up" :shortcut="{ shiftKey: true, altKey: true, keys: ['T'] }">
-				<button type="button" :class="$style.toolBtn" @click="onTidyUp">
-					<svg
-						width="15"
-						height="15"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2.2"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-					>
-						<path d="m14 12 6-6" />
-						<path d="m18 16 3-3" />
-						<path d="m8.5 8.5 7 7L13 18l-8 3 3-8 2.5-4.5z" />
-					</svg>
+				<button type="button" :class="[$style.toolBtn, $style.tidyBtn]" @click="onTidyUp">
+					<TidyUpIcon />
 				</button>
 			</KeyboardShortcutTooltip>
 
@@ -242,19 +170,7 @@ function onToggleAssistant() {
 					:class="[$style.toolBtn, isFocusPanelOpen && $style.active]"
 					@click="onToggleFocusPanel"
 				>
-					<svg
-						width="15"
-						height="15"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2.2"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-					>
-						<rect x="3" y="3" width="18" height="18" rx="3" ry="3" />
-						<line x1="15" y1="3" x2="15" y2="21" />
-					</svg>
+					<N8nIcon icon="panel-right" size="medium" />
 				</button>
 			</KeyboardShortcutTooltip>
 
@@ -265,28 +181,7 @@ function onToggleAssistant() {
 					:class="[$style.toolBtn, isChatOpen && $style.active, $style.aiSparkleBtn]"
 					@click="onToggleAssistant"
 				>
-					<svg
-						width="16"
-						height="16"
-						viewBox="0 0 24 24"
-						fill="none"
-						:class="$style.aiSparkleIcon"
-					>
-						<path
-							d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"
-							fill="url(#aiSparkleGrad)"
-						/>
-						<path
-							d="M19 2L20.2 5.8L24 7L20.2 8.2L19 12L17.8 8.2L14 7L17.8 5.8L19 2Z"
-							fill="url(#aiSparkleGrad)"
-						/>
-						<defs>
-							<linearGradient id="aiSparkleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-								<stop offset="0%" stop-color="#a855f7" />
-								<stop offset="100%" stop-color="#ec4899" />
-							</linearGradient>
-						</defs>
-					</svg>
+					<N8nIcon icon="sparkles" size="medium" :class="$style.aiSparkleIcon" />
 				</button>
 			</KeyboardShortcutTooltip>
 		</div>
@@ -408,6 +303,13 @@ function onToggleAssistant() {
 		color: #38bdf8;
 		border-color: rgba(56, 189, 248, 0.3);
 		box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);
+	}
+}
+
+.tidyBtn {
+	svg {
+		width: 16px;
+		height: 16px;
 	}
 }
 
