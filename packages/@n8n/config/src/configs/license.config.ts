@@ -4,11 +4,11 @@ import { Config, Env } from '../decorators';
 export class LicenseConfig {
 	/** URL of the license server used to validate and refresh licenses. */
 	@Env('N8N_LICENSE_SERVER_URL')
-	serverUrl: string = 'https://license.n8n.io/v1';
+	serverUrl: string = '';
 
 	/** Whether to automatically renew licenses before they expire. */
 	@Env('N8N_LICENSE_AUTO_RENEW_ENABLED')
-	autoRenewalEnabled: boolean = true;
+	autoRenewalEnabled: boolean = false;
 
 	/** Activation key used to activate or upgrade the instance license. */
 	@Env('N8N_LICENSE_ACTIVATION_KEY')
