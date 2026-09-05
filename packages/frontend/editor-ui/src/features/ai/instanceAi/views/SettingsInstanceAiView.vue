@@ -135,14 +135,13 @@ const searchValue = computed(() => {
 const isSetupRequired = computed(
 	() =>
 		isEnabled.value &&
-		((showCredentialsRows.value && !isModelConfigured.value) ||
-			(showSandboxRow.value && !isSandboxConfigured.value) ||
-			(showCredentialsRows.value && searchState.value === 'notset')),
+		showCredentialsRows.value &&
+		!isModelConfigured.value,
 );
 const neverConfigured = computed(() => {
 	if (isEnabled.value) return false;
 	if (!isSelfManaged.value || !store.settings) return true;
-	return !isModelConfigured.value && !isSandboxConfigured.value && searchState.value === 'notset';
+	return !isModelConfigured.value;
 });
 
 const emptyStateIcon: EmptyStateIconCards = {
@@ -368,7 +367,6 @@ async function handleEnable() {
 		return;
 	}
 
-	enableAfterSetup.value = true;
 	if (showCredentialsRows.value && !isModelConfigured.value) {
 		openModelSetup();
 		return;
@@ -387,33 +385,6 @@ async function handleEnable() {
 			)))
 	) {
 		openModelSetup();
-		return;
-	}
-
-	if (!(await enableEnvironmentSandboxIfNeeded())) return;
-
-	if (showSandboxRow.value && !isSandboxConfigured.value && !isSandboxEnvManaged.value) {
-		openSandboxDialog();
-		return;
-	}
-
-	if (showSandboxRow.value && sandboxCredentialId.value && store.canManageInstanceCredentials) {
-		const isDaytona = store.settings?.sandboxProvider === 'daytona';
-		if (
-			!(await testSavedCredential(
-				sandboxCredentialId.value,
-				'AI Assistant sandbox',
-				isDaytona ? 'daytonaApi' : 'httpHeaderAuth',
-			))
-		) {
-			openSandboxDialog();
-			return;
-		}
-	}
-
-	if (showCredentialsRows.value && searchState.value === 'notset') {
-		setupChain.value = true;
-		openSearchSetup();
 		return;
 	}
 

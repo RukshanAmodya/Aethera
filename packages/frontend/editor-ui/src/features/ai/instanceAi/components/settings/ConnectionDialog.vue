@@ -11,11 +11,11 @@ const props = withDefaults(defineProps<{ kind: InstanceAiConnectionKind; setup?:
 
 const emit = defineEmits<{ saved: [] }>();
 
-const setupSequence: InstanceAiOnboardingStep[] = ['model', 'sandbox', 'search', 'done'];
+const setupSequence: InstanceAiOnboardingStep[] = ['model', 'done'];
 
 function handleAdvance(): void {
 	emit('saved');
-	if (!props.setup) open.value = false;
+	open.value = false;
 }
 </script>
 
