@@ -8,38 +8,30 @@
 // would mask --canvas-node--border-color set by ancestors (e.g. diff views).
 @mixin canvas-node-border($line-style: solid) {
 	border: var(--canvas-node--border-width) $line-style
-		var(
-			--canvas-node--border-color,
-			light-dark(
-				rgba(0, 0, 0, 0.08),
-				rgba(255, 255, 255, 0.12)
-			)
-		);
+		var(--canvas-node--border-color, light-dark(rgba(0, 0, 0, 0.08), rgba(255, 255, 255, 0.12)));
 }
 
 @mixin canvas-node-selected-ring {
 	/* stylelint-disable-next-line @n8n/css-var-naming */
-	box-shadow: 0 0 0 calc(3px * var(--canvas-zoom-compensation-factor, 1))
-		rgba(34, 197, 94, 0.7),
-		0 8px 24px -4px rgba(34, 197, 94, 0.45);
+	box-shadow: 0 0 0 calc(2px * var(--canvas-zoom-compensation-factor, 1)) var(--color--primary);
 }
 
 @mixin status-success {
 	--canvas-node--border-width: 1.5px;
 	--canvas-node--border-color: var(--color-canvas-node-success-border-color, #22c55e);
-	box-shadow: 0 0 16px -2px rgba(34, 197, 94, 0.5), 0 0 0 1.5px rgba(34, 197, 94, 0.4);
+	box-shadow: none;
 }
 
 @mixin status-error {
 	--canvas-node--border-width: 1.5px;
 	--canvas-node--border-color: var(--canvas-node--border-color--error, var(--color--danger));
-	box-shadow: 0 0 12px -2px rgba(239, 68, 68, 0.4), 0 0 0 1px rgba(239, 68, 68, 0.3);
+	box-shadow: none;
 }
 
 @mixin status-warning {
 	--canvas-node--border-width: 1.5px;
 	--canvas-node--border-color: var(--color--warning);
-	box-shadow: 0 0 12px -2px rgba(245, 158, 11, 0.4), 0 0 0 1px rgba(245, 158, 11, 0.3);
+	box-shadow: none;
 }
 
 @mixin status-running-border {
