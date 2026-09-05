@@ -63,6 +63,7 @@ const renderToolbar = computed(() => delayedHovered.value && !props.readOnly);
 const isMainConnection = computed(() => data.value.source.type === NodeConnectionTypes.Main);
 
 const status = computed(() => props.data.status);
+const isRunning = computed(() => status.value === 'running');
 
 const edgeStyle = computed(() => ({
 	...props.style,
@@ -170,6 +171,22 @@ function onEdgeLabelMouseLeave() {
 			:marker-end="isMainConnection ? markerEnd : undefined"
 			:interaction-width="40"
 		/>
+
+		<!-- Smooth flowing energy beam when edge is running -->
+		<template v-if="isRunning">
+			<path
+				v-for="segment in segments"
+				:key="`flow-glow-${segment[0]}`"
+				:d="segment[0]"
+				:class="$style.runningFlowGlow"
+			/>
+			<path
+				v-for="segment in segments"
+				:key="`flow-${segment[0]}`"
+				:d="segment[0]"
+				:class="$style.runningFlow"
+			/>
+		</template>
 	</g>
 
 	<EdgeLabelRenderer>
@@ -211,6 +228,38 @@ function onEdgeLabelMouseLeave() {
 	/* stylelint-disable-next-line @n8n/css-var-naming */
 	stroke-width: calc(2 * var(--canvas-zoom-compensation-factor, 1)) !important;
 	stroke-linecap: square;
+}
+
+.runningFlowGlow {
+	fill: none;
+	stroke: var(--color--primary, #6366f1);
+	/* stylelint-disable-next-line @n8n/css-var-naming */
+	stroke-width: calc(3.5px * var(--canvas-zoom-compensation-factor, 1));
+	stroke-linecap: round;
+	stroke-dasharray: 48 120;
+	opacity: 0.35;
+	pointer-events: none;
+	animation: flowingBeam 1.4s linear infinite;
+}
+
+.runningFlow {
+	fill: none;
+	stroke: var(--color--primary, #6366f1);
+	/* stylelint-disable-next-line @n8n/css-var-naming */
+	stroke-width: calc(2.2px * var(--canvas-zoom-compensation-factor, 1));
+	stroke-linecap: round;
+	stroke-dasharray: 32 136;
+	pointer-events: none;
+	animation: flowingBeam 1.4s linear infinite;
+}
+
+@keyframes flowingBeam {
+	from {
+		stroke-dashoffset: 168;
+	}
+	to {
+		stroke-dashoffset: 0;
+	}
 }
 
 .edgeLabelWrapper {
